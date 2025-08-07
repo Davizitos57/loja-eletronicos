@@ -1,12 +1,21 @@
 DROP TABLE IF EXISTS usuarios;
+DROP TABLE IF EXISTS produto;
 
 CREATE TABLE usuarios (
-    id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     nome TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
     cpf TEXT UNIQUE NOT NULL,
     telefone TEXT,
     endereco TEXT NOT NULL
+);
+
+CREATE TABLE produtos (
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY, 
+    nome VARCHAR(100) NOT NULL,
+    descricao TEXT,
+    preco_unico NUMERIC(10, 2) NOT NULL,
+    quantidade_estoque INTEGER NOT NULL 
 );
 
 INSERT INTO usuarios (nome, email, cpf, telefone, endereco) VALUES ('Maria', 'maria@gmail.com', '111111', '319959125', 'Rua sem nome');
