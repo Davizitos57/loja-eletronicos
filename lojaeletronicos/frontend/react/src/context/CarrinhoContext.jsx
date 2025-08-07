@@ -1,6 +1,5 @@
 import { createContext, useState, useContext } from 'react';
 
-
 const CarrinhoContext = createContext();
 
 export function CarrinhoProvider({ children }) {

@@ -16,18 +16,18 @@ import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import ForgotPassword from '../../components/login/ForgotPassword.jsx';
 import AppTheme from '../../shared-theme/AppTheme.jsx';
-import { GoogleIcon, FacebookIcon, SitemarkIcon } from '../../components/login/CustomIcons.jsx';
+import { Link as RouterLink } from 'react-router-dom';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignSelf: 'center',
-  width: '100%',
-  padding: theme.spacing(4),
+  width: '400px',
+  padding: theme.spacing(5),
   gap: theme.spacing(2),
   margin: 'auto',
   [theme.breakpoints.up('sm')]: {
-    maxWidth: '450px',
+    maxWidth: '500px',
   },
   boxShadow:
     'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
@@ -117,6 +117,14 @@ export default function SignIn(props) {
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
+     <Link
+        component={RouterLink}
+        to="/home"
+        variant="body2"
+        sx={{ alignSelf: 'center', fontSize: '40px'}}
+      >
+        Home
+      </Link>
       <SignInContainer direction="column" justifyContent="space-between">
         <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
         <Card variant="outlined">
@@ -200,7 +208,8 @@ export default function SignIn(props) {
             <Typography sx={{ textAlign: 'center' }}>
               Não tem uma conta?{' '}
               <Link
-                href="/material-ui/getting-started/templates/sign-in/"
+                component={RouterLink}
+                to="/signup"
                 variant="body2"
                 sx={{ alignSelf: 'center' }}
               >
