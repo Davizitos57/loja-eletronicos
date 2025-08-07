@@ -18,6 +18,7 @@ public class Produto implements Serializable {
     private String descricao;
     private float precoUnico;
     private int quantidadeEstoque;
+    private boolean aVenda = true;
 
     public Produto(String nome, String descricao, float precoUnico, int quantidadeEstoque){
         this.nome = nome;

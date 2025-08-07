@@ -25,6 +25,7 @@ public class ProdutoRepository {
         produto.setDescricao(rs.getString("descricao"));
         produto.setPrecoUnico(rs.getFloat("preco_unico"));
         produto.setQuantidadeEstoque(rs.getInt("quantidade_estoque"));
+        produto.setAVenda(rs.getBoolean("ativo"));
         
         return produto;
     };
@@ -48,20 +49,20 @@ public class ProdutoRepository {
     }
 
     public List<Produto> findByNome(String nome){
-        String sql = "SELECT * FROM produtos WHERE nome = ?";            
+        String sql = "SELECT * FROM produtos WHERE nome = ? AND ativo = TRUE";            
         List<Produto> produtos = jdbcTemplate.query(sql, prodRowMapper, nome);
         return produtos;
     }
 
     public List<Produto> findAllProdutos(){
-        String sql = "SELECT * FROM produtos";
+        String sql = "SELECT * FROM produtos WHERE ativo = TRUE";
         List<Produto> produtos = jdbcTemplate.query(sql, prodRowMapper);
         return produtos;
     }
 
     /*
     public List<Produto> findByCategoria(String nomeCategoria){
-        String sql = "SELECT * FROM produtos WHERE categoria_id = ?";
+        String sql = "SELECT * FROM produtos WHERE categoria_id = ? AND ativo = TRUE";
         return jdbcTemplate.query(sql, )
     }
     */
@@ -74,6 +75,11 @@ public class ProdutoRepository {
     public void deleteById(Long idProduto){
         String sql = "DELETE FROM produtos WHERE id = ?";
         jdbcTemplate.update(sql, idProduto); 
+    }
+
+    public void softDeleteById(Long idProduto){
+        String sql = "UPDATE produtos SET ativo = FALSE WHERE id = ?";
+        jdbcTemplate.update(sql, idProduto);
     }
 
 }

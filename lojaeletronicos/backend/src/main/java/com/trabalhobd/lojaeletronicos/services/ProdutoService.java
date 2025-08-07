@@ -46,4 +46,8 @@ public class ProdutoService {
         produtoRepository.deleteById(idProduto);
     }
 
+    public void deletarLogicamenteProdutoporId(Long idProduto){
+        produtoRepository.softDeleteById(idProduto);
+    }
+
 }

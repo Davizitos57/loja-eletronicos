@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS usuarios;
-DROP TABLE IF EXISTS produto;
+DROP TABLE IF EXISTS produtos;
 
 CREATE TABLE usuarios (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -15,7 +15,8 @@ CREATE TABLE produtos (
     nome VARCHAR(100) NOT NULL,
     descricao TEXT,
     preco_unico NUMERIC(10, 2) NOT NULL,
-    quantidade_estoque INTEGER NOT NULL 
+    quantidade_estoque INTEGER NOT NULL, 
+    avenda BOOLEAN DEFAULT TRUE
 );
 
 INSERT INTO usuarios (nome, email, cpf, telefone, endereco) VALUES ('Maria', 'maria@gmail.com', '111111', '319959125', 'Rua sem nome');

@@ -76,4 +76,10 @@ public class ProdutoController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("/soft/{id}")
+    public ResponseEntity<Void> deletarLogicamenteProdutoPorID(@PathVariable Long id){
+        produtoService.deletarLogicamenteProdutoporId(id);
+        return ResponseEntity.ok().build();
+    }
+
 }
