@@ -14,26 +14,37 @@ public class UsuarioService {
     private UsuarioRepository usuarioRepository;
 
     public void criarNovoUsuario(Usuario usuario) {
-        usuarioRepository.create(usuario);
+        if (!isCpfNumerico(usuario.getCpf())) {
+            throw new RuntimeException("O cpf deve conter apenas números!");
+        }
+        usuarioRepository.criarNovoUsuario(usuario);
     }
 
     public List<Usuario> todosUsuarios(){
-        return usuarioRepository.findAllUsers();
+        return usuarioRepository.encontrarTodosUsuario();
     }
 
     public Usuario procurarUsuarioPorId(Long id) {
-        return usuarioRepository.findById(id);
+        return usuarioRepository.encontrarUsuarioPorId(id);
     }
 
-    public List<Usuario> procurarUsuarioPorNome(String nome) {
-        return usuarioRepository.findByNome(nome);
+    public Usuario procurarUsuarioPorCpf(String cpf) {
+        return usuarioRepository.encontrarUsuarioPorCpf(cpf);
+    }
+
+    public Usuario procurarUsuarioPorEmail(String email) {
+        return usuarioRepository.encontrarUsuarioPorEmail(email);
     }
 
     public void atualizarDadosUsuario(Long id, Usuario usuario) {
-        usuarioRepository.updateUserData(id, usuario);
+        usuarioRepository.atualizarDadosUsuario(id, usuario);
     }
 
     public void deletarUsuarioPorId(Long id) {
-        usuarioRepository.deleteById(id);
+        usuarioRepository.deletarUsuarioPorId(id);
+    }
+
+    public static boolean isCpfNumerico(String cpf) {
+        return cpf != null && cpf.matches("\\d+");
     }
 }

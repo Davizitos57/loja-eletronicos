@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/loja/usuarios")
+@RequestMapping("/usuarios")
 public class UsuarioController {
 
     @Autowired
@@ -30,10 +30,22 @@ public class UsuarioController {
         return ResponseEntity.ok(data);
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<Usuario>> procurarUsuarioPorEmai(@RequestParam String nome) {
-        var usuarios = usuarioService.procurarUsuarioPorNome(nome);
-        return ResponseEntity.ok(usuarios);
+    @GetMapping("/search/cpf")
+    public ResponseEntity<Usuario> procurarUsuarioPorCpf(@RequestParam String cpf) {
+        var usuario = usuarioService.procurarUsuarioPorCpf(cpf);
+        if (usuario == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(usuario);
+    }
+
+    @GetMapping("/search/email")
+    public ResponseEntity<Usuario> procurarUsuarioPorEmail(@RequestParam String email) {
+        var usuario = usuarioService.procurarUsuarioPorEmail(email);
+        if (usuario == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(usuario);
     }
 
     @PostMapping

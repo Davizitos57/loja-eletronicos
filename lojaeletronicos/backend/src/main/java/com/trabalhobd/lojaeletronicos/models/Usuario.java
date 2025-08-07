@@ -18,13 +18,17 @@ public class Usuario implements Serializable {
     private String email;
     private String cpf;
     private String telefone;
-    private String endereco;
+    private String senha;
+    private String tipoUsuario;
+    private int excluido;
 
-    public Usuario(String nome, String email, String cpf, String telefone, String endereco) {
+    public Usuario(String nome, String email, String cpf, String telefone, String senha, String tipoUsuario, int excluido) {
         this.nome = nome;
         this.email = email;
         this.cpf = cpf;
         this.telefone = telefone;
-        this.endereco = endereco;
+        this.senha = senha;
+        this.tipoUsuario = tipoUsuario;
+        this.excluido = excluido;
     }
 }
