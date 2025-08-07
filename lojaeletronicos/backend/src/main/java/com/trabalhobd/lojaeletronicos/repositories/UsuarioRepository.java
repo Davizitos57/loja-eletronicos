@@ -9,7 +9,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
@@ -38,7 +37,7 @@ public class UsuarioRepository {
         String sql = "SELECT * FROM usuarios WHERE id = ?";
         Usuario usuario;
         try {
-            usuario = jdbcTemplate.queryForObject(sql, new Object[]{id}, userRowMapper);
+            usuario = jdbcTemplate.queryForObject(sql, userRowMapper, id);
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
@@ -47,7 +46,7 @@ public class UsuarioRepository {
 
     public List<Usuario> findByNome(String nome) {
         String sql = "SELECT * FROM usuarios WHERE nome = ?";
-        List<Usuario> usuarios = jdbcTemplate.query(sql, new Object[]{nome}, userRowMapper);
+        List<Usuario> usuarios = jdbcTemplate.query(sql, userRowMapper, nome);
         return usuarios;
     }
 
