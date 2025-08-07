@@ -3,9 +3,10 @@ import { Box, Container, Typography } from '@mui/material';
 import { useCarrinho } from '../context/CarrinhoContext.jsx';
 import { useNavegacao } from '../hooks/useNavegacao.js';
 import { categoriasMock } from '../data/categoriasMock.js';
-import CarrinhoFab from '../components/CarrinhoFab.jsx';
-import CarrinhoDrawer from '../components/CarrinhoDrawer.jsx';
+import CarrinhoFab from '../components/carrinho/CarrinhoFab.jsx';
+import CarrinhoDrawer from '../components/carrinho/CarrinhoDrawer.jsx';
 import CategoriaSection from '../components/CategoriaSection.jsx';
+import Header from '../components/Header.jsx';
 // import api from '../services/api'; // Comentado por enquanto
 
 
@@ -68,8 +69,11 @@ export default function Home() {
         );
     }
 
-    return (
-        <Box sx={{ bgcolor: '#f5f5f5', minHeight: '100vh', position: 'relative' }}>
+return (
+        <Box sx={{ bgcolor: '#f5f5f5', minHeight: '100vh' }}>
+            {/* Header com Logo e Capa */}
+            <Header />
+
             {/* Botão flutuante do carrinho */}
             <CarrinhoFab 
                 quantidadeItens={carrinho.length}
@@ -80,16 +84,12 @@ export default function Home() {
             <Container 
                 maxWidth={false}
                 sx={{ 
-                    py: 2,
+                    py: 10, 
                     px: 2,
                     width: '100%',
                     maxWidth: '100vw'
                 }}
             >
-                <Typography variant="h3" gutterBottom sx={{ textAlign: 'center', mb: 3, color: 'primary.main', fontWeight: 'bold', padding: 2 }}>
-                    TecnoFácil
-                </Typography>
-
                 {/* Seções de categorias */}
                 {categorias.map((categoria) => (
                     <CategoriaSection
