@@ -7,7 +7,7 @@ export function useNavegacao(categorias) {
         const categoria = categorias.find(cat => cat.id === categoriaId);
         if (!categoria) return;
 
-        const cardWidth = 280; // 260 + gap
+        const cardWidth = 280;
         const currentScroll = scrollPositions[categoriaId] || 0;
         const containerWidth = window.innerWidth - 100;
         const maxScroll = Math.max(0, (categoria.produtos.length * cardWidth) - containerWidth);

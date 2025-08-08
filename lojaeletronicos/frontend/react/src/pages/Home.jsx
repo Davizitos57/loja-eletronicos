@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Box, Container, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { useCarrinho } from '../context/CarrinhoContext.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
 import { useNavegacao } from '../hooks/useNavegacao.js';
 import { categoriasMock } from '../data/categoriasMock.js';
 import CarrinhoFab from '../components/carrinho/CarrinhoFab.jsx';
 import CarrinhoDrawer from '../components/carrinho/CarrinhoDrawer.jsx';
+import AdminFab from '../components/admin/AdminFab.jsx';
+import AdminDrawer from '../components/admin/AdminDrawer.jsx';
 import CategoriaSection from '../components/CategoriaSection.jsx';
 import Header from '../components/Header.jsx';
 // import api from '../services/api'; // Comentado por enquanto
@@ -14,13 +18,15 @@ export default function Home() {
     const [loading, setLoading] = useState(true);
     const [categorias, setCategorias] = useState(categoriasMock);
     const [carrinhoAberto, setCarrinhoAberto] = useState(false);
-    
+    const [adminAberto, setAdminAberto] = useState(false);
     const { carrinho, adicionarAoCarrinho, removerDoCarrinho } = useCarrinho();
+    const { isAdmin } = useAuth();
     const { scrollPositions, navegarHorizontal, podeNavegar } = useNavegacao(categorias);
+    const navigate = useNavigate();
 
     useEffect(() => {
         setLoading(true);
-        
+
         // Simular carregamento sem API por enquanto
         setTimeout(() => {
             console.log('Dados carregados:', categorias);
@@ -43,22 +49,23 @@ export default function Home() {
         */
     }, []);
 
-    // Função para abrir o carrinho e adicionar produto
     const adicionarEAbrirCarrinho = (produto) => {
         adicionarAoCarrinho(produto);
         setCarrinhoAberto(true);
         console.log('Produto adicionado e carrinho aberto:', produto.nome);
     };
 
-    // Função para comprar produto
     const comprarProduto = (produto) => {
         alert(`Comprando: ${produto.nome}`);
     };
 
-    // Função para finalizar compra
     const finalizarCompra = () => {
         alert('Finalizando compra... 🎉');
         setCarrinhoAberto(false);
+    };
+
+    const navegarAdmin = (secao) => {
+        navigate(`/dashboard?secao=${secao}`);
     };
 
     if (loading) {
@@ -69,28 +76,31 @@ export default function Home() {
         );
     }
 
-return (
+    return (
         <Box sx={{ bgcolor: '#f5f5f5', minHeight: '100vh' }}>
-            {/* Header com Logo e Capa */}
             <Header />
 
-            {/* Botão flutuante do carrinho */}
-            <CarrinhoFab 
+            {/* Botões flutuantes */}
+            <CarrinhoFab
                 quantidadeItens={carrinho.length}
                 onClick={() => setCarrinhoAberto(true)}
             />
 
+            {/* Botão Admin - só aparece para admins */}
+            <AdminFab
+                onClick={() => setAdminAberto(true)}
+            />
+
             {/* Conteúdo principal */}
-            <Container 
+            <Container
                 maxWidth={false}
-                sx={{ 
-                    py: 10, 
+                sx={{
+                    py: 10,
                     px: 2,
                     width: '100%',
                     maxWidth: '100vw'
                 }}
             >
-                {/* Seções de categorias */}
                 {categorias.map((categoria) => (
                     <CategoriaSection
                         key={categoria.id}
@@ -104,7 +114,7 @@ return (
                 ))}
             </Container>
 
-            {/* Drawer do carrinho */}
+            {/* Drawers */}
             <CarrinhoDrawer
                 aberto={carrinhoAberto}
                 onFechar={() => setCarrinhoAberto(false)}
@@ -112,6 +122,15 @@ return (
                 onRemoverItem={removerDoCarrinho}
                 onFinalizarCompra={finalizarCompra}
             />
+
+            {/* Drawer Admin - só renderiza para admins */}
+            {isAdmin() && (
+                <AdminDrawer
+                    aberto={adminAberto}
+                    onFechar={() => setAdminAberto(false)}
+                    onNavegar={navegarAdmin}
+                />
+            )}
         </Box>
     );
 }

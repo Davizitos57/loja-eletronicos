@@ -39,7 +39,7 @@ export function AuthProvider({ children }) {
         return usuario?.role === 'admin';
     };
 
-    // Verificar se há usuário logado no localStorage
+     // Verificar se há usuário logado no localStorage
     useEffect(() => {
         const savedUser = localStorage.getItem('usuario');
         if (savedUser) {
@@ -52,6 +52,20 @@ export function AuthProvider({ children }) {
         }
         setLoading(false);
     }, []);
+
+    // Para teste - simula um usuário admin logado
+    useEffect(() => {
+        if (!usuario && !loading) {
+            const mockAdminUser = {
+                id: 1,
+                nome: 'Admin Teste',
+                email: 'admin@tecnofacil.com',
+                role: 'admin',
+                avatar: null
+            };
+            setUsuario(mockAdminUser);
+        }
+    }, [usuario, loading]);
 
     return (
         <AuthContext.Provider

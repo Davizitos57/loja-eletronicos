@@ -2,11 +2,11 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './index.css'
-import App from './App.jsx'
 import Home from './pages/Home.jsx';
-import { CarrinhoProvider } from './context/CarrinhoContext.jsx'
+import Dashboard from './pages/Dashboard.jsx';
 import SignIn from './pages/login/SignIn.jsx';
 import SignUp from './pages/login/SignUp.jsx';
+import AppProviders from './providers/AppProviders.jsx'; // Se usar opção 1
 
 const router = createBrowserRouter([
   {
@@ -14,15 +14,23 @@ const router = createBrowserRouter([
     element: <SignIn />,
   },
   {
-    path: "/signup",
+    path: "/signup", 
     element: <SignUp />,
   },
   {
     path: "/home",
     element: (
-      <CarrinhoProvider>
+      <AppProviders>
         <Home />
-      </CarrinhoProvider>
+      </AppProviders>
+    ),
+  },
+  {
+    path: "/dashboard",
+    element: (
+      <AppProviders>
+        <Dashboard />
+      </AppProviders>
     ),
   },
 ]);
