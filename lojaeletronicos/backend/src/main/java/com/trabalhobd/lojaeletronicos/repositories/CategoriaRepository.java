@@ -50,9 +50,9 @@ public class CategoriaRepository{
         return categoria;
     }
 
-    public void updateCategoriaData (Long idProduto, Categoria categoria){
+    public void updateCategoriaData (Long idCategoria, Categoria categoria){
         String sql = "UPDATE categorias SET nome = ? WHERE id = ?";
-        jdbcTemplate.update(sql, categoria.getNome());
+        jdbcTemplate.update(sql, categoria.getNome(), idCategoria);
     }
 
 
