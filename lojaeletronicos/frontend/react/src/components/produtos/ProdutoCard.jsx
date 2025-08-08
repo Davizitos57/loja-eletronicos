@@ -7,8 +7,14 @@ import {
     Box
 } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
-export default function ProdutoCard({ produto, onAdicionarCarrinho, onComprar }) {
+export default function ProdutoCard({ 
+    produto, 
+    onAdicionarCarrinho, 
+    onComprar,
+    onVerDetalhes // Nova prop
+}) {
     return (
         <Card
             sx={{
@@ -18,11 +24,13 @@ export default function ProdutoCard({ produto, onAdicionarCarrinho, onComprar })
                 flexDirection: 'column',
                 transition: 'transform 0.2s, box-shadow 0.2s',
                 flexShrink: 0,
+                cursor: 'pointer', // Indicar que é clicável
                 '&:hover': {
                     transform: 'translateY(-4px)',
                     boxShadow: 4
                 }
             }}
+            onClick={() => onVerDetalhes(produto)} // Abrir modal ao clicar no card
         >
             <CardMedia
                 component="img"
@@ -43,11 +51,15 @@ export default function ProdutoCard({ produto, onAdicionarCarrinho, onComprar })
                 </Typography>
                 
                 <Box sx={{ mt: 'auto' }}>
+                    
                     <Button
                         variant="contained"
                         fullWidth
                         sx={{ mb: 1, py: 0.8 }}
-                        onClick={() => onComprar(produto)}
+                        onClick={(e) => {
+                            e.stopPropagation(); // Evitar que abra o modal
+                            onComprar(produto);
+                        }}
                     >
                         Comprar Agora
                     </Button>
@@ -55,7 +67,10 @@ export default function ProdutoCard({ produto, onAdicionarCarrinho, onComprar })
                         variant="outlined"
                         fullWidth
                         sx={{ py: 0.8 }}
-                        onClick={() => onAdicionarCarrinho(produto)}
+                        onClick={(e) => {
+                            e.stopPropagation(); // Evitar que abra o modal
+                            onAdicionarCarrinho(produto);
+                        }}
                         startIcon={<ShoppingCartIcon />}
                     >
                         Adicionar ao Carrinho

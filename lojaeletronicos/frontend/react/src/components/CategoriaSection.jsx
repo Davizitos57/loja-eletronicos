@@ -1,7 +1,7 @@
 import { Box, Typography, IconButton, Divider } from '@mui/material';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import ProdutoCard from './ProdutoCard';
+import ProdutoCard from './produtos/ProdutoCard';
 
 export default function CategoriaSection({ 
     categoria, 
@@ -9,18 +9,26 @@ export default function CategoriaSection({
     onNavigate, 
     podeNavegar,
     onAdicionarCarrinho,
-    onComprar 
+    onComprar,
+    onVerDetalhes 
 }) {
     return (
-        <Box sx={{ mb: 4 }}>
+        <Box sx={{ mb: 3 }}>
             {/* Cabeçalho da categoria */}
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-                <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
+                <Typography 
+                    variant="h4" 
+                    sx={{ 
+                        fontWeight: 'bold', 
+                        color: 'primary.main',
+                        fontSize: { xs: '1.5rem', md: '2rem' }
+                    }}
+                >
                     {categoria.nome} ({categoria.produtos.length})
                 </Typography>
                 
                 {/* Botões de navegação */}
-                <Box sx={{ display: 'flex', gap: 1 }}>
+                <Box sx={{ display: 'flex', gap: 0.5 }}>
                     <IconButton
                         onClick={() => onNavigate(categoria.id, 'left')}
                         sx={{ 
@@ -52,7 +60,7 @@ export default function CategoriaSection({
                 </Box>
             </Box>
 
-            {/* Container de produtos com scroll horizontal */}
+            {/* Container de produtos */}
             <Box
                 sx={{
                     position: 'relative',
@@ -78,12 +86,13 @@ export default function CategoriaSection({
                             produto={produto}
                             onAdicionarCarrinho={onAdicionarCarrinho}
                             onComprar={onComprar}
+                            onVerDetalhes={onVerDetalhes}
                         />
                     ))}
                 </Box>
             </Box>
 
-            <Divider sx={{ mt: 3 }} />
+            <Divider sx={{ mt: 2 }} />
         </Box>
     );
 }

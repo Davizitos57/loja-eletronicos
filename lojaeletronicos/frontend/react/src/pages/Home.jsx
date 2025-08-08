@@ -11,6 +11,7 @@ import AdminFab from '../components/admin/AdminFab.jsx';
 import AdminDrawer from '../components/admin/AdminDrawer.jsx';
 import CategoriaSection from '../components/CategoriaSection.jsx';
 import Header from '../components/Header.jsx';
+import ProdutoModal from '../components/produtos/ProdutoModal.jsx';
 // import api from '../services/api'; // Comentado por enquanto
 
 
@@ -19,6 +20,9 @@ export default function Home() {
     const [categorias, setCategorias] = useState(categoriasMock);
     const [carrinhoAberto, setCarrinhoAberto] = useState(false);
     const [adminAberto, setAdminAberto] = useState(false);
+    const [produtoModalAberto, setProdutoModalAberto] = useState(false);
+    const [produtoSelecionado, setProdutoSelecionado] = useState(null);
+
     const { carrinho, adicionarAoCarrinho, removerDoCarrinho } = useCarrinho();
     const { isAdmin } = useAuth();
     const { scrollPositions, navegarHorizontal, podeNavegar } = useNavegacao(categorias);
@@ -68,47 +72,58 @@ export default function Home() {
         navigate(`/dashboard?secao=${secao}`);
     };
 
-if (loading) {
-    return (
-        <Box 
-            sx={{ 
-                display: 'flex', 
-                flexDirection: 'column', // Empilhar verticalmente
-                justifyContent: 'center', 
-                alignItems: 'center', 
-                height: '100vh',
-                width: '100vw',
-                bgcolor: '#f5f5f5', 
-                gap: 3 
-            }}
-        >
-            <CircularProgress 
-                size={60} 
-                thickness={4}
-                sx={{ color: 'primary.main' }}
-            />
-            <Typography 
-                variant="h4" 
-                sx={{ 
-                    fontWeight: 'bold',
-                    color: 'primary.main',
-                    textAlign: 'center',
-                    fontSize: { xs: '1.5rem', md: '2.125rem' } 
+    const verDetalhesproduto = (produto) => {
+        setProdutoSelecionado(produto);
+        setProdutoModalAberto(true);
+    };
+
+    // Nova função para fechar modal
+    const fecharModalProduto = () => {
+        setProdutoModalAberto(false);
+        setProdutoSelecionado(null);
+    };
+
+    if (loading) {
+        return (
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column', // Empilhar verticalmente
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100vh',
+                    width: '100vw',
+                    bgcolor: '#f5f5f5',
+                    gap: 3
                 }}
             >
-                Seja Bem-vindo à Plataforma!
-            </Typography>
-            <Typography 
-                variant="body1" 
-                sx={{ 
-                    color: 'text.secondary',
-                    textAlign: 'center'
-                }}
-            >
-            </Typography>
-        </Box>
-    );
-}
+                <CircularProgress
+                    size={60}
+                    thickness={4}
+                    sx={{ color: 'primary.main' }}
+                />
+                <Typography
+                    variant="h4"
+                    sx={{
+                        fontWeight: 'bold',
+                        color: 'primary.main',
+                        textAlign: 'center',
+                        fontSize: { xs: '1.5rem', md: '2.125rem' }
+                    }}
+                >
+                    Seja Bem-vindo à Plataforma!
+                </Typography>
+                <Typography
+                    variant="body1"
+                    sx={{
+                        color: 'text.secondary',
+                        textAlign: 'center'
+                    }}
+                >
+                </Typography>
+            </Box>
+        );
+    }
 
     return (
         <Box sx={{ bgcolor: '#f5f5f5', minHeight: '100vh' }}>
@@ -144,11 +159,12 @@ if (loading) {
                         podeNavegar={podeNavegar}
                         onAdicionarCarrinho={adicionarEAbrirCarrinho}
                         onComprar={comprarProduto}
+                        onVerDetalhes={verDetalhesproduto}
                     />
                 ))}
             </Container>
 
-            {/* Drawers */}
+            {/* Drawers e Modals */}
             <CarrinhoDrawer
                 aberto={carrinhoAberto}
                 onFechar={() => setCarrinhoAberto(false)}
@@ -157,7 +173,6 @@ if (loading) {
                 onFinalizarCompra={finalizarCompra}
             />
 
-            {/* Drawer Admin - só renderiza para admins */}
             {isAdmin() && (
                 <AdminDrawer
                     aberto={adminAberto}
@@ -165,6 +180,15 @@ if (loading) {
                     onNavegar={navegarAdmin}
                 />
             )}
+
+            {/* Modal de detalhes do produto */}
+            <ProdutoModal
+                produto={produtoSelecionado}
+                aberto={produtoModalAberto}
+                onFechar={fecharModalProduto}
+                onAdicionarCarrinho={adicionarEAbrirCarrinho}
+                onComprar={comprarProduto}
+            />
         </Box>
     );
 }
