@@ -28,14 +28,14 @@ export default function Header() {
                     src="/images/logo-tecnofacil.jpg"
                     alt="TecnoFácil Logo"
                     sx={{
-                        height: { xs: '80px', md: '250px' }, 
-                        width: '700px', 
+                        height: { xs: '80px', md: '250px' },
+                        width: '700px',
                         maxWidth: '300px',
                         margin: '0 auto 2rem',
-                        filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))', 
+                        filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
                         transition: 'transform 0.3s ease',
                         '&:hover': {
-                            transform: 'scale(1.05)' 
+                            transform: 'scale(1.05)'
                         }
                     }}
                 />
@@ -46,22 +46,22 @@ export default function Header() {
                         color: 'white',
                         fontWeight: 'bold',
                         mb: 2,
-                        fontSize: { xs: '2rem', md: '3rem' }, 
+                        fontSize: { xs: '2rem', md: '3rem' },
                         textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
                     }}
                 >
                     TecnoFácil
                 </Typography>
-                
+
                 <Typography
                     variant="h5"
                     sx={{
                         color: 'rgba(255,255,255,0.9)',
-                        fontSize: { xs: '1rem', md: '1.5rem' }, 
+                        fontSize: { xs: '1rem', md: '1.5rem' },
                         textShadow: '1px 1px 2px rgba(0,0,0,0.3)'
                     }}
                 >
-                    Sua loja on-line de eletrônicos com as melhores ofertas!
+
                 </Typography>
             </Container>
         </Box>

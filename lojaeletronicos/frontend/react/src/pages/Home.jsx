@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, Container, Typography } from '@mui/material';
+import { Box, Container, Typography, CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useCarrinho } from '../context/CarrinhoContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
@@ -68,13 +68,47 @@ export default function Home() {
         navigate(`/dashboard?secao=${secao}`);
     };
 
-    if (loading) {
-        return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                <Typography variant="h4">Seja Bem-vinde à Nossa Loja</Typography>
-            </Box>
-        );
-    }
+if (loading) {
+    return (
+        <Box 
+            sx={{ 
+                display: 'flex', 
+                flexDirection: 'column', // Empilhar verticalmente
+                justifyContent: 'center', 
+                alignItems: 'center', 
+                height: '100vh',
+                width: '100vw',
+                bgcolor: '#f5f5f5', 
+                gap: 3 
+            }}
+        >
+            <CircularProgress 
+                size={60} 
+                thickness={4}
+                sx={{ color: 'primary.main' }}
+            />
+            <Typography 
+                variant="h4" 
+                sx={{ 
+                    fontWeight: 'bold',
+                    color: 'primary.main',
+                    textAlign: 'center',
+                    fontSize: { xs: '1.5rem', md: '2.125rem' } 
+                }}
+            >
+                Seja Bem-vindo à Plataforma!
+            </Typography>
+            <Typography 
+                variant="body1" 
+                sx={{ 
+                    color: 'text.secondary',
+                    textAlign: 'center'
+                }}
+            >
+            </Typography>
+        </Box>
+    );
+}
 
     return (
         <Box sx={{ bgcolor: '#f5f5f5', minHeight: '100vh' }}>
