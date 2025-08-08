@@ -1,7 +1,9 @@
 DROP TABLE IF EXISTS enderecos;
-DROP TABLE IF EXISTS produtos;
-DROP TABLE IF EXISTS pedidos;
+DROP TABLE IF EXISTS produtos_categorias;
 DROP TABLE IF EXISTS itens_pedidos;
+DROP TABLE IF EXISTS produtos;
+DROP TABLE IF EXISTS categorias;
+DROP TABLE IF EXISTS pedidos;
 DROP TABLE IF EXISTS usuarios;
 
 CREATE TABLE usuarios (
@@ -21,7 +23,7 @@ CREATE TABLE produtos (
     descricao TEXT,
     preco_unico NUMERIC(10, 2) NOT NULL,
     quantidade_estoque INTEGER NOT NULL, 
-    avenda BOOLEAN DEFAULT TRUE
+    ativo BOOLEAN DEFAULT TRUE
 );
 
 CREATE TABLE categorias (
@@ -57,11 +59,11 @@ CREATE TABLE itens_pedidos (
     CONSTRAINT itens_pedidos_pk PRIMARY KEY (pedido_id, produto_id)
 );
 
-INSERT INTO usuarios (nome, email, cpf, telefone, endereco) VALUES ('Maria', 'maria@gmail.com', '111111', '319959125', 'Rua sem nome');
-INSERT INTO usuarios (nome, email, cpf, telefone, endereco) VALUES ('Joao', 'joao@gmail.com', '222222', '319959125', 'Rua sem nome');
-INSERT INTO usuarios (nome, email, cpf, telefone, endereco) VALUES ('José', 'jose@gmail.com', '333333', '319959125', 'Rua sem nome');
-INSERT INTO usuarios (nome, email, cpf, telefone, endereco) VALUES ('Bob', 'bob@gmail.com', '444444', '319959125', 'Rua sem nome');
-INSERT INTO usuarios (nome, email, cpf, telefone, endereco) VALUES ('Alex', 'alex@gmail.com', '555555', '319959125', 'Rua sem nome');
+INSERT INTO usuarios (nome, email, cpf, telefone, senha, tipo_usuario, excluido) VALUES ('Maria', 'maria@gmail.com', '111111', '319959125', '1234', 'ADMIN', 0);
+INSERT INTO usuarios (nome, email, cpf, telefone, senha, tipo_usuario, excluido) VALUES ('Joao', 'joao@gmail.com', '222222', '319959125', '1234', 'BASIC', 0);
+INSERT INTO usuarios (nome, email, cpf, telefone, senha, tipo_usuario, excluido) VALUES ('José', 'jose@gmail.com', '333333', '319959125','1234', 'BASIC', 0);
+INSERT INTO usuarios (nome, email, cpf, telefone, senha, tipo_usuario, excluido) VALUES ('Bob', 'bob@gmail.com', '444444', '319959125', '1234', 'BASIC', 0) ;
+INSERT INTO usuarios (nome, email, cpf, telefone, senha, tipo_usuario, excluido) VALUES ('Alex', 'alex@gmail.com', '555555', '319959125', '1234', 'BASIC', 0);
 
 INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque) VALUES ('Notebook Lenovo IdeaPad 3', 'Processador Intel Core i5, 8GB RAM, SSD 256GB, Tela 15.6"', 2899.00, 20);
 INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque) VALUES ('Console PlayStation 5', 'Console com SSD de altíssima velocidade e controle DualSense', 4599.99, 10);

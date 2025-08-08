@@ -20,7 +20,7 @@ public class CategoriaRepository{
     private final RowMapper<Categoria> catRowMapper = (rs, rowNum) -> {
         Categoria categoria = new Categoria();
 
-        categoria.setIdCateogia(rs.getLong("id"));
+        categoria.setIdCategoria(rs.getLong("id"));
         categoria.setNome(rs.getString("nome"));
 
         return categoria;
