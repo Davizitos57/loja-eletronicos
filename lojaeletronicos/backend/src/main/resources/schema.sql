@@ -1,13 +1,18 @@
-DROP TABLE IF EXISTS usuarios;
+DROP TABLE IF EXISTS enderecos;
 DROP TABLE IF EXISTS produtos;
+DROP TABLE IF EXISTS pedidos;
+DROP TABLE IF EXISTS itens_pedidos;
+DROP TABLE IF EXISTS usuarios;
 
 CREATE TABLE usuarios (
-    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    nome TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL,
-    cpf TEXT UNIQUE NOT NULL,
+    id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nome VARCHAR(20) NOT NULL,
+    email VARCHAR(20) UNIQUE NOT NULL,
+    cpf VARCHAR(11) UNIQUE NOT NULL,
     telefone TEXT,
-    endereco TEXT NOT NULL
+    senha VARCHAR(20),
+    tipo_usuario VARCHAR(5),
+    excluido integer
 );
 
 CREATE TABLE produtos (
@@ -16,12 +21,23 @@ CREATE TABLE produtos (
     descricao TEXT,
     preco_unico NUMERIC(10, 2) NOT NULL,
     quantidade_estoque INTEGER NOT NULL, 
-    ativo BOOLEAN DEFAULT TRUE
+    avenda BOOLEAN DEFAULT TRUE
 );
 
 CREATE TABLE categorias (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     nome VARCHAR(100) UNIQUE NOT NULL 
+);
+
+CREATE TABLE enderecos (
+    id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    rua VARCHAR(100) NOT NULL,
+    numero INTEGER,
+    cidade VARCHAR(50) NOT NULL,
+    estado VARCHAR(30) NOT NULL,
+    cep VARCHAR(10) NOT NULL,
+    id_usuario integer,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
 );
 
 CREATE TABLE produtos_categorias(
@@ -30,6 +46,15 @@ CREATE TABLE produtos_categorias(
     FOREIGN KEY(produto_id) REFERENCES produtos(id),
     FOREIGN KEY(categoria_id) REFERENCES categorias(id),
     PRIMARY KEY(produto_id, categoria_id)
+);
+
+CREATE TABLE itens_pedidos (
+    pedido_id INTEGER,
+    produto_id INTEGER,
+    preco DECIMAL NOT NULL,
+    quantidade INTEGER NOT NULL,
+
+    CONSTRAINT itens_pedidos_pk PRIMARY KEY (pedido_id, produto_id)
 );
 
 INSERT INTO usuarios (nome, email, cpf, telefone, endereco) VALUES ('Maria', 'maria@gmail.com', '111111', '319959125', 'Rua sem nome');
