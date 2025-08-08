@@ -1,7 +1,7 @@
 import { Box, Typography, IconButton, Divider } from '@mui/material';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import ProdutoCard from './produtos/ProdutoCard';
+import ProdutoCard from './produto/ProdutoCard';
 
 export default function CategoriaSection({ 
     categoria, 

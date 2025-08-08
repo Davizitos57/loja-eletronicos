@@ -15,7 +15,7 @@ import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import AppTheme from '../../shared-theme/AppTheme';
 import ColorModeSelect from '../../shared-theme/ColorModeSelect';
-import {validarCPF} from '../login/functionLogin';
+import {validarCPF} from '../../components/login/cpfLogin'
 import { Link as RouterLink } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 
@@ -169,13 +169,12 @@ export default function SignUp(props) {
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
-      <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
       <SignUpContainer direction="column" justifyContent="space-between">
         <Card variant="outlined">
           <Typography
             component="h1"
             variant="h4"
-            sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
+            sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)', display: 'flex', justifyContent: 'center' }}
           >
             Inscreva-se
           </Typography>
@@ -188,16 +187,8 @@ export default function SignUp(props) {
                   <TextField id="name" name="name" required fullWidth placeholder="Seu nome" error={nameError} helperText={nameErrorMessage} />
                 </FormControl>
                 <FormControl fullWidth>
-                  <FormLabel htmlFor="email">Email</FormLabel>
-                  <TextField id="email" name="email" required fullWidth placeholder="seu@email.com" autoComplete="email" error={emailError} helperText={emailErrorMessage} />
-                </FormControl>
-                <FormControl fullWidth>
                   <FormLabel htmlFor="cpf">CPF</FormLabel>
                   <TextField id="cpf" name="cpf" required fullWidth placeholder="000.000.000-00" error={cpfError} helperText={cpfErrorMessage} />
-                </FormControl>
-                <FormControl fullWidth>
-                  <FormLabel htmlFor="telefone">Telefone</FormLabel>
-                  <TextField id="telefone" name="telefone" required fullWidth placeholder="(00) 00000-0000" type="tel" error={telefoneError} helperText={telefoneErrorMessage} />
                 </FormControl>
                 <FormControl fullWidth>
                   <FormLabel htmlFor="password">Senha</FormLabel>
@@ -206,6 +197,18 @@ export default function SignUp(props) {
               </Stack>
             </Grid>
             <Grid item xs={12} md={6}>
+              <Stack spacing={1}>
+                <FormControl fullWidth>
+                  <FormLabel htmlFor="email">Email</FormLabel>
+                  <TextField id="email" name="email" required fullWidth placeholder="seu@email.com" autoComplete="email" error={emailError} helperText={emailErrorMessage} />
+                </FormControl>
+                <FormControl fullWidth>
+                  <FormLabel htmlFor="telefone">Telefone</FormLabel>
+                  <TextField id="telefone" name="telefone" required fullWidth placeholder="(00) 00000-0000" type="tel" error={telefoneError} helperText={telefoneErrorMessage} />
+                </FormControl>
+              </Stack>
+            </Grid>
+            {/*<Grid item xs={12} md={6}>
               <Stack spacing={1}>
                 <FormLabel>Endereço</FormLabel>
                 <TextField id="cep" name="cep" required fullWidth placeholder="Seu CEP" error={enderecoError} helperText={enderecoErrorMessage} />
@@ -216,7 +219,7 @@ export default function SignUp(props) {
                 <TextField id="numero" name="numero" required fullWidth placeholder="Número" type="text" error={numeroError} helperText={numeroErrorMessage} />
                 <TextField id="complemento" name="complemento" fullWidth placeholder="Complemento (opcional)" />
               </Stack>
-            </Grid>
+            </Grid>*/}
           </Grid>
           <Button
             type="submit"

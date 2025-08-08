@@ -117,21 +117,30 @@ export default function SignIn(props) {
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
-     <Link
-        component={RouterLink}
-        to="/home"
-        variant="body2"
-        sx={{ alignSelf: 'center', fontSize: '40px'}}
-      >
-        Home
-      </Link>
+      <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', mb: 2 }}>
+        <Link
+          component={RouterLink}
+          to="/home"
+          variant="body2"
+          sx={{ fontSize: '40px', mr: 4 }}
+        >
+          Home
+        </Link>
+        <Link
+          component={RouterLink}
+          to="/produto"
+          variant="body2"
+          sx={{ fontSize: '40px' }}
+        >
+          Cadastro de Produtos
+        </Link>
+      </Box>
       <SignInContainer direction="column" justifyContent="space-between">
-        <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
         <Card variant="outlined">
           <Typography
             component="h1"
             variant="h4"
-            sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
+            sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)', display: 'flex', justifyContent: 'center' }}
           >
             Entre
           </Typography>
