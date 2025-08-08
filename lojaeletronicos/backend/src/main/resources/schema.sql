@@ -24,6 +24,14 @@ CREATE TABLE categorias (
     nome VARCHAR(100) UNIQUE NOT NULL 
 );
 
+CREATE TABLE produtos_categorias(
+    produto_id INTEGER,
+    categoria_id INTEGER,
+    FOREIGN KEY(produto_id) REFERENCES produtos(id),
+    FOREIGN KEY(categoria_id) REFERENCES categorias(id),
+    PRIMARY KEY(produto_id, categoria_id)
+);
+
 INSERT INTO usuarios (nome, email, cpf, telefone, endereco) VALUES ('Maria', 'maria@gmail.com', '111111', '319959125', 'Rua sem nome');
 INSERT INTO usuarios (nome, email, cpf, telefone, endereco) VALUES ('Joao', 'joao@gmail.com', '222222', '319959125', 'Rua sem nome');
 INSERT INTO usuarios (nome, email, cpf, telefone, endereco) VALUES ('José', 'jose@gmail.com', '333333', '319959125', 'Rua sem nome');
