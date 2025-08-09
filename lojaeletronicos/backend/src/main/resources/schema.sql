@@ -50,6 +50,14 @@ CREATE TABLE produtos_categorias(
     PRIMARY KEY(produto_id, categoria_id)
 );
 
+CREATE TABLE pedidos (
+    id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id_usuario INTEGER NOT NULL,
+    valor_total DECIMAL NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'rascunho',
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
+);
+
 CREATE TABLE itens_pedidos (
     pedido_id INTEGER,
     produto_id INTEGER,
@@ -64,6 +72,12 @@ INSERT INTO usuarios (nome, email, cpf, telefone, senha, tipo_usuario, excluido)
 INSERT INTO usuarios (nome, email, cpf, telefone, senha, tipo_usuario, excluido) VALUES ('José', 'jose@gmail.com', '333333', '319959125','1234', 'BASIC', 0);
 INSERT INTO usuarios (nome, email, cpf, telefone, senha, tipo_usuario, excluido) VALUES ('Bob', 'bob@gmail.com', '444444', '319959125', '1234', 'BASIC', 0) ;
 INSERT INTO usuarios (nome, email, cpf, telefone, senha, tipo_usuario, excluido) VALUES ('Alex', 'alex@gmail.com', '555555', '319959125', '1234', 'BASIC', 0);
+
+INSERT INTO enderecos (rua, numero, cidade, estado, cep, id_usuario) VALUES ('Av. Getulio Vargas', 100, 'Betim', 'Minas Gerais', '3500000', 1);
+INSERT INTO enderecos (rua, numero, cidade, estado, cep, id_usuario) VALUES ('Av. Brasil', 1, 'Rio de Janeiro', 'Rio de Janeiro', '6200065', 1);
+INSERT INTO enderecos (rua, numero, cidade, estado, cep, id_usuario) VALUES ('Rua Nova York', 25, 'Joao Monlevade', 'Minas Gerais', '5693254', 2);
+INSERT INTO enderecos (rua, numero, cidade, estado, cep, id_usuario) VALUES ('Av. Wilson Alvarega', 1, 'Joao Monlevade', 'Minas Gerais', '9658723', 3);
+INSERT INTO enderecos (rua, numero, cidade, estado, cep, id_usuario) VALUES ('Rua Presidente Prudente', 1, 'Governador Valadares', 'Minas Gerais', '7894561', 4);
 
 INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque) VALUES ('Notebook Lenovo IdeaPad 3', 'Processador Intel Core i5, 8GB RAM, SSD 256GB, Tela 15.6"', 2899.00, 20);
 INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque) VALUES ('Console PlayStation 5', 'Console com SSD de altíssima velocidade e controle DualSense', 4599.99, 10);

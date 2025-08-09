@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,6 +21,7 @@ public class Usuario implements Serializable {
     private String telefone;
     private String senha;
     private String tipoUsuario;
+    private List<Endereco> enderecos;
     private int excluido;
 
     public Usuario(String nome, String email, String cpf, String telefone, String senha, String tipoUsuario, int excluido) {
