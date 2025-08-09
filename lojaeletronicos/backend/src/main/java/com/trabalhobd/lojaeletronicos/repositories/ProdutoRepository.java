@@ -49,8 +49,14 @@ public class ProdutoRepository {
     }
 
     public List<Produto> findByNome(String nome){
-        String sql = "SELECT * FROM produtos WHERE nome = ? AND ativo = TRUE";            
-        List<Produto> produtos = jdbcTemplate.query(sql, prodRowMapper, nome);
+        String sql = "SELECT * FROM produtos WHERE nome = ? AND ativo = TRUE";   
+        List<Produto> produtos;  
+        try{
+            produtos = jdbcTemplate.query(sql, prodRowMapper, nome);
+        }
+        catch (EmptyResultDataAccessException e) {
+            return null;
+        }
         return produtos;
     }
 
