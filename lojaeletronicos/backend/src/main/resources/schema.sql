@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS produtos;
 DROP TABLE IF EXISTS categorias;
 DROP TABLE IF EXISTS pedidos;
 DROP TABLE IF EXISTS usuarios;
+DROP TABLE IF EXISTS pagamentos;
 
 CREATE TABLE usuarios (
     id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -67,6 +68,14 @@ CREATE TABLE itens_pedidos (
     CONSTRAINT itens_pedidos_pk PRIMARY KEY (pedido_id, produto_id)
 );
 
+CREATE TABLE pagamentos (
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    valor NUMERIC(10,2) NOT NULL,
+    data_pagamento TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    metodo_pagamento VARCHAR(50),
+    quantidade_parcelas INTEGER NOT NULL DEFAULT 1
+);
+
 INSERT INTO usuarios (nome, email, cpf, telefone, senha, tipo_usuario, excluido) VALUES ('Maria', 'maria@gmail.com', '111111', '319959125', '1234', 'ADMIN', 0);
 INSERT INTO usuarios (nome, email, cpf, telefone, senha, tipo_usuario, excluido) VALUES ('Joao', 'joao@gmail.com', '222222', '319959125', '1234', 'BASIC', 0);
 INSERT INTO usuarios (nome, email, cpf, telefone, senha, tipo_usuario, excluido) VALUES ('José', 'jose@gmail.com', '333333', '319959125','1234', 'BASIC', 0);
@@ -84,3 +93,15 @@ INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque) VALUES (
 INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque) VALUES ('Teclado Mecânico Redragon Kumara', 'Switches Outemu Blue, LED Vermelho, ABNT2', 199.90, 80);
 INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque) VALUES ('Fone de Ouvido Bluetooth JBL Tune 510BT', 'Fone sem fio com até 40h de bateria, som JBL Pure Bass', 249.99, 100);
 INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque) VALUES ('Roteador TP-Link Archer AX10', 'Wi-Fi 6, Dual Band, 1201 Mbps, 4 antenas, MU-MIMO', 349.00, 40);
+
+INSERT INTO categorias (nome) VALUES ('Computadores e Notebooks');
+INSERT INTO categorias (nome) VALUES ('Consoles');
+INSERT INTO categorias (nome) VALUES ('Periféricos e Acessórios');
+INSERT INTO categorias (nome) VALUES ('Wearables');
+INSERT INTO categorias (nome) VALUES ('Eletrodomésticos');
+
+INSERT INTO pagamentos (valor, metodo_pagamento, quantidade_parcelas) VALUES (1111.22, 'Cartão de Crédito', 3);
+INSERT INTO pagamentos (valor, metodo_pagamento, quantidade_parcelas) VALUES (100.00, 'Dinheiro', 1);
+INSERT INTO pagamentos (valor, data_pagamento, metodo_pagamento, quantidade_parcelas) VALUES (500.50, '2025-08-09 14:30:00', 'Pix', 2);
+INSERT INTO pagamentos (valor, metodo_pagamento, quantidade_parcelas) VALUES (1111.22, 'Cartão de Débito', 1);
+INSERT INTO pagamentos (valor, data_pagamento, metodo_pagamento, quantidade_parcelas) VALUES (1200.00, '2025-08-10 09:00:00', 'Transferência Bancária', 1);
