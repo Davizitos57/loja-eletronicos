@@ -14,12 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 
-
-
-
-
 @RestController
-@RequestMapping("@/loja/produtos")
+@RequestMapping("/loja/produtos")
 public class ProdutoController {
 
     private ProdutoService produtoService;
@@ -33,7 +29,6 @@ public class ProdutoController {
         produtoService.criarNovoProduto(produto);
         return ResponseEntity.ok().build();
     }
-    
 
     @GetMapping
     public ResponseEntity<List<Produto>> todosProdutos(){
@@ -50,7 +45,7 @@ public class ProdutoController {
         return ResponseEntity.ok(achado);
     }
 
-    @GetMapping("/buscarPorNome")
+    @GetMapping("/nome")
     public ResponseEntity<List<Produto>> procurarProdutoporNome(@RequestParam String nome){
         var produtos = produtoService.procuraProdutoporNome(nome);
         return ResponseEntity.ok(produtos);
