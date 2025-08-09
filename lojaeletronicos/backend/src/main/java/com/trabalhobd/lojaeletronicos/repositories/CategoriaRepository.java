@@ -46,7 +46,13 @@ public class CategoriaRepository{
 
     public Categoria findByNome(String nome){
         String sql = "SELECT * FROM categorias WHERE nome = ?";
-        Categoria categoria = jdbcTemplate.queryForObject(sql, catRowMapper, nome);
+        Categoria categoria;
+        try{
+            categoria = jdbcTemplate.queryForObject(sql, catRowMapper, nome);
+        }
+        catch (EmptyResultDataAccessException e) {
+            return null;
+        }
         return categoria;
     }
 
