@@ -9,6 +9,7 @@ import SignUp from './pages/login/SignUp.jsx';
 import { CarrinhoProvider } from './context/CarrinhoContext.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 import DashboardLayout from './pages/cadastro/DashboardLayout.jsx';
+import Dashboard from './pages/Dashboard.jsx';
 import ProdutoList from './components/produto/ProdutoList';
 import ProdutoShow from './components/produto/ProdutoShow';
 import ProdutoCreate from './components/produto/ProdutoCreate';
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
       {
         path: "/home",
         element: <Home />,
+      },
+      {
+        path: "/dashboard",
+        element: <Dashboard />,
       },
       {
         path: "/produto",
