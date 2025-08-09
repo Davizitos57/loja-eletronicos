@@ -11,7 +11,7 @@ import AdminFab from '../components/admin/AdminFab.jsx';
 import AdminDrawer from '../components/admin/AdminDrawer.jsx';
 import CategoriaSection from '../components/CategoriaSection.jsx';
 import Header from '../components/Header.jsx';
-import ProdutoModal from '../components/produto/ProdutoModal.jsx';
+import ProdutoModal from '../components/produto/modal/ProdutoModal.jsx';
 // import api from '../services/api'; // Comentado por enquanto
 
 
