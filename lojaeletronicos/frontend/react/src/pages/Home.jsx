@@ -22,11 +22,11 @@ export default function Home() {
     const [adminAberto, setAdminAberto] = useState(false);
     const [produtoModalAberto, setProdutoModalAberto] = useState(false);
     const [produtoSelecionado, setProdutoSelecionado] = useState(null);
-
-    const { carrinho, adicionarAoCarrinho, removerDoCarrinho } = useCarrinho();
+    const { carrinho, adicionarAoCarrinho, removerDoCarrinho, calcularTotal } = useCarrinho();
     const { isAdmin } = useAuth();
     const { scrollPositions, navegarHorizontal, podeNavegar } = useNavegacao(categorias);
     const navigate = useNavigate();
+    const total = calcularTotal();
 
     useEffect(() => {
         setLoading(true);
@@ -131,7 +131,6 @@ export default function Home() {
 
             {/* Botões flutuantes */}
             <CarrinhoFab
-                quantidadeItens={carrinho.length}
                 onClick={() => setCarrinhoAberto(true)}
             />
 

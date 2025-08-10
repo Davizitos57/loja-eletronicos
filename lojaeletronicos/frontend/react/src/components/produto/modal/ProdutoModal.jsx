@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
     Dialog,
     DialogContent,
@@ -13,6 +14,8 @@ import ProdutoInfo from './ProdutoInfo';
 import ProdutoDescricao from './ProdutoDescricao';
 // import ProdutoEspecificacoes from 'ProdutoEspecificacoes';
 import ProdutoAcoes from './ProdutoAcoes';
+import ProdutoQuantidade from './ProdutoQuantidade';
+import { useEstoque } from '../../../hooks/useEstoque';
 
 export default function ProdutoModal({
     produto,
@@ -21,21 +24,71 @@ export default function ProdutoModal({
     onAdicionarCarrinho,
     onComprar
 }) {
+    const [quantidade, setQuantidade] = useState(1);
+    const {
+        reservarQuantidade,
+        liberarReserva,
+        confirmarCompra,
+        obterEstoqueDisponivel
+    } = useEstoque();
+
     if (!produto) return null;
 
+    const estoqueDisponivel = obterEstoqueDisponivel(produto);
+
+    const handleFechar = () => {
+        // Liberar qualquer reserva ao fechar modal
+        liberarReserva(produto.id);
+        setQuantidade(1);
+        onFechar();
+    };
+
     const handleAdicionarCarrinho = () => {
-        onAdicionarCarrinho(produto);
+        // Reservar quantidade ao adicionar no carrinho
+        reservarQuantidade(produto.id, quantidade);
+
+        // Passar produto com quantidade para o carrinho
+        const produtoComQuantidade = {
+            ...produto,
+            quantidadeSelecionada: quantidade
+        };
+
+        onAdicionarCarrinho(produtoComQuantidade);
+
+        // Não fechar modal, permitir adicionar mais
     };
 
     const handleComprar = () => {
-        onComprar(produto);
-        onFechar();
+        // Confirmar compra (finaliza reserva)
+        const quantidadeComprada = confirmarCompra(produto.id);
+
+        if (quantidadeComprada > 0) {
+            // Simular compra
+            const dadosCompra = {
+                produto,
+                quantidade: quantidadeComprada,
+                valorTotal: produto.preco * quantidadeComprada,
+                dataCompra: new Date()
+            };
+
+            onComprar(dadosCompra);
+            setQuantidade(1);
+            onFechar();
+        }
+    };
+
+    const handleQuantidadeChange = (novaQuantidade) => {
+        setQuantidade(novaQuantidade);
+        // Atualizar reserva em tempo real
+        if (novaQuantidade > 0) {
+            reservarQuantidade(produto.id, novaQuantidade);
+        }
     };
 
     return (
         <Dialog
             open={aberto}
-            onClose={onFechar}
+            onClose={handleFechar}
             maxWidth="xl"
             fullWidth
             sx={{
@@ -52,7 +105,7 @@ export default function ProdutoModal({
         >
             {/* Botão de fechar */}
             <IconButton
-                onClick={onFechar}
+                onClick={handleFechar}
                 sx={{
                     position: 'absolute',
                     right: 16,
@@ -70,7 +123,6 @@ export default function ProdutoModal({
             </IconButton>
 
             <DialogContent sx={{ p: 0, height: 'calc(100% - 80px)', overflow: 'hidden' }}>
-                {/* Layout Flexbox lado a lado */}
                 <Box sx={{
                     display: 'flex',
                     height: '100%',
@@ -98,11 +150,21 @@ export default function ProdutoModal({
                             borderRadius: '4px',
                         },
                         '&::-webkit-scrollbar-thumb:hover': {
-       
+                            background: '#1565c0',
                         },
                     }}>
                         {/* Informações básicas */}
                         <ProdutoInfo produto={produto} />
+
+                        <Divider sx={{ my: 3, borderWidth: 2 }} />
+
+                        {/* Seletor de quantidade */}
+                        <ProdutoQuantidade
+                            produto={produto}
+                            quantidade={quantidade}
+                            onQuantidadeChange={handleQuantidadeChange}
+                            estoqueDisponivel={estoqueDisponivel}
+                        />
 
                         <Divider sx={{ my: 3, borderWidth: 2 }} />
 
@@ -122,6 +184,9 @@ export default function ProdutoModal({
             <ProdutoAcoes
                 onAdicionarCarrinho={handleAdicionarCarrinho}
                 onComprar={handleComprar}
+                quantidade={quantidade}
+                valorTotal={produto.preco * quantidade}
+                estoqueDisponivel={estoqueDisponivel}
             />
         </Dialog>
     );

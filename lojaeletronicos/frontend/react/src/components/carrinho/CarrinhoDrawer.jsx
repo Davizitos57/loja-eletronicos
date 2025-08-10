@@ -3,15 +3,23 @@ import {
     Box,
     Typography,
     IconButton,
-    Divider,
+    Button,
     List,
     ListItem,
     ListItemText,
-    Button
+    ListItemSecondaryAction,
+    Divider,
+    Paper,
+    TextField,
+    Chip
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
+import {useCarrinho} from '../../context/CarrinhoContext';
+
 
 export default function CarrinhoDrawer({ 
     aberto, 
@@ -20,7 +28,13 @@ export default function CarrinhoDrawer({
     onRemoverItem,
     onFinalizarCompra 
 }) {
-    const total = carrinho.reduce((sum, item) => sum + item.preco, 0);
+    const { atualizarQuantidade, calcularTotal } = useCarrinho();
+    
+    const total = calcularTotal();
+
+    const handleQuantidadeChange = (index, novaQuantidade) => {
+        atualizarQuantidade(index, novaQuantidade);
+    };
 
     return (
         <Drawer
@@ -29,113 +43,181 @@ export default function CarrinhoDrawer({
             onClose={onFechar}
             sx={{
                 '& .MuiDrawer-paper': {
-                    width: 350,
-                    boxShadow: 4
+                    width: { xs: '100%', sm: 400 },
+                    maxWidth: '90vw'
                 }
             }}
         >
-            <Box sx={{ p: 2, height: '100%', bgcolor: '#fafafa', display: 'flex', flexDirection: 'column' }}>
-                {/* Cabeçalho do carrinho */}
+            <Box sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
+                {/* Cabeçalho */}
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                        🛒 Carrinho ({carrinho.length})
+                    <Typography variant="h5" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <ShoppingCartIcon />
+                        Carrinho ({carrinho.length})
                     </Typography>
-                    <IconButton 
-                        onClick={onFechar}
-                        sx={{ color: 'grey.600' }}
-                    >
+                    <IconButton onClick={onFechar}>
                         <CloseIcon />
                     </IconButton>
                 </Box>
-                
-                <Divider sx={{ mb: 2 }} />
-                
-                {/* Lista de produtos no carrinho */}
-                <List sx={{ flexGrow: 1, overflow: 'auto' }}>
-                    {carrinho.map((item, index) => (
-                        <ListItem
-                            key={index}
-                            sx={{ 
-                                mb: 1, 
-                                bgcolor: 'white',
-                                borderRadius: 1,
-                                boxShadow: 1,
-                                p: 2
-                            }}
-                            secondaryAction={
-                                <IconButton 
-                                    onClick={() => onRemoverItem(index)}
-                                    color="error"
-                                    size="small"
-                                    sx={{ 
-                                        '&:hover': { 
-                                            backgroundColor: 'error.light',
-                                            color: 'white'
-                                        }
-                                    }}
-                                >
-                                    <DeleteIcon />
-                                </IconButton>
-                            }
-                        >
-                            <ListItemText
-                                primary={item.nome}
-                                secondary={`R$ ${item.preco?.toFixed(2) || '0.00'}`}
-                                primaryTypographyProps={{ fontSize: '1rem', fontWeight: 'bold' }}
-                                secondaryTypographyProps={{ fontSize: '1.1rem', color: 'primary.main', fontWeight: 'bold' }}
-                            />
-                        </ListItem>
-                    ))}
-                    
-                    {carrinho.length === 0 && (
-                        <Box sx={{ textAlign: 'center', mt: 4 }}>
-                            <ShoppingCartIcon sx={{ fontSize: 80, color: 'grey.300', mb: 2 }} />
-                            <Typography variant="h6" color="text.secondary" gutterBottom>
-                                Seu carrinho está vazio
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                Adicione produtos para começar suas compras!
-                            </Typography>
-                        </Box>
-                    )}
-                </List>
 
-                {/* Rodapé com total e botão de finalizar */}
-                {carrinho.length > 0 && (
-                    <Box sx={{ 
-                        mt: 2, 
-                        pt: 2, 
-                        borderTop: '2px solid #e0e0e0',
-                        bgcolor: 'white',
-                        borderRadius: 2,
-                        p: 2,
-                        boxShadow: 1
-                    }}>
-                        <Typography variant="h5" sx={{ textAlign: 'center', mb: 3, fontWeight: 'bold' }}>
-                            Total: R$ {total.toFixed(2)}
+                <Divider sx={{ mb: 2 }} />
+
+                {/* Lista de produtos */}
+                {carrinho.length === 0 ? (
+                    <Box sx={{ textAlign: 'center', mt: 4 }}>
+                        <Typography variant="h6" color="text.secondary">
+                            Seu carrinho está vazio
                         </Typography>
-                        <Button 
-                            variant="contained" 
-                            fullWidth 
+                        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                            Adicione produtos para começar suas compras!
+                        </Typography>
+                    </Box>
+                ) : (
+                    <>
+                        <List sx={{ flexGrow: 1, overflow: 'auto' }}>
+                            {carrinho.map((item, index) => {
+                                const quantidade = item.quantidadeSelecionada || 1;
+                                const subtotal = item.preco * quantidade;
+                                
+                                return (
+                                    <ListItem key={index} sx={{ px: 0, py: 1 }}>
+                                        <Paper 
+                                            elevation={2} 
+                                            sx={{ 
+                                                width: '100%', 
+                                                p: 2,
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                gap: 2
+                                            }}
+                                        >
+                                            {/* Info do produto */}
+                                            <Box>
+                                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                                                    {item.nome}
+                                                </Typography>
+                                                <Typography variant="body2" color="text.secondary">
+                                                    R$ {item.preco?.toFixed(2)} cada
+                                                </Typography>
+                                            </Box>
+
+                                            {/* Controles de quantidade */}
+                                            <Box sx={{ 
+                                                display: 'flex', 
+                                                alignItems: 'center', 
+                                                justifyContent: 'space-between' 
+                                            }}>
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                    <IconButton 
+                                                        size="small"
+                                                        onClick={() => handleQuantidadeChange(index, quantidade - 1)}
+                                                        disabled={quantidade <= 1}
+                                                        sx={{ 
+                                                            bgcolor: 'grey.200',
+                                                            color: 'white',
+                                                            '&:hover': { bgcolor: 'grey.300' },
+                                                            '&:disabled': { bgcolor: 'grey.300' }
+                                                        }}
+                                                    >
+                                                        <RemoveIcon fontSize="small" />
+                                                    </IconButton>
+
+                                                    <TextField
+                                                        value={quantidade}
+                                                        onChange={(e) => {
+                                                            const valor = parseInt(e.target.value) || 1;
+                                                            handleQuantidadeChange(index, valor);
+                                                        }}
+                                                        type="number"
+                                                        size="small"
+                                                        inputProps={{ 
+                                                            min: 1,
+                                                            style: { textAlign: 'center', width: '50px' }
+                                                        }}
+                                                        sx={{ width: '70px' }}
+                                                    />
+
+                                                    <IconButton 
+                                                        size="small"
+                                                        onClick={() => handleQuantidadeChange(index, quantidade + 1)}
+                                                        sx={{ 
+                                                            bgcolor: 'grey.200',
+                                                            color: 'white',
+                                                            '&:hover': { bgcolor: 'grey.300' }
+                                                        }}
+                                                    >
+                                                        <AddIcon fontSize="small" />
+                                                    </IconButton>
+                                                </Box>
+
+                                                <IconButton 
+                                                    onClick={() => onRemoverItem(index)}
+                                                    color="error"
+                                                    size="small"
+                                                >
+                                                    <DeleteIcon />
+                                                </IconButton>
+                                            </Box>
+
+                                            {/* Subtotal */}
+                                            <Box sx={{ 
+                                                display: 'flex', 
+                                                justifyContent: 'space-between',
+                                                alignItems: 'center',
+                                                pt: 1,
+                                                borderTop: '1px solid #e0e0e0'
+                                            }}>
+                                                <Typography variant="body2" color="text.secondary">
+                                                    {quantidade} x R$ {item.preco?.toFixed(2)}
+                                                </Typography>
+                                                <Chip 
+                                                    label={`R$ ${subtotal.toFixed(2)}`}
+                                                    color="primary"
+                                                    size="small"
+                                                    sx={{ fontWeight: 'bold' }}
+                                                />
+                                            </Box>
+                                        </Paper>
+                                    </ListItem>
+                                );
+                            })}
+                        </List>
+
+                        <Divider sx={{ my: 2 }} />
+
+                        {/* Total */}
+                        <Paper 
+                            elevation={3}
+                            sx={{ 
+                                p: 2, 
+                                bgcolor: 'primary.light',
+                                color: 'primary.contrastText',
+                                textAlign: 'center',
+                                mb: 2
+                            }}
+                        >
+                            <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                                Total: R$ {total.toFixed(2)}
+                            </Typography>
+                        </Paper>
+
+                        {/* Botão finalizar */}
+                        <Button
+                            variant="contained"
+                            fullWidth
                             size="large"
                             onClick={onFinalizarCompra}
                             sx={{ 
-                                fontWeight: 'bold',
                                 py: 1.5,
-                                fontSize: '1.1rem'
+                                fontWeight: 'bold',
+                                fontSize: '1.1rem',
+                                bgcolor: 'success.main',
+                                '&:hover': { bgcolor: 'success.dark' }
                             }}
                         >
-                            Finalizar Compra
+                            Finalizar Compra - R$ {total.toFixed(2)}
                         </Button>
-                        <Button
-                            variant="text"
-                            fullWidth
-                            onClick={onFechar}
-                            sx={{ mt: 1, color: 'grey.600' }}
-                        >
-                            Continuar Comprando
-                        </Button>
-                    </Box>
+                    </>
                 )}
             </Box>
         </Drawer>

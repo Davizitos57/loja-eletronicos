@@ -6,7 +6,28 @@ export function CarrinhoProvider({ children }) {
   const [carrinho, setCarrinho] = useState([]);
 
   const adicionarAoCarrinho = (produto) => {
-    setCarrinho((prev) => [...prev, produto]);
+    setCarrinho(prev => {
+      // Verificar se produto já existe no carrinho
+      const produtoExistente = prev.find(item => item.id === produto.id);
+
+      if (produtoExistente) {
+        // Se existe, somar a quantidade
+        return prev.map(item =>
+          item.id === produto.id
+            ? {
+              ...item,
+              quantidadeSelecionada: (item.quantidadeSelecionada || 1) + (produto.quantidadeSelecionada || 1)
+            }
+            : item
+        );
+      } else {
+        // Se não existe, adicionar novo item
+        return [...prev, {
+          ...produto,
+          quantidadeSelecionada: produto.quantidadeSelecionada || 1
+        }];
+      }
+    });
   };
 
   const removerDoCarrinho = (index) => {
@@ -17,19 +38,57 @@ export function CarrinhoProvider({ children }) {
     });
   };
 
+  const atualizarQuantidade = (index, novaQuantidade) => {
+    if (novaQuantidade <= 0) {
+      removerDoCarrinho(index);
+      return;
+    }
+
+    setCarrinho(prev =>
+      prev.map((item, i) =>
+        i === index
+          ? { ...item, quantidadeSelecionada: novaQuantidade }
+          : item
+      )
+    );
+  };
+
+  const calcularTotal = () => {
+    return carrinho.reduce((total, item) => {
+      const quantidade = item.quantidadeSelecionada || 1;
+      return total + (item.preco * quantidade);
+    }, 0);
+  };
+
+  const calcularQuantidadeTotal = () => {
+    return carrinho.reduce((total, item) => {
+      return total + (item.quantidadeSelecionada || 1);
+    }, 0);
+  };
+
   const limparCarrinho = () => {
     setCarrinho([]);
   };
 
   return (
-    <CarrinhoContext.Provider
-      value={{ carrinho, adicionarAoCarrinho, removerDoCarrinho, limparCarrinho }}
-    >
+    <CarrinhoContext.Provider value={{
+      carrinho,
+      adicionarAoCarrinho,
+      removerDoCarrinho,
+      atualizarQuantidade,
+      calcularTotal,
+      calcularQuantidadeTotal,
+      limparCarrinho
+    }}>
       {children}
     </CarrinhoContext.Provider>
   );
 }
 
 export function useCarrinho() {
-  return useContext(CarrinhoContext);
+  const context = useContext(CarrinhoContext);
+  if (!context) {
+    throw new Error('useCarrinho deve ser usado dentro de CarrinhoProvider');
+  }
+  return context;
 }
