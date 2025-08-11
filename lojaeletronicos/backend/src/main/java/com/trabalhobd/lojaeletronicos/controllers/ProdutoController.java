@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import com.trabalhobd.lojaeletronicos.models.Produto;
 import com.trabalhobd.lojaeletronicos.services.ProdutoService;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.CrossOrigin; // Para a conexão do front
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping("/loja/produtos")
+@CrossOrigin(origins = "http://localhost:5173") // Para a conexão do frontend
 public class ProdutoController {
 
     private ProdutoService produtoService;
