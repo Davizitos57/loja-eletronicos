@@ -1,5 +1,6 @@
 package com.trabalhobd.lojaeletronicos.repositories;
 
+import com.trabalhobd.lojaeletronicos.models.DTOs.LoginDTO;
 import com.trabalhobd.lojaeletronicos.models.Endereco;
 import com.trabalhobd.lojaeletronicos.models.Usuario;
 import lombok.AllArgsConstructor;
@@ -19,9 +20,8 @@ public class UsuarioRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    // COMENTEI PORQUE TEM DADO ERRO PARA RODAR O BACK POR COMPLETO
-    //@Autowired
-    //private EnderecoRepository enderecoRepository;
+    @Autowired
+    private EnderecoRepository enderecoRepository;
 
     private final RowMapper<Usuario> userRowMapper = (rs, rowNum) -> {
         Usuario usuario = new Usuario();
@@ -35,6 +35,18 @@ public class UsuarioRepository {
         usuario.setExcluido(rs.getInt("excluido"));
         return usuario;
     };
+
+    public Usuario verificarLoginInfo(LoginDTO login){
+        String sql = "SELECT * FROM usuarios WHERE email = ? and senha = ?";
+        Usuario usuario;
+        try {
+            usuario = jdbcTemplate.queryForObject(sql, userRowMapper, login.email(), login.senha());
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+        System.out.println(usuario);
+        return usuario;
+    }
 
     public void criarNovoUsuario(Usuario usuario) {
         String sql = "INSERT INTO usuarios (nome, email, cpf, telefone, senha, tipo_usuario) VALUES (?, ?, ?, ?, ?, ?)";
@@ -50,13 +62,13 @@ public class UsuarioRepository {
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
-        /* COMENTEI POR QUE TEM DADO ERRO PARA RODAR O BACK POR COMPLETO
+
         try {
             enderecos = enderecoRepository.findByUserId(id);
             usuario.setEnderecos(enderecos);
         } catch (Exception e) {
         }
-        */
+
         return usuario;
     }
 
@@ -69,13 +81,13 @@ public class UsuarioRepository {
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
-        /* COMENTEI POR QUE TEM DADO ERRO PARA RODAR O BACK POR COMPLETO
+
         try {
             enderecos = enderecoRepository.findByUserId(usuario.getId());
             usuario.setEnderecos(enderecos);
         } catch (Exception e) {
         }
-        */
+
         return usuario;
     }
 
@@ -87,20 +99,29 @@ public class UsuarioRepository {
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
-        /* COMENTEI POR QUE TEM DADO ERRO PARA RODAR O BACK POR COMPLETO
+
         List<Endereco> enderecos = new ArrayList<>();
         try {
             enderecos = enderecoRepository.findByUserId(usuario.getId());
             usuario.setEnderecos(enderecos);
         } catch (Exception e) {
         }
-        */
+
         return usuario;
     }
 
     public List<Usuario> encontrarTodosUsuario() {
         String sql = "SELECT * FROM usuarios where excluido = 0";
         List<Usuario> usuarios = jdbcTemplate.query(sql, userRowMapper);
+
+        try {
+            usuarios.forEach(usuario -> {
+                List<Endereco> enderecos = enderecoRepository.findByUserId(usuario.getId());
+                usuario.setEnderecos(enderecos);
+            });
+        } catch (Exception e) {
+        }
+
         return usuarios;
     }
 

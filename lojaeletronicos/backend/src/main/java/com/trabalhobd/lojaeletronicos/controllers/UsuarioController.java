@@ -1,5 +1,6 @@
 package com.trabalhobd.lojaeletronicos.controllers;
 
+import com.trabalhobd.lojaeletronicos.models.DTOs.LoginDTO;
 import com.trabalhobd.lojaeletronicos.models.Usuario;
 import com.trabalhobd.lojaeletronicos.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,12 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @PostMapping("/login")
+    public ResponseEntity<Usuario> login(@RequestBody LoginDTO loginDTO) {
+        Usuario data = usuarioService.verificarLoginInfo(loginDTO);
+        return ResponseEntity.ok(data);
+    }
 
     @GetMapping
     public ResponseEntity<List<Usuario>> todosUsuarios() {

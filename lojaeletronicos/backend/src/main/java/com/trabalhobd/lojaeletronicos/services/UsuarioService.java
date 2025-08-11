@@ -1,5 +1,6 @@
 package com.trabalhobd.lojaeletronicos.services;
 
+import com.trabalhobd.lojaeletronicos.models.DTOs.LoginDTO;
 import com.trabalhobd.lojaeletronicos.models.Usuario;
 import com.trabalhobd.lojaeletronicos.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,14 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    public Usuario verificarLoginInfo(LoginDTO login) {
+        Usuario usuario = usuarioRepository.verificarLoginInfo(login);
+        if (usuario == null) {
+            throw new RuntimeException("Email e/ou senha estão incorretos!");
+        }
+        return usuario;
+    }
+
     public void criarNovoUsuario(Usuario usuario) {
         if (!isCpfNumerico(usuario.getCpf())) {
             throw new RuntimeException("O cpf deve conter apenas números!");
@@ -20,7 +29,7 @@ public class UsuarioService {
         usuarioRepository.criarNovoUsuario(usuario);
     }
 
-    public List<Usuario> todosUsuarios(){
+    public List<Usuario> todosUsuarios() {
         return usuarioRepository.encontrarTodosUsuario();
     }
 
