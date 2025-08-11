@@ -19,8 +19,9 @@ public class UsuarioRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    private EnderecoRepository enderecoRepository;
+    // COMENTEI PORQUE TEM DADO ERRO PARA RODAR O BACK POR COMPLETO
+    //@Autowired
+    //private EnderecoRepository enderecoRepository;
 
     private final RowMapper<Usuario> userRowMapper = (rs, rowNum) -> {
         Usuario usuario = new Usuario();
@@ -49,12 +50,13 @@ public class UsuarioRepository {
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
-
+        /* COMENTEI POR QUE TEM DADO ERRO PARA RODAR O BACK POR COMPLETO
         try {
             enderecos = enderecoRepository.findByUserId(id);
             usuario.setEnderecos(enderecos);
         } catch (Exception e) {
         }
+        */
         return usuario;
     }
 
@@ -67,12 +69,13 @@ public class UsuarioRepository {
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
-
+        /* COMENTEI POR QUE TEM DADO ERRO PARA RODAR O BACK POR COMPLETO
         try {
             enderecos = enderecoRepository.findByUserId(usuario.getId());
             usuario.setEnderecos(enderecos);
         } catch (Exception e) {
         }
+        */
         return usuario;
     }
 
@@ -84,13 +87,14 @@ public class UsuarioRepository {
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
-
+        /* COMENTEI POR QUE TEM DADO ERRO PARA RODAR O BACK POR COMPLETO
         List<Endereco> enderecos = new ArrayList<>();
         try {
             enderecos = enderecoRepository.findByUserId(usuario.getId());
             usuario.setEnderecos(enderecos);
         } catch (Exception e) {
         }
+        */
         return usuario;
     }
 
