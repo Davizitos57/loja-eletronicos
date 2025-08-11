@@ -13,6 +13,7 @@ const INITIAL_FORM_VALUES = {
   descricao: '',
   preco: 0,
   quantidade: 0,
+  categoria: '',
 };
 
 export default function ProdutoCreate() {

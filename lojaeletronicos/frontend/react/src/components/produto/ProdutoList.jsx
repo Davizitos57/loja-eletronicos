@@ -212,6 +212,11 @@ export default function ProdutoList() {
         width: 150,
       },
       {
+        field: 'categoria',
+        headerName: 'Categoria',
+        width: 200,
+      },
+      {
         field: 'preco',
         headerName: 'Preço',
         type: 'number',
