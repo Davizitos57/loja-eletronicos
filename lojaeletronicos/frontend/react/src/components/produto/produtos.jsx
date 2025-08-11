@@ -1,42 +1,18 @@
-const INITIAL_PRODUTOS_STORE = [
-  {
-    id: 1,
-    nome: 'Smartphone Modelo X',
-    descricao: 'Um smartphone com câmera de alta resolução e bateria de longa duração.',
-    preco: 1500.00,
-    quantidade: 50,
-  },
-  {
-    id: 2,
-    nome: 'Notebook Ultra Fino',
-    descricao: 'Notebook leve e potente, ideal para trabalho e estudos.',
-    preco: 4500.00,
-    quantidade: 20,
-  },
-  {
-    id: 3,
-    nome: 'Fone de Ouvido Sem Fio',
-    descricao: 'Fone de ouvido com cancelamento de ruído e alta qualidade de som.',
-    preco: 350.00,
-    quantidade: 100,
-  },
-];
-
-export function getProdutosStore() {
-  const stringifiedProdutos = localStorage.getItem('produtos-store');
-  return stringifiedProdutos
-    ? JSON.parse(stringifiedProdutos)
-    : INITIAL_PRODUTOS_STORE;
-}
-
-export function setProdutosStore(produtos) {
-  return localStorage.setItem('produtos-store', JSON.stringify(produtos));
-}
+import api from '../../services/api';
 
 export async function getMuitos({ paginationModel, filterModel, sortModel }) {
-  const produtosStore = getProdutosStore();
+  const response = await api.get('/loja/produtos');
+  
+  const produtosDoBackend = response.data.map(produto => ({
+    id: produto.idProduto,
+    nome: produto.nome,
+    descricao: produto.descricao,
+    preco: produto.precoUnico,
+    quantidade: produto.quantidadeEstoque,
+    //categoria depois de arrumarem o back eu adiciono
+  }));
 
-  let filteredProdutos = [...produtosStore];
+  let filteredProdutos = [...produtosDoBackend];
 
   // Apply filters (example only)
   if (filterModel?.items?.length) {
@@ -101,80 +77,63 @@ export async function getMuitos({ paginationModel, filterModel, sortModel }) {
 }
 
 export async function getUm(produtoId) {
-  const produtosStore = getProdutosStore();
-
-  const produtoToShow = produtosStore.find(
-    (produto) => produto.id === produtoId,
-  );
-
-  if (!produtoToShow) {
-    throw new Error('Produto não encontrado');
-  }
-  return produtoToShow;
+    const response = await api.get(`/loja/produtos/${produtoId}`);
+    const produto = response.data;
+    return {
+        id: produto.idProduto,
+        nome: produto.nome,
+        descricao: produto.descricao,
+        preco: produto.precoUnico,
+        quantidade: produto.quantidadeEstoque,
+        //categoria depois de arrumarem o back eu adiciono
+    };
 }
 
 export async function criarUm(data) {
-  const produtosStore = getProdutosStore();
-
-  const newproduto = {
-    id: produtosStore.reduce((max, produto) => Math.max(max, produto.id), 0) + 1,
-    ...data,
+  const produtoParaBackend = {
+    nome: data.nome,
+    descricao: data.descricao,
+    precoUnico: data.preco,
+    quantidadeEstoque: data.quantidade,
+    //categoria depois de arrumarem o back eu adiciono
   };
-
-  setProdutosStore([...produtosStore, newproduto]);
-
-  return newproduto;
+  const response = await api.post('/loja/produtos', produtoParaBackend);
+  return response.data;
 }
 
 export async function atualizarUm(produtoId, data) {
-  const produtosStore = getProdutosStore();
-
-  let updatedproduto = null;
-
-  setProdutosStore(
-    produtosStore.map((produto) => {
-      if (produto.id === produtoId) {
-        updatedproduto = { ...produto, ...data };
-        return updatedproduto;
-      }
-      return produto;
-    }),
-  );
-
-  if (!updatedproduto) {
-    throw new Error('Produto não encontrado');
-  }
-  return updatedproduto;
+  const produtoParaBackend = {
+    nome: data.nome,
+    descricao: data.descricao,
+    precoUnico: data.preco,
+    quantidadeEstoque: data.quantidade,
+    //categoria depois de arrumarem o back eu adiciono
+  };
+  const response = await api.put(`/loja/produtos/${produtoId}`, produtoParaBackend);
+  return response.data;
 }
 
 export async function deletarUm(produtoId) {
-  const produtosStore = getProdutosStore();
-
-  setProdutosStore(produtosStore.filter((produto) => produto.id !== produtoId));
+  const response = await api.delete(`/loja/produtos/${produtoId}`);
+  return response.data;
 }
 
 export function validar(produto) {
   let issues = [];
-
   if (!produto.nome) {
     issues = [...issues, { message: 'Nome é obrigatório', path: ['nome'] }];
   }
-
   if (!produto.descricao) {
     issues = [...issues, { message: 'Descrição é obrigatória', path: ['descricao'] }];
   }
-
-  if (!produto.preco) {
-    issues = [...issues, { message: 'Preço é obrigatório', path: ['preco'] }];
-  } else if (produto.preco <= 0) {
+  if (!produto.preco || produto.preco <= 0) {
     issues = [...issues, { message: 'Preço deve ser maior que zero', path: ['preco'] }];
   }
-
-  if (produto.quantidade == null) {
-    issues = [...issues, { message: 'Quantidade é obrigatória', path: ['quantidade'] }];
-  } else if (produto.quantidade < 0) {
+  if (produto.quantidade == null || produto.quantidade < 0) {
     issues = [...issues, { message: 'Quantidade não pode ser negativa', path: ['quantidade'] }];
   }
-
+  if (!produto.categoria) {
+    issues = [...issues, { message: 'Categoria é obrigatória', path: ['categoria'] }];
+  }
   return { issues };
 }
