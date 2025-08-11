@@ -79,7 +79,7 @@ function ProdutoEditForm({ initialValues, onSubmit }) {
         autoHideDuration: 3000,
       });
 
-      navigate('/cadastro');
+      navigate('/produto');
     } catch (editError) {
       notifications.show(`Falha ao editar produto. Razão: ${editError.message}`, {
         severity: 'error',
