@@ -6,8 +6,19 @@ import FormGroup from '@mui/material/FormGroup';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router';
+
+const categorias = [
+  'Smartphones',
+  'Telefonia',
+  'Notebooks',
+  'Computadores',
+  'Tablets',
+  'E-readers',
+  'Áudio',
+];
 
 function ProdutoForm(props) {
   const {
@@ -86,6 +97,24 @@ function ProdutoForm(props) {
               fullWidth
             />
           </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              select
+              value={formValues.categoria ?? ''}
+              onChange={handleTextFieldChange}
+              name="categoria"
+              label="Categoria"
+              error={!!formErrors.categoria}
+              helperText={formErrors.categoria ?? ' '}
+              fullWidth
+            >
+              {categorias.map((option) => (
+                <MenuItem key={option} value={option}>
+                  {option}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
           <Grid item xs={12}>
             <TextField
               value={formValues.descricao ?? ''}
@@ -96,7 +125,6 @@ function ProdutoForm(props) {
               helperText={formErrors.descricao ?? ' '}
               fullWidth
               multiline
-              rows={4}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -149,18 +177,8 @@ function ProdutoForm(props) {
 ProdutoForm.propTypes = {
   backButtonPath: PropTypes.string,
   formState: PropTypes.shape({
-    errors: PropTypes.shape({
-      nome: PropTypes.string,
-      descricao: PropTypes.string,
-      preco: PropTypes.string,
-      quantidade: PropTypes.string,
-    }).isRequired,
-    values: PropTypes.shape({
-      nome: PropTypes.string,
-      descricao: PropTypes.string,
-      preco: PropTypes.number,
-      quantidade: PropTypes.number,
-    }).isRequired,
+    errors: PropTypes.object.isRequired,
+    values: PropTypes.object.isRequired,
   }).isRequired,
   onFieldChange: PropTypes.func.isRequired,
   onReset: PropTypes.func,
