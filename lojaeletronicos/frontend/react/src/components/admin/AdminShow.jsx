@@ -139,7 +139,7 @@ export default function AdminShow() {
           <Grid item xs={12}>
             <Paper sx={{ p: 2 }}>
               <Typography variant="overline">Endereço</Typography>
-              <Typography variant="body1">{admin.endereco}</Typography>
+              <Typography variant="body1">{`${admin.rua}, ${admin.numero} - ${admin.cidade}, ${admin.estado} - CEP: ${admin.cep}`}</Typography>
             </Paper>
           </Grid>
         </Grid>

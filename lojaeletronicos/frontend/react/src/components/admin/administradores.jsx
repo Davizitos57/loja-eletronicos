@@ -5,7 +5,11 @@ const INITIAL_ADMINISTRADORES_STORE = [
     email: 'admin@admin.com',
     cpf: '000.000.000-00',
     telefone: '(00) 00000-0000',
-    endereco: 'Rua dos Administradores, 1, Admin, AD, 00000-000'
+    rua: 'Rua dos Administradores',
+    numero: 1,
+    cidade: 'Admin',
+    estado: 'AD',
+    cep: '00000-000'
   },
 ];
 
@@ -22,19 +26,19 @@ export function setAdministradoresStore(administradores) {
 
 export async function getMuitos({ paginationModel, filterModel, sortModel }) {
     const administradoresStore = getAdministradoresStore();
-  
+
     let filteredAdministradores = [...administradoresStore];
-  
+
     // Apply filters (example only)
     if (filterModel?.items?.length) {
       filterModel.items.forEach(({ field, value, operator }) => {
         if (!field || value == null) {
           return;
         }
-  
+
         filteredAdministradores = filteredAdministradores.filter((administrador) => {
           const administradorValue = administrador[field];
-  
+
           switch (operator) {
             case 'contains':
               return String(administradorValue)
@@ -60,7 +64,7 @@ export async function getMuitos({ paginationModel, filterModel, sortModel }) {
         });
       });
     }
-  
+
     // Apply sorting
     if (sortModel?.length) {
       filteredAdministradores.sort((a, b) => {
@@ -75,49 +79,49 @@ export async function getMuitos({ paginationModel, filterModel, sortModel }) {
         return 0;
       });
     }
-  
+
     // Apply pagination
     const start = paginationModel.page * paginationModel.pageSize;
     const end = start + paginationModel.pageSize;
     const paginatedAdministradores = filteredAdministradores.slice(start, end);
-  
+
     return {
       items: paginatedAdministradores,
       itemCount: filteredAdministradores.length,
     };
   }
-  
+
   export async function getUm(administradorId) {
     const administradoresStore = getAdministradoresStore();
-  
+
     const administradorToShow = administradoresStore.find(
       (administrador) => administrador.id === administradorId,
     );
-  
+
     if (!administradorToShow) {
       throw new Error('Administrador não encontrado');
     }
     return administradorToShow;
   }
-  
+
   export async function criarUm(data) {
     const administradoresStore = getAdministradoresStore();
-  
+
     const newadministrador = {
       id: administradoresStore.reduce((max, administrador) => Math.max(max, administrador.id), 0) + 1,
       ...data,
     };
-  
+
     setAdministradoresStore([...administradoresStore, newadministrador]);
-  
+
     return newadministrador;
   }
-  
+
   export async function atualizarUm(administradorId, data) {
     const administradoresStore = getAdministradoresStore();
-  
+
     let updatedadministrador = null;
-  
+
     setAdministradoresStore(
       administradoresStore.map((administrador) => {
         if (administrador.id === administradorId) {
@@ -127,45 +131,48 @@ export async function getMuitos({ paginationModel, filterModel, sortModel }) {
         return administrador;
       }),
     );
-  
+
     if (!updatedadministrador) {
       throw new Error('Administrador não encontrado');
     }
     return updatedadministrador;
   }
-  
+
   export async function deletarUm(administradorId) {
     const administradoresStore = getAdministradoresStore();
-  
+
     setAdministradoresStore(administradoresStore.filter((administrador) => administrador.id !== administradorId));
   }
-  
+
   export function validar(administrador) {
     let issues = [];
-  
+
     if (!administrador.nome) {
       issues = [...issues, { message: 'Nome é obrigatório', path: ['nome'] }];
     }
-  
+
     if (!administrador.email) {
         issues = [...issues, { message: 'Email é obrigatório', path: ['email'] }];
     } else if (!/\S+@\S+\.\S+/.test(administrador.email)) {
         issues = [...issues, { message: 'Email inválido', path: ['email'] }];
     }
-  
+
     if (!administrador.cpf) {
         issues = [...issues, { message: 'CPF é obrigatório', path: ['cpf'] }];
     } else if (!/^\d{3}\.\d{3}\.\d{3}-\d{2}$/.test(administrador.cpf)) {
         issues = [...issues, { message: 'CPF inválido', path: ['cpf'] }];
     }
-  
+
     if (!administrador.telefone) {
         issues = [...issues, { message: 'Telefone é obrigatório', path: ['telefone'] }];
     }
-  
-    if (!administrador.endereco) {
-        issues = [...issues, { message: 'Endereço é obrigatório', path: ['endereco'] }];
-    }
-  
+
+    if (!administrador.rua) issues.push({ message: 'Rua é obrigatório', path: ['rua'] });
+    if (!administrador.numero) issues.push({ message: 'Número é obrigatório', path: ['numero'] });
+    if (!administrador.cidade) issues.push({ message: 'Cidade é obrigatório', path: ['cidade'] });
+    if (!administrador.estado) issues.push({ message: 'Estado é obrigatório', path: ['estado'] });
+    if (!administrador.cep) issues.push({ message: 'CEP é obrigatório', path: ['cep'] });
+
+
     return { issues };
   }

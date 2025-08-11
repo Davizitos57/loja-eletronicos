@@ -188,6 +188,8 @@ export default function ClienteList() {
       { field: 'email', headerName: 'Email', width: 200 },
       { field: 'cpf', headerName: 'CPF', width: 150 },
       { field: 'telefone', headerName: 'Telefone', width: 150 },
+      { field: 'cidade', headerName: 'Cidade', width: 150 },
+      { field: 'estado', headerName: 'Estado', width: 100 },
       {
         field: 'actions',
         type: 'actions',

@@ -139,7 +139,7 @@ export default function ClienteShow() {
           <Grid item xs={12}>
             <Paper sx={{ p: 2 }}>
               <Typography variant="overline">Endereço</Typography>
-              <Typography variant="body1">{cliente.endereco}</Typography>
+              <Typography variant="body1">{`${cliente.rua}, ${cliente.numero} - ${cliente.cidade}, ${cliente.estado} - CEP: ${cliente.cep}`}</Typography>
             </Paper>
           </Grid>
         </Grid>

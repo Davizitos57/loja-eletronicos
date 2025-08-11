@@ -47,6 +47,13 @@ function ClienteForm(props) {
     [onFieldChange],
   );
 
+  const handleNumberFieldChange = React.useCallback(
+    (event) => {
+      onFieldChange(event.target.name, Number(event.target.value));
+    },
+    [onFieldChange],
+  );
+
   const handleReset = React.useCallback(() => {
     if (onReset) {
       onReset(formValues);
@@ -112,14 +119,59 @@ function ClienteForm(props) {
               fullWidth
             />
           </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              value={formValues.cep ?? ''}
+              onChange={handleTextFieldChange}
+              name="cep"
+              label="CEP"
+              error={!!formErrors.cep}
+              helperText={formErrors.cep ?? ' '}
+              fullWidth
+            />
+          </Grid>
           <Grid item xs={12}>
             <TextField
-              value={formValues.endereco ?? ''}
+              value={formValues.rua ?? ''}
               onChange={handleTextFieldChange}
-              name="endereco"
-              label="Endereço"
-              error={!!formErrors.endereco}
-              helperText={formErrors.endereco ?? ' '}
+              name="rua"
+              label="Rua"
+              error={!!formErrors.rua}
+              helperText={formErrors.rua ?? ' '}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              type="number"
+              value={formValues.numero ?? ''}
+              onChange={handleNumberFieldChange}
+              name="numero"
+              label="Número"
+              error={!!formErrors.numero}
+              helperText={formErrors.numero ?? ' '}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              value={formValues.cidade ?? ''}
+              onChange={handleTextFieldChange}
+              name="cidade"
+              label="Cidade"
+              error={!!formErrors.cidade}
+              helperText={formErrors.cidade ?? ' '}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              value={formValues.estado ?? ''}
+              onChange={handleTextFieldChange}
+              name="estado"
+              label="Estado"
+              error={!!formErrors.estado}
+              helperText={formErrors.estado ?? ' '}
               fullWidth
             />
           </Grid>
@@ -149,20 +201,8 @@ function ClienteForm(props) {
 ClienteForm.propTypes = {
   backButtonPath: PropTypes.string,
   formState: PropTypes.shape({
-    errors: PropTypes.shape({
-      nome: PropTypes.string,
-      email: PropTypes.string,
-      cpf: PropTypes.string,
-      telefone: PropTypes.string,
-      endereco: PropTypes.string,
-    }).isRequired,
-    values: PropTypes.shape({
-      nome: PropTypes.string,
-      email: PropTypes.string,
-      cpf: PropTypes.string,
-      telefone: PropTypes.string,
-      endereco: PropTypes.string,
-    }).isRequired,
+    errors: PropTypes.object.isRequired,
+    values: PropTypes.object.isRequired,
   }).isRequired,
   onFieldChange: PropTypes.func.isRequired,
   onReset: PropTypes.func,
