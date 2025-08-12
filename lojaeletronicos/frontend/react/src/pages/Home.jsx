@@ -18,6 +18,8 @@ import ProdutoModal from '../components/produto/modal/ProdutoModal.jsx';
 export default function Home() {
     const [loading, setLoading] = useState(true);
     const [categorias, setCategorias] = useState(categoriasMock);
+    const [categoriasFiltradas, setCategoriasFiltradas] = useState(categoriasMock);
+    const [termoPesquisa, setTermoPesquisa] = useState('');
     const [carrinhoAberto, setCarrinhoAberto] = useState(false);
     const [adminAberto, setAdminAberto] = useState(false);
     const [produtoModalAberto, setProdutoModalAberto] = useState(false);
@@ -83,6 +85,28 @@ export default function Home() {
         setProdutoSelecionado(null);
     };
 
+    // Função para filtrar produtos por pesquisa
+    const handlePesquisa = (termo) => {
+        setTermoPesquisa(termo);
+
+        if (!termo.trim()) {
+            setCategoriasFiltradas(categorias);
+            return;
+        }
+
+        const termoLower = termo.toLowerCase();
+        const categoriasFiltradas = categorias.map(categoria => ({
+            ...categoria,
+            produtos: categoria.produtos.filter(produto =>
+                produto.nome.toLowerCase().includes(termoLower) ||
+                produto.marca.toLowerCase().includes(termoLower) ||
+                produto.categoria.toLowerCase().includes(termoLower)
+            )
+        })).filter(categoria => categoria.produtos.length > 0);
+
+        setCategoriasFiltradas(categoriasFiltradas);
+    };
+
     if (loading) {
         return (
             <Box
@@ -127,7 +151,7 @@ export default function Home() {
 
     return (
         <Box sx={{ bgcolor: '#f5f5f5', minHeight: '100vh' }}>
-            <Header />
+            <Header onPesquisar={handlePesquisa} />
 
             {/* Botões flutuantes */}
             <CarrinhoFab
@@ -139,28 +163,51 @@ export default function Home() {
                 onClick={() => setAdminAberto(true)}
             />
 
-            {/* Conteúdo principal */}
+           {/* Conteúdo principal */}
             <Container
                 maxWidth={false}
                 sx={{
-                    py: 10,
+                    py: 12, // Aumentado para acomodar o header maior
                     px: 2,
                     width: '100%',
                     maxWidth: '100vw'
                 }}
             >
-                {categorias.map((categoria) => (
-                    <CategoriaSection
-                        key={categoria.id}
-                        categoria={categoria}
-                        scrollPosition={scrollPositions[categoria.id]}
-                        onNavigate={navegarHorizontal}
-                        podeNavegar={podeNavegar}
-                        onAdicionarCarrinho={adicionarEAbrirCarrinho}
-                        onComprar={comprarProduto}
-                        onVerDetalhes={verDetalhesproduto}
-                    />
-                ))}
+                {/* Mostrar resultado da pesquisa */}
+                {termoPesquisa && (
+                    <Box sx={{ mb: 3 }}>
+                        <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1 }}>
+                            Resultados para "{termoPesquisa}"
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            {categoriasFiltradas.reduce((total, cat) => total + cat.produtos.length, 0)} produtos encontrados
+                        </Typography>
+                    </Box>
+                )}
+
+                {categoriasFiltradas.length === 0 && termoPesquisa ? (
+                    <Box sx={{ textAlign: 'center', py: 8 }}>
+                        <Typography variant="h6" color="text.secondary" gutterBottom>
+                            Nenhum produto encontrado
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            Tente pesquisar com outros termos
+                        </Typography>
+                    </Box>
+                ) : (
+                    categoriasFiltradas.map((categoria) => (
+                        <CategoriaSection
+                            key={categoria.id}
+                            categoria={categoria}
+                            scrollPosition={scrollPositions[categoria.id]}
+                            onNavigate={navegarHorizontal}
+                            podeNavegar={podeNavegar}
+                            onAdicionarCarrinho={adicionarEAbrirCarrinho}
+                            onComprar={comprarProduto}
+                            onVerDetalhes={verDetalhesproduto}
+                        />
+                    ))
+                )}
             </Container>
 
             {/* Drawers e Modals */}

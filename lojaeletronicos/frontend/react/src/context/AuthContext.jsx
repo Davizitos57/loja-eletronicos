@@ -39,6 +39,10 @@ export function AuthProvider({ children }) {
         return usuario?.role === 'admin';
     };
 
+    const isLoggedIn = () => {
+        return !!usuario;
+    };
+
      // Verificar se há usuário logado no localStorage
     useEffect(() => {
         const savedUser = localStorage.getItem('usuario');
@@ -74,8 +78,8 @@ export function AuthProvider({ children }) {
                 login,
                 logout,
                 isAdmin,
-                loading,
-                isLoggedIn: !!usuario
+                isLoggedIn,
+                loading
             }}
         >
             {children}
