@@ -36,7 +36,7 @@ public class UsuarioRepository {
         return usuario;
     };
 
-    public Usuario verificarLoginInfo(LoginDTO login){
+    public Usuario verificarLoginInfo(LoginDTO login) {
         String sql = "SELECT * FROM usuarios WHERE email = ? and senha = ?";
         Usuario usuario;
         try {
@@ -49,13 +49,12 @@ public class UsuarioRepository {
     }
 
     public void criarNovoUsuario(Usuario usuario) {
-        String sql = "INSERT INTO usuarios (nome, email, cpf, telefone, senha, tipo_usuario) VALUES (?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, usuario.getNome(), usuario.getEmail(), usuario.getCpf(), usuario.getTelefone(), usuario.getSenha(), usuario.getTipoUsuario());
+        String sql = "INSERT INTO usuarios (nome, email, cpf, telefone, senha) VALUES (?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, usuario.getNome(), usuario.getEmail(), usuario.getCpf(), usuario.getTelefone(), usuario.getSenha());
     }
 
     public Usuario encontrarUsuarioPorId(Long id) {
         String sql = "SELECT * FROM usuarios WHERE id = ?";
-        List<Endereco> enderecos = new ArrayList<>();
         Usuario usuario;
         try {
             usuario = jdbcTemplate.queryForObject(sql, userRowMapper, id);
@@ -63,10 +62,12 @@ public class UsuarioRepository {
             return null;
         }
 
+        List<Endereco> enderecos = new ArrayList<>();
         try {
             enderecos = enderecoRepository.findByUserId(id);
             usuario.setEnderecos(enderecos);
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
+            usuario.setEnderecos(null);
         }
 
         return usuario;
@@ -74,7 +75,6 @@ public class UsuarioRepository {
 
     public Usuario encontrarUsuarioPorCpf(String cpf) {
         String sql = "SELECT * FROM usuarios WHERE cpf = ?";
-        List<Endereco> enderecos = new ArrayList<>();
         Usuario usuario;
         try {
             usuario = jdbcTemplate.queryForObject(sql, userRowMapper, new Object[]{cpf});
@@ -82,12 +82,13 @@ public class UsuarioRepository {
             return null;
         }
 
+        List<Endereco> enderecos = new ArrayList<>();
         try {
             enderecos = enderecoRepository.findByUserId(usuario.getId());
             usuario.setEnderecos(enderecos);
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
+            usuario.setEnderecos(null);
         }
-
         return usuario;
     }
 
@@ -104,7 +105,8 @@ public class UsuarioRepository {
         try {
             enderecos = enderecoRepository.findByUserId(usuario.getId());
             usuario.setEnderecos(enderecos);
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
+            usuario.setEnderecos(null);
         }
 
         return usuario;
@@ -114,14 +116,14 @@ public class UsuarioRepository {
         String sql = "SELECT * FROM usuarios where excluido = 0";
         List<Usuario> usuarios = jdbcTemplate.query(sql, userRowMapper);
 
-        try {
-            usuarios.forEach(usuario -> {
+        usuarios.forEach(usuario -> {
+            try {
                 List<Endereco> enderecos = enderecoRepository.findByUserId(usuario.getId());
                 usuario.setEnderecos(enderecos);
-            });
-        } catch (Exception e) {
-        }
-
+            } catch (NullPointerException e) {
+                usuario.setEnderecos(null);
+            }
+        });
         return usuarios;
     }
 

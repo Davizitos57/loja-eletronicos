@@ -14,8 +14,8 @@ CREATE TABLE usuarios (
     cpf VARCHAR(11) UNIQUE NOT NULL,
     telefone TEXT,
     senha VARCHAR(20),
-    tipo_usuario VARCHAR(5),
-    excluido integer
+    tipo_usuario VARCHAR(5) DEFAULT 'BASIC',
+    excluido integer DEFAULT 0
 );
 
 CREATE TABLE produtos (
@@ -105,3 +105,7 @@ INSERT INTO pagamentos (valor, metodo_pagamento, quantidade_parcelas) VALUES (10
 INSERT INTO pagamentos (valor, data_pagamento, metodo_pagamento, quantidade_parcelas) VALUES (500.50, '2025-08-09 14:30:00', 'Pix', 2);
 INSERT INTO pagamentos (valor, metodo_pagamento, quantidade_parcelas) VALUES (1111.22, 'Cartão de Débito', 1);
 INSERT INTO pagamentos (valor, data_pagamento, metodo_pagamento, quantidade_parcelas) VALUES (1200.00, '2025-08-10 09:00:00', 'Transferência Bancária', 1);
+
+INSERT INTO itens_pedidos (pedido_id, produto_id, quantidade, preco) VALUES (1, 3, 2, 299.80);
+
+INSERT INTO pedidos (id_usuario, valor_total) VALUES (1, 299.80)
