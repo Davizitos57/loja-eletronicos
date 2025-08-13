@@ -1,7 +1,6 @@
 package com.trabalhobd.lojaeletronicos.controllers;
 
 import com.trabalhobd.lojaeletronicos.models.DTOs.LoginDTO;
-import com.trabalhobd.lojaeletronicos.models.Endereco;
 import com.trabalhobd.lojaeletronicos.models.Usuario;
 import com.trabalhobd.lojaeletronicos.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;

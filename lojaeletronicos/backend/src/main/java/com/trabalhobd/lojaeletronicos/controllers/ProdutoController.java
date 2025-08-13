@@ -52,14 +52,12 @@ public class ProdutoController {
         var produtos = produtoService.procuraProdutoporNome(nome);
         return ResponseEntity.ok(produtos);
     }
-    
-    /* 
-    @GetMapping("/buscarPorCategoria")
-    public ResponseEntity<List<Produto>> procurarProdutoporCategoria(@RequestParam String nomeCategoria){
-        var produtos = produtoService.procurarProdutoporCategoria(nomeCategoria);
+
+    @GetMapping("/categoria/{id}")  
+    public ResponseEntity<List<Produto>> buscarProdutosPorIdCategoria(@PathVariable("id") Long idCategoria) {
+        List<Produto> produtos = produtoService.procurarProdutoporCategoria(idCategoria);
         return ResponseEntity.ok(produtos);
     }
-    */
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> atualizarDadosProduto (@PathVariable Long id, @RequestBody Produto produto){

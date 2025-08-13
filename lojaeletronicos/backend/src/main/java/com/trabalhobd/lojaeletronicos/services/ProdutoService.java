@@ -3,6 +3,7 @@ package com.trabalhobd.lojaeletronicos.services;
 import org.springframework.stereotype.Service;
 
 import com.trabalhobd.lojaeletronicos.models.Produto;
+import com.trabalhobd.lojaeletronicos.repositories.CategoriaRepository;
 import com.trabalhobd.lojaeletronicos.repositories.ProdutoRepository;
 
 import java.util.List;
@@ -11,12 +12,17 @@ import java.util.List;
 public class ProdutoService {
 
     private final ProdutoRepository produtoRepository;
+    private final CategoriaRepository categoriaRepository;
 
-    public ProdutoService(ProdutoRepository produtoRepository) {
+    public ProdutoService(ProdutoRepository produtoRepository, CategoriaRepository categoriaRepository) {
         this.produtoRepository = produtoRepository;
+        this.categoriaRepository = categoriaRepository;
     }
 
-    public void criarNovoProduto(Produto produto){
+    public void criarNovoProduto(Produto produto) {
+        if (categoriaRepository.findById((long) produto.getIdCategoria()) == null) {
+            throw new IllegalArgumentException("Categoria informada não existe.");
+        }
         produtoRepository.create(produto);
     }
 
@@ -32,11 +38,10 @@ public class ProdutoService {
         return produtoRepository.findAllProdutos();
     }
 
-    /*
-    public List<Produto> procurarProdutoporCategoria(String nomeCategoria){
-        return produtoRepository.findByCategoria(nomeCategoria);
+    public List<Produto> procurarProdutoporCategoria(Long id){
+        return produtoRepository.findByCategoria(id);
     }
-    */
+
 
     public void atualizarDadosProdutos(Long idProduto, Produto produto){
         produtoRepository.updateProdutosData(idProduto, produto);

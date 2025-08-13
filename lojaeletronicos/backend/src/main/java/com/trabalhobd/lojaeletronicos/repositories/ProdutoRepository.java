@@ -26,13 +26,13 @@ public class ProdutoRepository {
         produto.setPrecoUnico(rs.getFloat("preco_unico"));
         produto.setQuantidadeEstoque(rs.getInt("quantidade_estoque"));
         produto.setAVenda(rs.getBoolean("ativo"));
-        
+        produto.setIdCategoria(rs.getInt("id_categoria"));
         return produto;
     };
 
     public void create(Produto produto){
-        String sql = "INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque) VALUES (?, ?, ?, ?)";
-        jdbcTemplate.update(sql, produto.getNome(), produto.getDescricao(), produto.getPrecoUnico(), produto.getQuantidadeEstoque()); 
+        String sql = "INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque, id_categoria) VALUES (?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, produto.getNome(), produto.getDescricao(), produto.getPrecoUnico(), produto.getQuantidadeEstoque(), produto.getIdCategoria()); 
     } 
 
     public Produto findById(Long idProduto){
@@ -66,16 +66,15 @@ public class ProdutoRepository {
         return produtos;
     }
 
-    /*
-    public List<Produto> findByCategoria(String nomeCategoria){
-        String sql = "SELECT * FROM produtos WHERE categoria_id = ? AND ativo = TRUE";
-        return jdbcTemplate.query(sql, )
+    public List<Produto> findByCategoria(Long idCategoria){
+        String sql = "SELECT * FROM produtos WHERE id_categoria = ? AND ativo = TRUE";
+        List<Produto> produtos = jdbcTemplate.query(sql, prodRowMapper, idCategoria);
+        return produtos;
     }
-    */
 
     public void updateProdutosData(Long idProduto, Produto produto){
-        String sql = "UPDATE produtos SET nome = ?, descricao = ?, preco_unico = ?, quantidade_estoque = ? WHERE id = ?";
-        jdbcTemplate.update(sql, produto.getNome(), produto.getDescricao(), produto.getPrecoUnico(), produto.getQuantidadeEstoque(), idProduto);
+        String sql = "UPDATE produtos SET nome = ?, descricao = ?, preco_unico = ?, quantidade_estoque = ?, id_categoria = ? WHERE id = ?";
+        jdbcTemplate.update(sql, produto.getNome(), produto.getDescricao(), produto.getPrecoUnico(), produto.getQuantidadeEstoque(), produto.getIdCategoria(), idProduto);
     }
 
     public void deleteById(Long idProduto){
