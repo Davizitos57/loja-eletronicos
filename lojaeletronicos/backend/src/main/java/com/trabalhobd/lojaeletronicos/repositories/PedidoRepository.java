@@ -29,8 +29,7 @@ public class PedidoRepository {
 
     public List<Pedido> encontrarTodosPedidos() {
         String sql = "SELECT * FROM pedidos where NOT (status = 'rascunho')";
-        List<Pedido> pedidos = jdbcTemplate.query(sql, pedidoRowMapper);
-        return pedidos;
+        return jdbcTemplate.query(sql, pedidoRowMapper);
     }
 
     public Pedido encontrarPedidoPorId(Long id) {
@@ -58,7 +57,7 @@ public class PedidoRepository {
         String sql = "SELECT * FROM pedidos WHERE id_usuario = ? AND status = 'rascunho'";
         Pedido pedido;
         try {
-            pedido = jdbcTemplate.queryForObject(sql, new Object[]{clienteId}, pedidoRowMapper);
+            pedido = jdbcTemplate.queryForObject(sql, pedidoRowMapper, clienteId);
         } catch (EmptyResultDataAccessException e) {
             throw new EmptyResultDataAccessException(1);
         }
@@ -67,7 +66,7 @@ public class PedidoRepository {
 
     public List<Pedido> buscarPedidosPorCliente(Long clienteId) {
         String sql = "SELECT * FROM pedidos WHERE id_usuario = ? AND NOT (status = 'rascunho')";
-        return jdbcTemplate.query(sql, new Object[]{clienteId}, pedidoRowMapper);
+        return jdbcTemplate.query(sql, pedidoRowMapper, clienteId);
     }
 
     public void atualizarValorTotal(Long pedidoId, Double novoTotal) {

@@ -10,7 +10,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -62,7 +61,7 @@ public class UsuarioRepository {
             return null;
         }
 
-        List<Endereco> enderecos = new ArrayList<>();
+        List<Endereco> enderecos;
         try {
             enderecos = enderecoRepository.findByUserId(id);
             usuario.setEnderecos(enderecos);
@@ -77,12 +76,12 @@ public class UsuarioRepository {
         String sql = "SELECT * FROM usuarios WHERE cpf = ?";
         Usuario usuario;
         try {
-            usuario = jdbcTemplate.queryForObject(sql, userRowMapper, new Object[]{cpf});
+            usuario = jdbcTemplate.queryForObject(sql, userRowMapper, cpf);
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
 
-        List<Endereco> enderecos = new ArrayList<>();
+        List<Endereco> enderecos;
         try {
             enderecos = enderecoRepository.findByUserId(usuario.getId());
             usuario.setEnderecos(enderecos);
@@ -96,12 +95,12 @@ public class UsuarioRepository {
         String sql = "SELECT * FROM usuarios WHERE email = ?";
         Usuario usuario;
         try {
-            usuario = jdbcTemplate.queryForObject(sql, userRowMapper, new Object[]{email});
+            usuario = jdbcTemplate.queryForObject(sql, userRowMapper, email);
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
 
-        List<Endereco> enderecos = new ArrayList<>();
+        List<Endereco> enderecos;
         try {
             enderecos = enderecoRepository.findByUserId(usuario.getId());
             usuario.setEnderecos(enderecos);
