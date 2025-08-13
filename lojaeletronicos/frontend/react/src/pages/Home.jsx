@@ -9,6 +9,8 @@ import CarrinhoFab from '../components/carrinho/CarrinhoFab.jsx';
 import CarrinhoDrawer from '../components/carrinho/CarrinhoDrawer.jsx';
 import AdminFab from '../components/admin/AdminFab.jsx';
 import AdminDrawer from '../components/admin/AdminDrawer.jsx';
+import FiltroFab from '../components/filtros/FiltroFab.jsx';
+import FiltroDrawer from '../components/filtros/FiltroDrawer.jsx';
 import CategoriaSection from '../components/CategoriaSection.jsx';
 import Header from '../components/Header.jsx';
 import ProdutoModal from '../components/produto/modal/ProdutoModal.jsx';
@@ -24,9 +26,12 @@ export default function Home() {
     const [adminAberto, setAdminAberto] = useState(false);
     const [produtoModalAberto, setProdutoModalAberto] = useState(false);
     const [produtoSelecionado, setProdutoSelecionado] = useState(null);
+    const [categoriasSelecionadas, setCategoriasSelecionadas] = useState([]);
+    const [filtroAtivo, setFiltroAtivo] = useState(false);
+    const [filtroAberto, setFiltroAberto] = useState(false);
     const { carrinho, adicionarAoCarrinho, removerDoCarrinho, calcularTotal } = useCarrinho();
     const { isAdmin } = useAuth();
-    const { scrollPositions, navegarHorizontal, podeNavegar } = useNavegacao(categorias);
+    const { scrollPositions, navegarHorizontal, podeNavegar } = useNavegacao(categoriasFiltradas);
     const navigate = useNavigate();
     const total = calcularTotal();
 
@@ -55,6 +60,37 @@ export default function Home() {
         */
     }, []);
 
+    // Efeito para aplicar filtros quando categorias selecionadas ou termo de pesquisa mudam
+    useEffect(() => {
+        aplicarFiltros();
+    }, [categoriasSelecionadas, termoPesquisa, categorias]);
+
+    const aplicarFiltros = () => {
+        let categoriasFiltradas = [...categorias];
+
+        // Filtro por categorias selecionadas
+        if (categoriasSelecionadas.length > 0) {
+            categoriasFiltradas = categoriasFiltradas.filter(categoria =>
+                categoriasSelecionadas.includes(categoria.id)
+            );
+        }
+
+        // Filtro por pesquisa
+        if (termoPesquisa.trim()) {
+            const termoLower = termoPesquisa.toLowerCase();
+            categoriasFiltradas = categoriasFiltradas.map(categoria => ({
+                ...categoria,
+                produtos: categoria.produtos.filter(produto =>
+                    produto.nome.toLowerCase().includes(termoLower) ||
+                    produto.marca.toLowerCase().includes(termoLower) ||
+                    produto.categoria.toLowerCase().includes(termoLower)
+                )
+            })).filter(categoria => categoria.produtos.length > 0);
+        }
+
+        setCategoriasFiltradas(categoriasFiltradas);
+    };
+
     const adicionarEAbrirCarrinho = (produto) => {
         adicionarAoCarrinho(produto);
         setCarrinhoAberto(true);
@@ -79,13 +115,11 @@ export default function Home() {
         setProdutoModalAberto(true);
     };
 
-    // Nova função para fechar modal
     const fecharModalProduto = () => {
         setProdutoModalAberto(false);
         setProdutoSelecionado(null);
     };
 
-    // Função para filtrar produtos por pesquisa
     const handlePesquisa = (termo) => {
         setTermoPesquisa(termo);
 
@@ -105,6 +139,22 @@ export default function Home() {
         })).filter(categoria => categoria.produtos.length > 0);
 
         setCategoriasFiltradas(categoriasFiltradas);
+    };
+
+    // Funções para filtros de categoria
+    const handleToggleCategoria = (novaSelecao) => {
+        setCategoriasSelecionadas(novaSelecao);
+    };
+
+    const handleAplicarFiltro = (categoriasSelecionadas) => {
+        setFiltroAtivo(categoriasSelecionadas.length > 0);
+        console.log('Filtro aplicado para categorias:', categoriasSelecionadas);
+    };
+
+    const handleLimparFiltros = () => {
+        setCategoriasSelecionadas([]);
+        setFiltroAtivo(false);
+        console.log('Filtros limpos');
     };
 
     if (loading) {
@@ -158,12 +208,18 @@ export default function Home() {
                 onClick={() => setCarrinhoAberto(true)}
             />
 
+            {/* Botão de Filtros */}
+            <FiltroFab
+                onClick={() => setFiltroAberto(true)}
+                categoriasAtivaCount={categoriasSelecionadas.length}
+            />
+
             {/* Botão Admin - só aparece para admins */}
             <AdminFab
                 onClick={() => setAdminAberto(true)}
             />
 
-           {/* Conteúdo principal */}
+            {/* Conteúdo principal */}
             <Container
                 maxWidth={false}
                 sx={{
@@ -173,25 +229,32 @@ export default function Home() {
                     maxWidth: '100vw'
                 }}
             >
-                {/* Mostrar resultado da pesquisa */}
-                {termoPesquisa && (
+                {/* Indicadores de filtros ativos */}
+                {(termoPesquisa || filtroAtivo) && (
                     <Box sx={{ mb: 3 }}>
-                        <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1 }}>
-                            Resultados para "{termoPesquisa}"
-                        </Typography>
+                        {termoPesquisa && (
+                            <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1 }}>
+                                Resultados para "{termoPesquisa}"
+                            </Typography>
+                        )}
+                        {filtroAtivo && (
+                            <Typography variant="body1" color="secondary" sx={{ fontWeight: 'bold', mb: 1 }}>
+                                📂 Filtrado por {categoriasSelecionadas.length} categoria(s)
+                            </Typography>
+                        )}
                         <Typography variant="body2" color="text.secondary">
                             {categoriasFiltradas.reduce((total, cat) => total + cat.produtos.length, 0)} produtos encontrados
                         </Typography>
                     </Box>
                 )}
 
-                {categoriasFiltradas.length === 0 && termoPesquisa ? (
+                {categoriasFiltradas.length === 0 ? (
                     <Box sx={{ textAlign: 'center', py: 8 }}>
                         <Typography variant="h6" color="text.secondary" gutterBottom>
-                            Nenhum produto encontrado
+                            {termoPesquisa || filtroAtivo ? 'Nenhum produto encontrado' : 'Nenhuma categoria disponível'}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                            Tente pesquisar com outros termos
+                            {termoPesquisa || filtroAtivo ? 'Tente pesquisar com outros termos ou ajustar os filtros' : 'Verifique a conexão ou tente novamente mais tarde'}
                         </Typography>
                     </Box>
                 ) : (
@@ -217,6 +280,16 @@ export default function Home() {
                 carrinho={carrinho}
                 onRemoverItem={removerDoCarrinho}
                 onFinalizarCompra={finalizarCompra}
+            />
+
+            <FiltroDrawer
+                aberto={filtroAberto}
+                onFechar={() => setFiltroAberto(false)}
+                categorias={categorias}
+                categoriasSelecionadas={categoriasSelecionadas}
+                onToggleCategoria={handleToggleCategoria}
+                onAplicarFiltro={handleAplicarFiltro}
+                onLimparFiltros={handleLimparFiltros}
             />
 
             {isAdmin() && (
