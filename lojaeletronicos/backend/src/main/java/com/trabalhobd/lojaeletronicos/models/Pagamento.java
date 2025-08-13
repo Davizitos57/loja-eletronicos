@@ -19,12 +19,14 @@ public class Pagamento implements Serializable {
     private LocalDateTime data_pagamento;
     private String metodo_pagamento;
     private int quantidade_parcelas;
+    private Long idPedido;
 
-    public Pagamento(float valor, LocalDateTime data_pagamento, String metodo_pagamento, int quantidade_parcelas){
+    public Pagamento(float valor, LocalDateTime data_pagamento, String metodo_pagamento, int quantidade_parcelas, Long idPedido){
         this.valor = valor;
         this.data_pagamento = data_pagamento;
         this.metodo_pagamento = metodo_pagamento;
         this.quantidade_parcelas = quantidade_parcelas;
+        this.idPedido = idPedido;
     }
 
 }

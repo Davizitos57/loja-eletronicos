@@ -27,13 +27,13 @@ public class PagamentoRepository{
         pagamento.setData_pagamento(rs.getTimestamp("data_pagamento").toLocalDateTime());
         pagamento.setMetodo_pagamento(rs.getString("metodo_pagamento"));
         pagamento.setQuantidade_parcelas(rs.getInt("quantidade_parcelas"));
-        
+        pagamento.setIdPedido(rs.getLong("id_pedido"));
         return pagamento;
     };
 
     public void create(Pagamento pagamento){
-        String sql = "INSERT INTO pagamentos (valor, metodo_pagamento, quantidade_parcelas) VALUES (?,?,?)";
-        jdbcTemplate.update(sql, pagamento.getValor(), pagamento.getMetodo_pagamento(), pagamento.getQuantidade_parcelas());
+        String sql = "INSERT INTO pagamentos (valor, metodo_pagamento, quantidade_parcelas, id_pedido) VALUES (?,?,?, ?)";
+        jdbcTemplate.update(sql, pagamento.getValor(), pagamento.getMetodo_pagamento(), pagamento.getQuantidade_parcelas(), pagamento.getIdPedido());
     }
 
     public List<Pagamento> findAllPagamento (){
@@ -61,6 +61,18 @@ public class PagamentoRepository{
         
         String sql = "SELECT * FROM pagamentos WHERE data_pagamento >= ? AND data_pagamento < ?";
         return jdbcTemplate.query(sql, pagamRowMapper, inicio, fim);
+    }
+
+    public Pagamento findPagamentoByIdPedido(Long idPedido) {
+        String sql = "SELECT * FROM pagamentos WHERE id_pedido = ?";
+        Pagamento pagamento;
+        try{
+            pagamento = jdbcTemplate.queryForObject(sql, pagamRowMapper, idPedido);
+        }
+        catch(EmptyResultDataAccessException e){
+            return null;
+        }
+        return pagamento;
     }
 
     public void updatePagamentoData(Long idPagamento, Pagamento pagamento){

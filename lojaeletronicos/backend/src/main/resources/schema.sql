@@ -2,9 +2,9 @@ DROP TABLE IF EXISTS enderecos;
 DROP TABLE IF EXISTS itens_pedidos;
 DROP TABLE IF EXISTS produtos;
 DROP TABLE IF EXISTS categorias;
+DROP TABLE IF EXISTS pagamentos;
 DROP TABLE IF EXISTS pedidos;
 DROP TABLE IF EXISTS usuarios;
-DROP TABLE IF EXISTS pagamentos;
 
 CREATE TABLE usuarios (
     id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -66,7 +66,9 @@ CREATE TABLE pagamentos (
     valor NUMERIC(10,2) NOT NULL,
     data_pagamento TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     metodo_pagamento VARCHAR(50),
-    quantidade_parcelas INTEGER NOT NULL DEFAULT 1
+    quantidade_parcelas INTEGER NOT NULL DEFAULT 1,
+    id_pedido INTEGER,
+    FOREIGN KEY (id_pedido) REFERENCES pedidos(id)
 );
 
 INSERT INTO usuarios (nome, email, cpf, telefone, senha, tipo_usuario, excluido) VALUES ('Maria', 'maria@gmail.com', '111111', '319959125', '1234', 'ADMIN', 0);
@@ -94,13 +96,20 @@ INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque, id_categ
 INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque, id_categoria) VALUES ('Fone de Ouvido Bluetooth JBL Tune 510BT', 'Fone sem fio com até 40h de bateria, som JBL Pure Bass', 249.99, 100, 5);
 INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque) VALUES ('Roteador TP-Link Archer AX10', 'Wi-Fi 6, Dual Band, 1201 Mbps, 4 antenas, MU-MIMO', 349.00, 40);
 
+INSERT INTO pedidos (id_usuario, valor_total, status) VALUES (1, 2899.00, 'concluido');
+INSERT INTO pedidos (id_usuario, valor_total, status) VALUES (2, 9000.80, 'concluido');
+INSERT INTO pedidos (id_usuario, valor_total, status) VALUES (3, 5800.80, 'concluido');
+INSERT INTO pedidos (id_usuario, valor_total, status) VALUES (4, 249.99, 'concluido');
+INSERT INTO pedidos (id_usuario, valor_total, status) VALUES (5, 349.00, 'concluido');
 
-INSERT INTO pagamentos (valor, metodo_pagamento, quantidade_parcelas) VALUES (1111.22, 'Cartão de Crédito', 3);
-INSERT INTO pagamentos (valor, metodo_pagamento, quantidade_parcelas) VALUES (100.00, 'Dinheiro', 1);
-INSERT INTO pagamentos (valor, data_pagamento, metodo_pagamento, quantidade_parcelas) VALUES (500.50, '2025-08-09 14:30:00', 'Pix', 2);
-INSERT INTO pagamentos (valor, metodo_pagamento, quantidade_parcelas) VALUES (1111.22, 'Cartão de Débito', 1);
-INSERT INTO pagamentos (valor, data_pagamento, metodo_pagamento, quantidade_parcelas) VALUES (1200.00, '2025-08-10 09:00:00', 'Transferência Bancária', 1);
+INSERT INTO pagamentos (valor, metodo_pagamento, quantidade_parcelas, id_pedido) VALUES (499.80, 'Cartão de Crédito', 3, 1);
+INSERT INTO pagamentos (valor, metodo_pagamento, quantidade_parcelas, id_pedido) VALUES (100.00, 'Dinheiro', 1, 2);
+INSERT INTO pagamentos (valor, data_pagamento, metodo_pagamento, quantidade_parcelas, id_pedido) VALUES (500.50, '2025-08-09 14:30:00', 'Pix', 2, 3);
+INSERT INTO pagamentos (valor, metodo_pagamento, quantidade_parcelas, id_pedido) VALUES (1111.22, 'Cartão de Débito', 1, 4);
+INSERT INTO pagamentos (valor, data_pagamento, metodo_pagamento, quantidade_parcelas, id_pedido) VALUES (1200.00, '2025-08-10 09:00:00', 'Transferência Bancária', 1, 5);
 
-INSERT INTO itens_pedidos (pedido_id, produto_id, quantidade, preco) VALUES (1, 3, 2, 299.80);
-
-INSERT INTO pedidos (id_usuario, valor_total) VALUES (1, 299.80)
+INSERT INTO itens_pedidos (pedido_id, produto_id, quantidade, preco) VALUES (1, 1, 1, 2899.00);
+INSERT INTO itens_pedidos (pedido_id, produto_id, quantidade, preco) VALUES (2, 2, 2, 9000.80);
+INSERT INTO itens_pedidos (pedido_id, produto_id, quantidade, preco) VALUES (3, 3, 2, 5800.80);
+INSERT INTO itens_pedidos (pedido_id, produto_id, quantidade, preco) VALUES (4, 4, 1, 249.99);
+INSERT INTO itens_pedidos (pedido_id, produto_id, quantidade, preco) VALUES (5, 5, 1, 349.00);

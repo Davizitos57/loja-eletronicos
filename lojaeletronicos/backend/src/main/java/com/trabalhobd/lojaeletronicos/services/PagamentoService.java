@@ -35,6 +35,10 @@ public class PagamentoService {
         return pagamentoRepository.findPagamentosByDay(dataPagamento);
     }
 
+    public Pagamento procurarPagamentoPorIdPedido(Long idPedido) {
+        return pagamentoRepository.findPagamentoByIdPedido(idPedido);
+    }
+
     public void atualizarDadosPagamento(Long idPagamento, Pagamento pagamento){
         pagamentoRepository.updatePagamentoData(idPagamento, pagamento);
     }

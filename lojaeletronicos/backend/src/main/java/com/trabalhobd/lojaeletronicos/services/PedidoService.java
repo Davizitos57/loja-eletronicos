@@ -135,7 +135,7 @@ public class PedidoService {
         pagamento.setMetodo_pagamento(formaPagamento);
         pagamento.setQuantidade_parcelas(qtd_parcelas);
         pagamento.setValor(valorTotal);
-        //setPedidoid
+        pagamento.setIdPedido(pedidoId);
 
         pagamentoRepository.create(pagamento);
 

@@ -56,6 +56,15 @@ public class PagamentoController{
         return ResponseEntity.ok(pagamentos);
     }
 
+    @GetMapping("/pedido")
+    public ResponseEntity<Pagamento> procurarPagamentoPorIdPedido(@RequestParam Long idPedido) {
+        Pagamento pagamento = pagamentoService.procurarPagamentoPorIdPedido(idPedido);
+        if(pagamento == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(pagamento);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Void> atualizarDadosPagamento (@PathVariable Long id, @RequestBody Pagamento pagamento){
         pagamentoService.atualizarDadosPagamento(id, pagamento);
