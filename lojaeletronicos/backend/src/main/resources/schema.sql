@@ -18,18 +18,20 @@ CREATE TABLE usuarios (
     excluido integer DEFAULT 0
 );
 
+CREATE TABLE categorias (
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nome VARCHAR(100) UNIQUE NOT NULL 
+);
+
 CREATE TABLE produtos (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY, 
     nome VARCHAR(100) NOT NULL,
     descricao TEXT,
     preco_unico NUMERIC(10, 2) NOT NULL,
     quantidade_estoque INTEGER NOT NULL, 
-    ativo BOOLEAN DEFAULT TRUE
-);
-
-CREATE TABLE categorias (
-    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    nome VARCHAR(100) UNIQUE NOT NULL 
+    ativo BOOLEAN DEFAULT TRUE,
+    id_categoria INTEGER NOT NULL DEFAULT 1,
+    FOREIGN KEY (id_categoria) REFERENCES categorias(id)
 );
 
 CREATE TABLE enderecos (
@@ -41,14 +43,6 @@ CREATE TABLE enderecos (
     cep VARCHAR(10) NOT NULL,
     id_usuario integer,
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
-);
-
-CREATE TABLE produtos_categorias(
-    produto_id INTEGER,
-    categoria_id INTEGER,
-    FOREIGN KEY(produto_id) REFERENCES produtos(id),
-    FOREIGN KEY(categoria_id) REFERENCES categorias(id),
-    PRIMARY KEY(produto_id, categoria_id)
 );
 
 CREATE TABLE pedidos (
@@ -88,17 +82,19 @@ INSERT INTO enderecos (rua, numero, cidade, estado, cep, id_usuario) VALUES ('Ru
 INSERT INTO enderecos (rua, numero, cidade, estado, cep, id_usuario) VALUES ('Av. Wilson Alvarega', 1, 'Joao Monlevade', 'Minas Gerais', '9658723', 3);
 INSERT INTO enderecos (rua, numero, cidade, estado, cep, id_usuario) VALUES ('Rua Presidente Prudente', 1, 'Governador Valadares', 'Minas Gerais', '7894561', 4);
 
-INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque) VALUES ('Notebook Lenovo IdeaPad 3', 'Processador Intel Core i5, 8GB RAM, SSD 256GB, Tela 15.6"', 2899.00, 20);
-INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque) VALUES ('Console PlayStation 5', 'Console com SSD de altíssima velocidade e controle DualSense', 4599.99, 10);
-INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque) VALUES ('Teclado Mecânico Redragon Kumara', 'Switches Outemu Blue, LED Vermelho, ABNT2', 199.90, 80);
-INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque) VALUES ('Fone de Ouvido Bluetooth JBL Tune 510BT', 'Fone sem fio com até 40h de bateria, som JBL Pure Bass', 249.99, 100);
-INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque) VALUES ('Roteador TP-Link Archer AX10', 'Wi-Fi 6, Dual Band, 1201 Mbps, 4 antenas, MU-MIMO', 349.00, 40);
-
+INSERT INTO categorias (nome) VALUES ('Sem Categoria');
 INSERT INTO categorias (nome) VALUES ('Computadores e Notebooks');
 INSERT INTO categorias (nome) VALUES ('Consoles');
 INSERT INTO categorias (nome) VALUES ('Periféricos e Acessórios');
 INSERT INTO categorias (nome) VALUES ('Wearables');
 INSERT INTO categorias (nome) VALUES ('Eletrodomésticos');
+
+INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque, id_categoria) VALUES ('Notebook Lenovo IdeaPad 3', 'Processador Intel Core i5, 8GB RAM, SSD 256GB, Tela 15.6"', 2899.00, 20, 2);
+INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque, id_categoria) VALUES ('Console PlayStation 5', 'Console com SSD de altíssima velocidade e controle DualSense', 4599.99, 10, 3);
+INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque, id_categoria) VALUES ('Teclado Mecânico Redragon Kumara', 'Switches Outemu Blue, LED Vermelho, ABNT2', 199.90, 80, 4);
+INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque, id_categoria) VALUES ('Fone de Ouvido Bluetooth JBL Tune 510BT', 'Fone sem fio com até 40h de bateria, som JBL Pure Bass', 249.99, 100, 5);
+INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque) VALUES ('Roteador TP-Link Archer AX10', 'Wi-Fi 6, Dual Band, 1201 Mbps, 4 antenas, MU-MIMO', 349.00, 40);
+
 
 INSERT INTO pagamentos (valor, metodo_pagamento, quantidade_parcelas) VALUES (1111.22, 'Cartão de Crédito', 3);
 INSERT INTO pagamentos (valor, metodo_pagamento, quantidade_parcelas) VALUES (100.00, 'Dinheiro', 1);
