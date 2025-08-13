@@ -1,5 +1,4 @@
 DROP TABLE IF EXISTS enderecos;
-DROP TABLE IF EXISTS produtos_categorias;
 DROP TABLE IF EXISTS itens_pedidos;
 DROP TABLE IF EXISTS produtos;
 DROP TABLE IF EXISTS categorias;
