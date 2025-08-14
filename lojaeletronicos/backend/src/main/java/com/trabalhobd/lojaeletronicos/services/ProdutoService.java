@@ -46,6 +46,10 @@ public class ProdutoService {
         produtoRepository.updateProdutosData(idProduto, produto);
     }
 
+    public void atualizarQuantidadeProdutos(Long idProduto, int quantidade){
+        produtoRepository.updateProdutoQuantidade(idProduto, quantidade);
+    }
+
     public void deletarProdutoporId(Long idProduto){
         produtoRepository.deleteById(idProduto);
     }

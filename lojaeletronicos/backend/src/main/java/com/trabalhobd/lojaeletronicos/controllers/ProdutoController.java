@@ -59,6 +59,12 @@ public class ProdutoController {
         return ResponseEntity.ok(produtos);
     }
 
+    @PutMapping("/quantidade/{id}")
+    public ResponseEntity<Void> atualizarQuantidadeProduto(@PathVariable Long id, @RequestParam int quantidade){
+        produtoService.atualizarQuantidadeProdutos(id, quantidade);
+        return ResponseEntity.ok().build();
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Void> atualizarDadosProduto (@PathVariable Long id, @RequestBody Produto produto){
         produtoService.atualizarDadosProdutos(id, produto);

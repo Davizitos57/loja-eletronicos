@@ -72,6 +72,11 @@ public class ProdutoRepository {
         return produtos;
     }
 
+    public void updateProdutoQuantidade(Long idProduto, int quantidade){
+        String sql = "UPDATE produtos SET quantidade_estoque = GREATEST(quantidade_estoque + ?, 0) WHERE id = ?";
+        jdbcTemplate.update(sql, quantidade, idProduto);
+    }
+
     public void updateProdutosData(Long idProduto, Produto produto){
         String sql = "UPDATE produtos SET nome = ?, descricao = ?, preco_unico = ?, quantidade_estoque = ?, id_categoria = ? WHERE id = ?";
         jdbcTemplate.update(sql, produto.getNome(), produto.getDescricao(), produto.getPrecoUnico(), produto.getQuantidadeEstoque(), produto.getIdCategoria(), idProduto);
