@@ -98,11 +98,24 @@ export default function Home() {
     };
 
     const comprarProduto = (produto) => {
-        alert(`Comprando: ${produto.nome}`);
+        console.log('Comprando produto:', produto); // Debug
+        navigate('/resumo-compra', {
+            state: {
+                produto: {
+                    ...produto,
+                    quantidade: produto.quantidade || produto.quantidadeSelecionada || 1
+                }
+            }
+        });
     };
 
     const finalizarCompra = () => {
-        alert('Finalizando compra... 🎉');
+        navigate('/resumo-compra', {
+            state: {
+                carrinho: [...carrinho], 
+                total: calcularTotal()
+            }
+        });
         setCarrinhoAberto(false);
     };
 
@@ -156,6 +169,8 @@ export default function Home() {
         setFiltroAtivo(false);
         console.log('Filtros limpos');
     };
+
+
 
     if (loading) {
         return (

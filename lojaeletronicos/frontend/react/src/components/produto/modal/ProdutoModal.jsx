@@ -12,7 +12,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import ProdutoImagem from './ProdutoImagem.jsx';
 import ProdutoInfo from './ProdutoInfo';
 import ProdutoDescricao from './ProdutoDescricao';
-// import ProdutoEspecificacoes from 'ProdutoEspecificacoes';
 import ProdutoAcoes from './ProdutoAcoes';
 import ProdutoQuantidade from './ProdutoQuantidade';
 import { useEstoque } from '../../../hooks/useEstoque';
@@ -60,21 +59,19 @@ export default function ProdutoModal({
 
     const handleComprar = () => {
         // Confirmar compra (finaliza reserva)
-        const quantidadeComprada = confirmarCompra(produto.id);
+        confirmarCompra(produto.id);
 
-        if (quantidadeComprada > 0) {
-            // Simular compra
-            const dadosCompra = {
-                produto,
-                quantidade: quantidadeComprada,
-                valorTotal: produto.preco * quantidadeComprada,
-                dataCompra: new Date()
-            };
+        // Criar objeto de compra com quantidade selecionada
+        const produtoParaCompra = {
+            ...produto,
+            quantidade: quantidade,
+            quantidadeSelecionada: quantidade
+        };
 
-            onComprar(dadosCompra);
-            setQuantidade(1);
-            onFechar();
-        }
+        // Chamar função de compra do componente pai
+        onComprar(produtoParaCompra);
+        setQuantidade(1);
+        onFechar();
     };
 
     const handleQuantidadeChange = (novaQuantidade) => {
@@ -170,9 +167,6 @@ export default function ProdutoModal({
 
                         {/* Descrição */}
                         <ProdutoDescricao produto={produto} />
-
-                        {/* Especificações */}
-                        {/* <ProdutoEspecificacoes especificacoes={produto.especificacoes} /> */}
 
                         {/* Espaço extra para scroll */}
                         <Box sx={{ height: 20 }} />

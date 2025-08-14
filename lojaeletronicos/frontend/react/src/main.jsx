@@ -6,6 +6,7 @@ import './index.css';
 import Home from './pages/Home.jsx';
 import SignIn from './pages/login/SignIn.jsx';
 import SignUp from './pages/login/SignUp.jsx';
+import ResumoCompra from './pages/compra/ResumoCompra.jsx'; 
 import { CarrinhoProvider } from './context/CarrinhoContext.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 import DashboardLayout from './pages/cadastro/DashboardLayout.jsx';
@@ -31,7 +32,6 @@ import {
 } from './shared-theme/customizations';
 import NotificationsProvider from './hooks/cadastro/useNotifications/NotificationsProvider';
 import DialogsProvider from './hooks/cadastro/useDialogs/DialogsProvider';
-
 
 const themeComponents = {
   ...dataGridCustomizations,
@@ -63,6 +63,10 @@ const router = createBrowserRouter([
       {
         path: "/home",
         element: <Home />,
+      },
+      {
+        path: "/resumo-compra",
+        element: <ResumoCompra />,
       },
       {
         path: "/dashboard",

@@ -18,18 +18,18 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import {useCarrinho} from '../../context/CarrinhoContext';
+import { useCarrinho } from '../../context/CarrinhoContext';
 
 
-export default function CarrinhoDrawer({ 
-    aberto, 
-    onFechar, 
-    carrinho, 
+export default function CarrinhoDrawer({
+    aberto,
+    onFechar,
+    carrinho,
     onRemoverItem,
-    onFinalizarCompra 
+    onFinalizarCompra
 }) {
     const { atualizarQuantidade, calcularTotal } = useCarrinho();
-    
+
     const total = calcularTotal();
 
     const handleQuantidadeChange = (index, novaQuantidade) => {
@@ -78,13 +78,13 @@ export default function CarrinhoDrawer({
                             {carrinho.map((item, index) => {
                                 const quantidade = item.quantidadeSelecionada || 1;
                                 const subtotal = item.preco * quantidade;
-                                
+
                                 return (
                                     <ListItem key={index} sx={{ px: 0, py: 1 }}>
-                                        <Paper 
-                                            elevation={2} 
-                                            sx={{ 
-                                                width: '100%', 
+                                        <Paper
+                                            elevation={2}
+                                            sx={{
+                                                width: '100%',
                                                 p: 2,
                                                 display: 'flex',
                                                 flexDirection: 'column',
@@ -102,17 +102,17 @@ export default function CarrinhoDrawer({
                                             </Box>
 
                                             {/* Controles de quantidade */}
-                                            <Box sx={{ 
-                                                display: 'flex', 
-                                                alignItems: 'center', 
-                                                justifyContent: 'space-between' 
+                                            <Box sx={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'space-between'
                                             }}>
                                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                    <IconButton 
+                                                    <IconButton
                                                         size="small"
                                                         onClick={() => handleQuantidadeChange(index, quantidade - 1)}
                                                         disabled={quantidade <= 1}
-                                                        sx={{ 
+                                                        sx={{
                                                             bgcolor: 'grey.200',
                                                             color: 'white',
                                                             '&:hover': { bgcolor: 'grey.300' },
@@ -130,17 +130,17 @@ export default function CarrinhoDrawer({
                                                         }}
                                                         type="number"
                                                         size="small"
-                                                        inputProps={{ 
+                                                        inputProps={{
                                                             min: 1,
                                                             style: { textAlign: 'center', width: '50px' }
                                                         }}
                                                         sx={{ width: '70px' }}
                                                     />
 
-                                                    <IconButton 
+                                                    <IconButton
                                                         size="small"
                                                         onClick={() => handleQuantidadeChange(index, quantidade + 1)}
-                                                        sx={{ 
+                                                        sx={{
                                                             bgcolor: 'grey.200',
                                                             color: 'white',
                                                             '&:hover': { bgcolor: 'grey.300' }
@@ -150,7 +150,7 @@ export default function CarrinhoDrawer({
                                                     </IconButton>
                                                 </Box>
 
-                                                <IconButton 
+                                                <IconButton
                                                     onClick={() => onRemoverItem(index)}
                                                     color="error"
                                                     size="small"
@@ -160,8 +160,8 @@ export default function CarrinhoDrawer({
                                             </Box>
 
                                             {/* Subtotal */}
-                                            <Box sx={{ 
-                                                display: 'flex', 
+                                            <Box sx={{
+                                                display: 'flex',
                                                 justifyContent: 'space-between',
                                                 alignItems: 'center',
                                                 pt: 1,
@@ -170,7 +170,7 @@ export default function CarrinhoDrawer({
                                                 <Typography variant="body2" color="text.secondary">
                                                     {quantidade} x R$ {item.preco?.toFixed(2)}
                                                 </Typography>
-                                                <Chip 
+                                                <Chip
                                                     label={`R$ ${subtotal.toFixed(2)}`}
                                                     color="primary"
                                                     size="small"
@@ -186,10 +186,10 @@ export default function CarrinhoDrawer({
                         <Divider sx={{ my: 2 }} />
 
                         {/* Total */}
-                        <Paper 
+                        <Paper
                             elevation={3}
-                            sx={{ 
-                                p: 2, 
+                            sx={{
+                                p: 2,
                                 bgcolor: 'primary.light',
                                 color: 'primary.contrastText',
                                 textAlign: 'center',
@@ -206,8 +206,8 @@ export default function CarrinhoDrawer({
                             variant="contained"
                             fullWidth
                             size="large"
-                            onClick={onFinalizarCompra}
-                            sx={{ 
+                            onClick={onFinalizarCompra} // Esta função vem do Home.jsx
+                            sx={{
                                 py: 1.5,
                                 fontWeight: 'bold',
                                 fontSize: '1.1rem',

@@ -53,10 +53,11 @@ export function CarrinhoProvider({ children }) {
     );
   };
 
-  const calcularTotal = () => {
+const calcularTotal = () => {
     return carrinho.reduce((total, item) => {
-      const quantidade = item.quantidadeSelecionada || 1;
-      return total + (item.preco * quantidade);
+      const quantidade = item.quantidadeSelecionada || item.quantidade || 1;
+      const preco = item.preco || 0;
+      return total + (preco * quantidade);
     }, 0);
   };
 
