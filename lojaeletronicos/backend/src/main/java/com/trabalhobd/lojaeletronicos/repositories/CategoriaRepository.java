@@ -45,10 +45,10 @@ public class CategoriaRepository{
     }
 
     public Categoria findByNome(String nome){
-        String sql = "SELECT * FROM categorias WHERE nome = ?";
+        String sql = "SELECT * FROM categorias WHERE nome ILIKE ?";
         Categoria categoria;
         try{
-            categoria = jdbcTemplate.queryForObject(sql, catRowMapper, nome);
+            categoria = jdbcTemplate.queryForObject(sql, catRowMapper, nome + "%");
         }
         catch (EmptyResultDataAccessException e) {
             return null;
@@ -60,7 +60,5 @@ public class CategoriaRepository{
         String sql = "UPDATE categorias SET nome = ? WHERE id = ?";
         jdbcTemplate.update(sql, categoria.getNome(), idCategoria);
     }
-
-
 }
 

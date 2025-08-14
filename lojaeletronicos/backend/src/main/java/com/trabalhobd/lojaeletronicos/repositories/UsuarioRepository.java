@@ -92,10 +92,10 @@ public class UsuarioRepository {
     }
 
     public Usuario encontrarUsuarioPorEmail(String email) {
-        String sql = "SELECT * FROM usuarios WHERE email = ?";
+        String sql = "SELECT * FROM usuarios WHERE email ILIKE ?";
         Usuario usuario;
         try {
-            usuario = jdbcTemplate.queryForObject(sql, userRowMapper, email);
+            usuario = jdbcTemplate.queryForObject(sql, userRowMapper, email + "%");
         } catch (EmptyResultDataAccessException e) {
             return null;
         }

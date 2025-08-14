@@ -42,7 +42,6 @@ public class ProdutoService {
         return produtoRepository.findByCategoria(id);
     }
 
-
     public void atualizarDadosProdutos(Long idProduto, Produto produto){
         produtoRepository.updateProdutosData(idProduto, produto);
     }
