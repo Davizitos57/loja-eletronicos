@@ -37,8 +37,10 @@ CREATE TABLE enderecos (
     id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     rua VARCHAR(100) NOT NULL,
     numero INTEGER,
+    bairro VARCHAR(50) NOT NULL,
     cidade VARCHAR(50) NOT NULL,
     estado VARCHAR(30) NOT NULL,
+    complemento VARCHAR(20) NOT NULL,
     cep VARCHAR(10) NOT NULL,
     id_usuario integer,
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
@@ -77,11 +79,11 @@ INSERT INTO usuarios (nome, email, cpf, telefone, senha, tipo_usuario, excluido)
 INSERT INTO usuarios (nome, email, cpf, telefone, senha, tipo_usuario, excluido) VALUES ('Bob', 'bob@gmail.com', '444444', '319959125', '1234', 'BASIC', 0) ;
 INSERT INTO usuarios (nome, email, cpf, telefone, senha, tipo_usuario, excluido) VALUES ('Alex', 'alex@gmail.com', '555555', '319959125', '1234', 'BASIC', 0);
 
-INSERT INTO enderecos (rua, numero, cidade, estado, cep, id_usuario) VALUES ('Av. Getulio Vargas', 100, 'Betim', 'Minas Gerais', '3500000', 1);
-INSERT INTO enderecos (rua, numero, cidade, estado, cep, id_usuario) VALUES ('Av. Brasil', 1, 'Rio de Janeiro', 'Rio de Janeiro', '6200065', 1);
-INSERT INTO enderecos (rua, numero, cidade, estado, cep, id_usuario) VALUES ('Rua Nova York', 25, 'Joao Monlevade', 'Minas Gerais', '5693254', 2);
-INSERT INTO enderecos (rua, numero, cidade, estado, cep, id_usuario) VALUES ('Av. Wilson Alvarega', 1, 'Joao Monlevade', 'Minas Gerais', '9658723', 3);
-INSERT INTO enderecos (rua, numero, cidade, estado, cep, id_usuario) VALUES ('Rua Presidente Prudente', 1, 'Governador Valadares', 'Minas Gerais', '7894561', 4);
+INSERT INTO enderecos (rua, numero, bairro, cidade, estado, complemento, cep, id_usuario) VALUES ('Av. Getulio Vargas', 100, 'Bela Onda', 'Betim', 'Minas Gerais', 'Casa', '3500000', 1);
+INSERT INTO enderecos (rua, numero, bairro, cidade, estado, complemento, cep, id_usuario) VALUES ('Av. Brasil', 1, 'Lago Azul', 'Rio de Janeiro', 'Rio de Janeiro', 'Casa', '6200065', 1);
+INSERT INTO enderecos (rua, numero, bairro, cidade, estado, complemento, cep, id_usuario) VALUES ('Rua Nova York', 25, 'Cruzeiro Celeste', 'Joao Monlevade', 'Minas Gerais', 'Apartamento', '5693254', 2);
+INSERT INTO enderecos (rua, numero, bairro, cidade, estado, complemento, cep, id_usuario) VALUES ('Av. Wilson Alvarega', 1, 'Vila Tanque', 'Joao Monlevade', 'Minas Gerais', 'Casa', '9658723', 3);
+INSERT INTO enderecos (rua, numero, bairro, cidade, estado, complemento, cep, id_usuario) VALUES ('Rua Presidente Prudente', 1, 'Pingo Dourado', 'Governador Valadares', 'Minas Gerais', 'Apartamento', '7894561', 4);
 
 INSERT INTO categorias (nome) VALUES ('Sem Categoria');
 INSERT INTO categorias (nome) VALUES ('Computadores e Notebooks');
