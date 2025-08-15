@@ -1,9 +1,9 @@
-DROP TABLE IF EXISTS enderecos;
+DROP TABLE IF EXISTS pagamentos;
 DROP TABLE IF EXISTS itens_pedidos;
+DROP TABLE IF EXISTS pedidos;
+DROP TABLE IF EXISTS enderecos;
 DROP TABLE IF EXISTS produtos;
 DROP TABLE IF EXISTS categorias;
-DROP TABLE IF EXISTS pagamentos;
-DROP TABLE IF EXISTS pedidos;
 DROP TABLE IF EXISTS usuarios;
 
 CREATE TABLE usuarios (
