@@ -25,7 +25,9 @@ import {
   Payment as PaymentIcon,
   CheckCircle as CheckCircleIcon
 } from '@mui/icons-material';
+import PriceChangeIcon from '@mui/icons-material/PriceChange';
 import { useCarrinho } from '../../context/CarrinhoContext.jsx';
+import SelecionarPagamento from './SelecionarPagamento.jsx';
 
 export default function ResumoCompra() {
   const navigate = useNavigate();
@@ -33,6 +35,8 @@ export default function ResumoCompra() {
   const { limparCarrinho } = useCarrinho();
   const [processandoPagamento, setProcessandoPagamento] = useState(false);
   const [pagamentoSucesso, setPagamentoSucesso] = useState(false);
+  const [pagamentoAberto, setPagamentoAberto] = useState(false);
+  const [dadosPagamento, setDadosPagamento] = useState(null);
   
   // Pega os dados vindos da navegação
   const produtoCompra = location.state?.produto;
@@ -62,7 +66,21 @@ export default function ResumoCompra() {
     navigate('/home');
   };
 
-  const processarPagamento = async () => {
+  const abrirSelecaoPagamento = () => {
+    setPagamentoAberto(true);
+  };
+
+  const fecharSelecaoPagamento = () => {
+    setPagamentoAberto(false);
+  };
+
+  const confirmarPagamento = (dadosPagamento) => {
+    setDadosPagamento(dadosPagamento);
+    setPagamentoAberto(false);
+    processarPagamento(dadosPagamento);
+  };
+
+  const processarPagamento = async (dados) => {
     setProcessandoPagamento(true);
     
     // Simula processamento do pagamento
@@ -79,7 +97,17 @@ export default function ResumoCompra() {
 
   const finalizarCompra = () => {
     setPagamentoSucesso(false);
+    setDadosPagamento(null);
     navigate('/home');
+  };
+
+  const obterTextoFormaPagamento = (forma) => {
+    switch (forma) {
+      case 'pix': return 'PIX';
+      case 'boleto': return 'Boleto Bancário';
+      case 'cartao': return 'Cartão de Crédito';
+      default: return forma;
+    }
   };
 
   // Debug - vamos ver o que está chegando
@@ -203,18 +231,25 @@ export default function ResumoCompra() {
         </CardContent>
       </Card>
 
-      {/* Botão de pagamento */}
+      {/* Botão de escolher pagamento */}
       <Button
         variant="contained"
         size="large"
         fullWidth
-        startIcon={<PaymentIcon />}
-        onClick={processarPagamento}
-        disabled={processandoPagamento}
-        sx={{ py: 2 }}
+        startIcon={<PriceChangeIcon sx={{ height: 35 }} />}
+        onClick={abrirSelecaoPagamento}
+        sx={{ py: 2, fontSize: '1.2rem', fontWeight: 'bold' }}
       >
-        {processandoPagamento ? 'Processando...' : 'Efetuar Pagamento'}
+        Escolher Forma de Pagamento
       </Button>
+
+      {/* Modal de seleção de pagamento */}
+      <SelecionarPagamento
+        aberto={pagamentoAberto}
+        onFechar={fecharSelecaoPagamento}
+        total={total}
+        onConfirmarPagamento={confirmarPagamento}
+      />
 
       {/* Dialog de processamento */}
       <Dialog open={processandoPagamento}>
@@ -223,9 +258,21 @@ export default function ResumoCompra() {
           <Typography variant="h6">
             Processando pagamento...
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
             Aguarde enquanto processamos sua compra
           </Typography>
+          {dadosPagamento && (
+            <Box sx={{ mt: 2, p: 2, bgcolor: 'grey.100', borderRadius: 2 }}>
+              <Typography variant="body2" color="text.secondary">
+                Forma de pagamento: {obterTextoFormaPagamento(dadosPagamento.forma)}
+              </Typography>
+              {dadosPagamento.forma === 'cartao' && dadosPagamento.parcelas > 1 && (
+                <Typography variant="body2" color="text.secondary">
+                  Parcelamento: {dadosPagamento.parcelas}x
+                </Typography>
+              )}
+            </Box>
+          )}
         </DialogContent>
       </Dialog>
 
@@ -241,9 +288,32 @@ export default function ResumoCompra() {
           <Typography variant="body1" color="text.secondary">
             Sua compra foi processada e você receberá um e-mail de confirmação em breve.
           </Typography>
-          <Typography variant="h6" color="primary" sx={{ mt: 2 }}>
-            Total pago: R$ {total.toFixed(2)}
-          </Typography>
+          
+          {dadosPagamento && (
+            <Card sx={{ mt: 2, bgcolor: 'success.50' }}>
+              <CardContent sx={{ py: 2 }}>
+                <Typography variant="h6" color="success.main" gutterBottom>
+                  Detalhes do Pagamento
+                </Typography>
+                <Typography variant="body2">
+                  Forma: {obterTextoFormaPagamento(dadosPagamento.forma)}
+                </Typography>
+                {dadosPagamento.forma === 'cartao' && dadosPagamento.parcelas > 1 && (
+                  <Typography variant="body2">
+                    Parcelamento: {dadosPagamento.parcelas}x de R$ {(dadosPagamento.valorFinal / dadosPagamento.parcelas).toFixed(2)}
+                  </Typography>
+                )}
+                {dadosPagamento.juros > 0 && (
+                  <Typography variant="body2" color="warning.main">
+                    Juros aplicados: {dadosPagamento.juros}%
+                  </Typography>
+                )}
+                <Typography variant="h6" color="primary" sx={{ mt: 1 }}>
+                  Total pago: R$ {dadosPagamento.valorFinal.toFixed(2)}
+                </Typography>
+              </CardContent>
+            </Card>
+          )}
         </DialogContent>
         <DialogActions sx={{ justifyContent: 'center', pb: 3 }}>
           <Button
