@@ -67,4 +67,9 @@ public class EnderecoRepository {
         String sql = "DELETE from enderecos where id = ?";
         jdbcTemplate.update(sql, id);
     }
+
+    public void deleteByUsuarioId(Long idUsuario) {
+        String sql = "DELETE FROM enderecos WHERE id_usuario = ?";
+        jdbcTemplate.update(sql, idUsuario);
+    }
 }

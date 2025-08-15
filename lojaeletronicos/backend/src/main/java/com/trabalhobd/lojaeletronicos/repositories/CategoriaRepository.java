@@ -5,10 +5,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.jdbc.core.RowMapper;
-
 import com.trabalhobd.lojaeletronicos.models.Categoria;
-
 import lombok.AllArgsConstructor;
+import java.util.List;
 
 @Repository
 @AllArgsConstructor
@@ -19,16 +18,19 @@ public class CategoriaRepository{
 
     private final RowMapper<Categoria> catRowMapper = (rs, rowNum) -> {
         Categoria categoria = new Categoria();
-
         categoria.setIdCategoria(rs.getLong("id"));
         categoria.setNome(rs.getString("nome"));
-
         return categoria;
     };
 
     public void create (Categoria categoria){
         String sql = "INSERT INTO categorias (nome) VALUES (?)";
         jdbcTemplate.update(sql, categoria.getNome());
+    }
+
+    public List<Categoria> findAll() {
+        String sql = "SELECT * FROM categorias";
+        return jdbcTemplate.query(sql, catRowMapper);
     }
 
     public Categoria findById(Long idCategoria){
@@ -40,7 +42,6 @@ public class CategoriaRepository{
         catch (EmptyResultDataAccessException e){
             return null;
         }
-
         return categoria;
     }
 
@@ -61,4 +62,3 @@ public class CategoriaRepository{
         jdbcTemplate.update(sql, categoria.getNome(), idCategoria);
     }
 }
-
