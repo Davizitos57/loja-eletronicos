@@ -1,32 +1,31 @@
 import { createContext, useState, useContext, useEffect } from 'react';
+import api from '../services/api';
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
     const [usuario, setUsuario] = useState(null);
     const [loading, setLoading] = useState(true);
-
-    // Simular login (substituir pela API real)
+    
     const login = async (email, senha) => {
+        setLoading(true);
         try {
-            // Chamada da API para verificar se é um administrador
-            // const response = await api.post('/auth/login', { email, senha });
-            
-            // Mock para testar modalidade admin
-            const mockUser = {
-                id: 1,
-                nome: 'Admin User',
-                email: email,
-                role: email === 'admin@tecnofacil.com' ? 'admin' : 'user', // Mock validation
-                avatar: null
+            const response = await api.post('/usuarios/login', { email, senha });
+            const userData = response.data;
+
+            const userWithRole = {
+                ...userData,
+                role: userData.tipoUsuario === 'ADMIN' ? 'admin' : 'user'
             };
-            
-            setUsuario(mockUser);
-            localStorage.setItem('usuario', JSON.stringify(mockUser));
-            return { success: true, user: mockUser };
+
+            setUsuario(userWithRole);
+            localStorage.setItem('usuario', JSON.stringify(userWithRole));
+            setLoading(false);
+            return { success: true, user: userWithRole };
         } catch (error) {
             console.error('Erro no login:', error);
-            return { success: false, error: 'Credenciais inválidas' };
+            setLoading(false);
+            return { success: false, error: error.response?.data?.message || 'Credenciais inválidas' };
         }
     };
 
@@ -43,8 +42,7 @@ export function AuthProvider({ children }) {
         return !!usuario;
     };
 
-     // Verificar se há usuário logado no localStorage
-    useEffect(() => {
+     useEffect(() => {
         const savedUser = localStorage.getItem('usuario');
         if (savedUser) {
             try {
@@ -57,7 +55,6 @@ export function AuthProvider({ children }) {
         setLoading(false);
     }, []);
 
-    // Para teste - simula um usuário admin logado
     useEffect(() => {
         if (!usuario && !loading) {
             const mockAdminUser = {

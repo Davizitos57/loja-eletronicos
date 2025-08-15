@@ -1,5 +1,7 @@
 import * as React from 'react';
 import ColorModeSelect from '../../shared-theme/ColorModeSelect.jsx';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
@@ -61,10 +63,9 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignIn(props) {
-  const [emailError, setEmailError] = React.useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
-  const [passwordError, setPasswordError] = React.useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  const [error, setError] = React.useState('');
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -75,140 +76,94 @@ export default function SignIn(props) {
     setOpen(false);
   };
 
-  const handleSubmit = (event) => {
-    if (emailError || passwordError) {
-      event.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError('');
+    const data = new FormData(event.currentTarget);
+    const email = data.get('email');
+    const password = data.get('password');
+
+    if (!email || !password) {
+      setError('Email e senha são obrigatórios.');
       return;
     }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
 
-  const validateInputs = () => {
-    const email = document.getElementById('email');
-    const password = document.getElementById('password');
+    const result = await login(email, password);
 
-    let isValid = true;
-
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-      setEmailError(true);
-      setEmailErrorMessage('Digite um endereço de email válido.');
-      isValid = false;
+    if (result.success) {
+      navigate('/home');
     } else {
-      setEmailError(false);
-      setEmailErrorMessage('');
+      setError(result.error || 'Falha no login. Verifique suas credenciais.');
     }
-
-    if (!password.value || password.value.length < 6) {
-      setPasswordError(true);
-      setPasswordErrorMessage('A senha deve ter ao menos 6 caracteres.');
-      isValid = false;
-    } else {
-      setPasswordError(false);
-      setPasswordErrorMessage('');
-    }
-
-    return isValid;
   };
 
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
       <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', mb: 2 }}>
-        <Link
-          component={RouterLink}
-          to="/home"
-          variant="body2"
-          sx={{ fontSize: '40px', mr: 4 }}
-        >
+        <Link 
+        component={RouterLink} 
+        to="/home" 
+        variant="body2" 
+        sx={{ fontSize: '40px', 
+        mr: 4 }}>
           Home
         </Link>
-        <Link
-          component={RouterLink}
-          to="/produto"
-          variant="body2"
-          sx={{ fontSize: '40px' }}
-        >
+        <Link 
+        component={RouterLink} 
+        to="/produto" 
+        variant="body2" 
+        sx={{ fontSize: '40px' }}>
           Cadastro de Produtos
         </Link>
       </Box>
       <SignInContainer direction="column" justifyContent="space-between">
         <Card variant="outlined">
-          <Typography
-            component="h1"
-            variant="h4"
-            sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)', display: 'flex', justifyContent: 'center' }}
-          >
+          <Typography 
+          component="h1" 
+          variant="h4" 
+          sx={{ width: '100%', 
+          fontSize: 'clamp(2rem, 10vw, 2.15rem)', 
+          display: 'flex', 
+          justifyContent: 'center' }}>
             Entre
           </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              width: '100%',
-              gap: 2,
-            }}
-          >
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ display: 'flex', flexDirection: 'column', width: '100%', ap: 2 }}>
+            {error && <Typography color="error" align="center">{error}</Typography>}
             <FormControl>
               <FormLabel htmlFor="email">Email</FormLabel>
-              <TextField
-                error={emailError}
-                helperText={emailErrorMessage}
-                id="email"
-                type="email"
-                name="email"
-                placeholder="seu@email.com"
-                autoComplete="email"
-                autoFocus
-                required
-                fullWidth
-                variant="outlined"
-                color={emailError ? 'error' : 'primary'}
-              />
+              <TextField 
+              id="email" 
+              type="email" 
+              name="email" 
+              placeholder="seu@email.com" 
+              autoComplete="email" 
+              autoFocus required fullWidth />
             </FormControl>
             <FormControl>
               <FormLabel htmlFor="password">Senha</FormLabel>
-              <TextField
-                error={passwordError}
-                helperText={passwordErrorMessage}
-                name="password"
-                placeholder="••••••"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                autoFocus
-                required
-                fullWidth
-                variant="outlined"
-                color={passwordError ? 'error' : 'primary'}
-              />
+              <TextField 
+              name="password"
+              placeholder="••••••" 
+              type="password"
+              id="password" 
+              autoComplete="current-password" 
+              required fullWidth />
             </FormControl>
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Lembre-se"
-            />
+            <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Lembre-se" />
             <ForgotPassword open={open} handleClose={handleClose} />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              onClick={validateInputs}
-            >
+            <Button 
+            type="submit" 
+            fullWidth 
+            variant="contained">
               Entrar
             </Button>
-            <Link
-              component="button"
-              type="button"
-              onClick={handleClickOpen}
-              variant="body2"
-              sx={{ alignSelf: 'center' }}
-            >
+            <Link 
+            component="button" 
+            type="button" 
+            onClick={handleClickOpen} 
+            variant="body2" 
+            sx={{ alignSelf: 'center' }}>
               Esqueceu sua senha?
             </Link>
           </Box>
@@ -216,12 +171,11 @@ export default function SignIn(props) {
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Typography sx={{ textAlign: 'center' }}>
               Não tem uma conta?{' '}
-              <Link
-                component={RouterLink}
-                to="/signup"
-                variant="body2"
-                sx={{ alignSelf: 'center' }}
-              >
+              <Link 
+              component={RouterLink} 
+              to="/signup" 
+              variant="body2" 
+              sx={{ alignSelf: 'center' }}>
                 Inscreva-se
               </Link>
             </Typography>

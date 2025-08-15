@@ -6,11 +6,20 @@ import './index.css';
 import Home from './pages/Home.jsx';
 import SignIn from './pages/login/SignIn.jsx';
 import SignUp from './pages/login/SignUp.jsx';
-import ResumoCompra from './pages/compra/ResumoCompra.jsx'; 
-import { CarrinhoProvider } from './context/CarrinhoContext.jsx';
-import { AuthProvider } from './context/AuthContext.jsx';
+import ResumoCompra from './pages/compra/ResumoCompra.jsx';
 import DashboardLayout from './pages/cadastro/DashboardLayout.jsx';
 import Dashboard from './pages/Dashboard.jsx';
+import { CarrinhoProvider } from './context/CarrinhoContext.jsx';
+import { AuthProvider } from './context/AuthContext.jsx';
+import NotificationsProvider from './hooks/cadastro/useNotifications/NotificationsProvider';
+import DialogsProvider from './hooks/cadastro/useDialogs/DialogsProvider';
+import AppTheme from './shared-theme/AppTheme';
+import {
+  dataGridCustomizations,
+  datePickersCustomizations,
+  sidebarCustomizations,
+  formInputCustomizations,
+} from './shared-theme/customizations';
 import ProdutoList from './components/produto/ProdutoList';
 import ProdutoShow from './components/produto/ProdutoShow';
 import ProdutoCreate from './components/produto/ProdutoCreate';
@@ -23,15 +32,6 @@ import ClienteList from './components/cliente/ClienteList.jsx';
 import ClienteShow from './components/cliente/ClienteShow.jsx';
 import ClienteCreate from './components/cliente/ClienteCreate.jsx';
 import ClienteEdit from './components/cliente/ClienteEdit.jsx';
-import AppTheme from './shared-theme/AppTheme';
-import {
-  dataGridCustomizations,
-  datePickersCustomizations,
-  sidebarCustomizations,
-  formInputCustomizations,
-} from './shared-theme/customizations';
-import NotificationsProvider from './hooks/cadastro/useNotifications/NotificationsProvider';
-import DialogsProvider from './hooks/cadastro/useDialogs/DialogsProvider';
 
 const themeComponents = {
   ...dataGridCustomizations,
@@ -40,7 +40,7 @@ const themeComponents = {
   ...formInputCustomizations,
 };
 
-const AppLayout = () => (
+const RootLayout = () => (
   <AuthProvider>
     <CarrinhoProvider>
       <Outlet />
@@ -50,16 +50,16 @@ const AppLayout = () => (
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <SignIn />,
-  },
-  {
-    path: "/signup",
-    element: <SignUp />,
-  },
-  {
-    element: <AppLayout />,
+    element: <RootLayout />, 
     children: [
+      {
+        path: "/",
+        element: <SignIn />,
+      },
+      {
+        path: "/signup",
+        element: <SignUp />,
+      },
       {
         path: "/home",
         element: <Home />,
@@ -76,66 +76,30 @@ const router = createBrowserRouter([
         path: "/produto",
         Component: DashboardLayout,
         children: [
-          {
-            index: true,
-            Component: ProdutoList,
-          },
-          {
-            path: ':produtoId',
-            Component: ProdutoShow,
-          },
-          {
-            path: 'new',
-            Component: ProdutoCreate,
-          },
-          {
-            path: ':produtoId/edit',
-            Component: ProdutoEdit,
-          },
+          { index: true, Component: ProdutoList },
+          { path: ':produtoId', Component: ProdutoShow },
+          { path: 'new', Component: ProdutoCreate },
+          { path: ':produtoId/edit', Component: ProdutoEdit },
         ],
       },
       {
         path: "/administrador",
         Component: DashboardLayout,
         children: [
-          {
-            index: true,
-            Component: AdminList,
-          },
-          {
-            path: ':adminId',
-            Component: AdminShow,
-          },
-          {
-            path: 'new',
-            Component: AdminCreate,
-          },
-          {
-            path: ':adminId/edit',
-            Component: AdminEdit,
-          },
+          { index: true, Component: AdminList },
+          { path: ':adminId', Component: AdminShow },
+          { path: 'new', Component: AdminCreate },
+          { path: ':adminId/edit', Component: AdminEdit },
         ],
       },
       {
         path: "/cliente",
         Component: DashboardLayout,
         children: [
-          {
-            index: true,
-            Component: ClienteList,
-          },
-          {
-            path: ':clienteId',
-            Component: ClienteShow,
-          },
-          {
-            path: 'new',
-            Component: ClienteCreate,
-          },
-          {
-            path: ':clienteId/edit',
-            Component: ClienteEdit,
-          },
+          { index: true, Component: ClienteList },
+          { path: ':clienteId', Component: ClienteShow },
+          { path: 'new', Component: ClienteCreate },
+          { path: ':clienteId/edit', Component: ClienteEdit },
         ],
       },
     ]
