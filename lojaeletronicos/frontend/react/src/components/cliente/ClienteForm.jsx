@@ -154,6 +154,28 @@ function ClienteForm(props) {
               fullWidth
             />
           </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              value={formValues.bairro ?? ''}
+              onChange={handleTextFieldChange}
+              name="bairro"
+              label="Bairro"
+              error={!!formErrors.bairro}
+              helperText={formErrors.bairro ?? ' '}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              value={formValues.complemento ?? ''}
+              onChange={handleTextFieldChange}
+              name="complemento"
+              label="Complemento"
+              error={!!formErrors.complemento}
+              helperText={formErrors.complemento ?? ' '}
+              fullWidth
+            />
+          </Grid>
           <Grid item xs={12} sm={2}>
             <TextField
               type="number"

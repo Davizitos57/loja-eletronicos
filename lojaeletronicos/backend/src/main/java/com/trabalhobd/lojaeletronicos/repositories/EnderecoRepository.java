@@ -62,7 +62,7 @@ public class EnderecoRepository {
 
     public void updateEnderecoData(Long idEndereco, Endereco endereco) {
         String sql = "UPDATE enderecos SET id_usuario = ?, rua = ?, numero = ?, bairro = ? cidade =?, estado=?, complemento=?, cep =?  WHERE id = ?";
-        jdbcTemplate.update(sql, endereco.getIdUsuario(), endereco.getRua(), endereco.getNumero(), endereco.getBairro(), endereco.getCidade(), endereco.getEstado(), endereco.getBairro(), endereco.getCep(), idEndereco);
+        jdbcTemplate.update(sql, endereco.getIdUsuario(), endereco.getRua(), endereco.getNumero(), endereco.getBairro(), endereco.getCidade(), endereco.getEstado(), endereco.getBairro(), endereco.getComplemento(), endereco.getCep(), idEndereco);
     }
 
     public void deleteById(Long id) {

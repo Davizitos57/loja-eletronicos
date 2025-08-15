@@ -10,7 +10,7 @@ import PageContainer from '../../pages/cadastro/PageContainer';
 
 const INITIAL_FORM_VALUES = {
   nome: '', email: '', cpf: '', telefone: '', senha: '',
-  rua: '', numero: '', cidade: '', estado: '', cep: '',
+  rua: '', numero: '', cidade: '', estado: '', bairro: '', complemento: '', cep: '',
 };
 
 export default function ClienteCreate() {
@@ -32,7 +32,7 @@ export default function ClienteCreate() {
   );
 
   const handleFormSubmit = React.useCallback(async (formValues) => {
-    const { issues } = validateCliente(formValues, false); // isEditing = false
+    const { issues } = validateCliente(formValues, false);
     if (issues.length > 0) {
       const newErrors = issues.reduce((acc, issue) => {
         acc[issue.path[0]] = issue.message;

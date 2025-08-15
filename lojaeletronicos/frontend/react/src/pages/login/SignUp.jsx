@@ -60,7 +60,7 @@ export default function SignUp(props) {
     const navigate = useNavigate();
     const [formValues, setFormValues] = React.useState({
         nome: '', email: '', cpf: '', telefone: '', senha: '',
-        cep: '', estado: '', cidade: '', /*bairro: '',*/ rua: '', numero: '', /*complemento: ''*/
+        cep: '', estado: '', cidade: '', bairro: '', rua: '', numero: '', complemento: ''
     });
     const [errors, setErrors] = React.useState({});
     const [apiError, setApiError] = React.useState('');
@@ -75,14 +75,13 @@ export default function SignUp(props) {
         const newErrors = {};
         if (!formValues.nome) newErrors.nome = 'Nome é obrigatório.';
         if (!formValues.email || !/\S+@\S+\.\S+/.test(formValues.email)) newErrors.email = 'Digite um e-mail válido.';
-        //if (!validarCPF(formValues.cpf)) newErrors.cpf = 'CPF inválido.';
         if (!formValues.cpf) newErrors.cpf = 'CPF é obrigatório.';
         if (!formValues.telefone) newErrors.telefone = 'Telefone é obrigatório.';
         if (!formValues.senha || formValues.senha.length < 4) newErrors.senha = 'A senha deve ter ao menos 4 caracteres.';
         if (!formValues.cep) newErrors.cep = 'CEP é obrigatório.';
         if (!formValues.estado) newErrors.estado = 'Estado é obrigatório.';
         if (!formValues.cidade) newErrors.cidade = 'Cidade é obrigatória.';
-        //if (!formValues.bairro) newErrors.bairro = 'Bairro é obrigatório.';
+        if (!formValues.bairro) newErrors.bairro = 'Bairro é obrigatório.';
         if (!formValues.rua) newErrors.rua = 'Rua é obrigatória.';
         if (!formValues.numero) newErrors.numero = 'Número é obrigatório.';
 
@@ -123,58 +122,51 @@ export default function SignUp(props) {
                 <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
                     {apiError && <Alert severity="error" sx={{ mb: 2 }}>{apiError}</Alert>}
                     <Grid container spacing={3}>
-    {/* Coluna da Esquerda: Dados Pessoais e Contato */}
-    <Grid item xs={12} md={6}>
-        <Stack spacing={2.5}>
-            {/* --- Dados Pessoais e Contato --- */}
-            <Box>
-                <Typography variant="h6" gutterBottom>Dados Pessoais e Contato</Typography>
-                <FormControl fullWidth>
-                    <FormLabel htmlFor="nome">Nome completo</FormLabel>
-                    <TextField id="nome" name="nome" value={formValues.nome} onChange={handleInputChange} required fullWidth placeholder="Seu nome completo" error={!!errors.nome} helperText={errors.nome} />
-                </FormControl>
-                <FormControl fullWidth sx={{ mt: 2 }}>
-                    <FormLabel htmlFor="cpf">CPF</FormLabel>
-                    <TextField id="cpf" name="cpf" value={formValues.cpf} onChange={handleInputChange} required fullWidth placeholder="000.000.000-00" error={!!errors.cpf} helperText={errors.cpf} />
-                </FormControl>
-                <FormControl fullWidth sx={{ mt: 2 }}>
-                    <FormLabel htmlFor="email">Email</FormLabel>
-                    <TextField id="email" name="email" value={formValues.email} onChange={handleInputChange} required fullWidth placeholder="seu@email.com" autoComplete="email" error={!!errors.email} helperText={errors.email} />
-                </FormControl>
-                <FormControl fullWidth sx={{ mt: 2 }}>
-                    <FormLabel htmlFor="telefone">Telefone</FormLabel>
-                    <TextField id="telefone" name="telefone" value={formValues.telefone} onChange={handleInputChange} required fullWidth placeholder="(00) 00000-0000" type="tel" error={!!errors.telefone} helperText={errors.telefone} />
-                </FormControl>
-            </Box>
-        </Stack>
-    </Grid>
-
-    {/* Coluna da Direita: Endereço */}
-    <Grid item xs={12} md={6}>
-        <Stack spacing={2}>
-             {/* --- Endereço --- */}
-             <Box>
-                <Typography variant="h6" gutterBottom>Endereço</Typography>
-                <TextField id="cep" name="cep" value={formValues.cep} onChange={handleInputChange} required fullWidth placeholder="Seu CEP" error={!!errors.cep} helperText={errors.cep} sx={{ mb: 2 }} />
-                <TextField id="estado" name="estado" value={formValues.estado} onChange={handleInputChange} required fullWidth placeholder="Seu estado" error={!!errors.estado} helperText={errors.estado} sx={{ mb: 2 }} />
-                <TextField id="cidade" name="cidade" value={formValues.cidade} onChange={handleInputChange} required fullWidth placeholder="Sua cidade" error={!!errors.cidade} helperText={errors.cidade} sx={{ mb: 2 }} />
-                {/*<TextField id="bairro" name="bairro" value={formValues.bairro} onChange={handleInputChange} required fullWidth placeholder="Seu bairro" error={!!errors.bairro} helperText={errors.bairro} />*/}
-                <TextField id="rua" name="rua" value={formValues.rua} onChange={handleInputChange} required fullWidth placeholder="Sua rua" error={!!errors.rua} helperText={errors.rua} sx={{ mb: 2 }} />
-                <TextField id="numero" name="numero" value={formValues.numero} onChange={handleInputChange} required fullWidth placeholder="Número" type="text" error={!!errors.numero} helperText={errors.numero} />
-                {/*<TextField id="complemento" name="complemento" value={formValues.complemento} onChange={handleInputChange} fullWidth placeholder="Complemento (opcional)" />*/}
-             </Box>
-        </Stack>
-    </Grid>
-    
-    {/* Linha Completa: Segurança */}
-    <Grid item xs={12}>
-        <Divider sx={{ my: 1 }}><Typography variant="overline">Segurança</Typography></Divider>
-        <FormControl fullWidth>
-            <FormLabel htmlFor="senha">Crie sua Senha</FormLabel>
-            <TextField id="senha" name="senha" value={formValues.senha} onChange={handleInputChange} required fullWidth placeholder="••••••" type="password" autoComplete="new-password" error={!!errors.senha} helperText={errors.senha} />
-        </FormControl>
-    </Grid>
-</Grid>
+                    <Grid item xs={12} md={6}>
+                        <Stack spacing={2.5}>
+                            <Box>
+                                <Typography variant="h6" gutterBottom>Dados Pessoais e Contato</Typography>
+                                <FormControl fullWidth>
+                                    <FormLabel htmlFor="nome">Nome completo</FormLabel>
+                                    <TextField id="nome" name="nome" value={formValues.nome} onChange={handleInputChange} required fullWidth placeholder="Seu nome completo" error={!!errors.nome} helperText={errors.nome} />
+                                </FormControl>
+                                <FormControl fullWidth sx={{ mt: 2 }}>
+                                    <FormLabel htmlFor="cpf">CPF</FormLabel>
+                                    <TextField id="cpf" name="cpf" value={formValues.cpf} onChange={handleInputChange} required fullWidth placeholder="000.000.000-00" error={!!errors.cpf} helperText={errors.cpf} />
+                                </FormControl>
+                                <FormControl fullWidth sx={{ mt: 2 }}>
+                                    <FormLabel htmlFor="email">Email</FormLabel>
+                                    <TextField id="email" name="email" value={formValues.email} onChange={handleInputChange} required fullWidth placeholder="seu@email.com" autoComplete="email" error={!!errors.email} helperText={errors.email} />
+                                </FormControl>
+                                <FormControl fullWidth sx={{ mt: 2 }}>
+                                    <FormLabel htmlFor="telefone">Telefone</FormLabel>
+                                    <TextField id="telefone" name="telefone" value={formValues.telefone} onChange={handleInputChange} required fullWidth placeholder="(00) 00000-0000" type="tel" error={!!errors.telefone} helperText={errors.telefone} />
+                                </FormControl>
+                            </Box>
+                        </Stack>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <Stack spacing={2}>
+                            <Box>
+                                <Typography variant="h6" gutterBottom>Endereço</Typography>
+                                <TextField id="cep" name="cep" value={formValues.cep} onChange={handleInputChange} required fullWidth placeholder="CEP" error={!!errors.cep} helperText={errors.cep} sx={{ mb: 2 }} />
+                                <TextField id="estado" name="estado" value={formValues.estado} onChange={handleInputChange} required fullWidth placeholder="Estado" error={!!errors.estado} helperText={errors.estado} sx={{ mb: 2 }} />
+                                <TextField id="cidade" name="cidade" value={formValues.cidade} onChange={handleInputChange} required fullWidth placeholder="Cidade" error={!!errors.cidade} helperText={errors.cidade} sx={{ mb: 2 }} />
+                                <TextField id="rua" name="rua" value={formValues.rua} onChange={handleInputChange} required fullWidth placeholder="Rua" error={!!errors.rua} helperText={errors.rua} sx={{ mb: 2 }} />
+                                <TextField id="bairro" name="bairro" value={formValues.bairro} onChange={handleInputChange} required fullWidth placeholder="Bairro" error={!!errors.bairro} helperText={errors.bairro} sx={{ mb: 2 }} />
+                                <TextField id="complemento" name="complemento" value={formValues.complemento} onChange={handleInputChange} fullWidth placeholder="Complemento (opcional)" sx={{ mb: 2 }}/>
+                                <TextField id="numero" name="numero" value={formValues.numero} onChange={handleInputChange} required fullWidth placeholder="Número" type="text" error={!!errors.numero} helperText={errors.numero} />
+                            </Box>
+                        </Stack>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Divider sx={{ my: 1 }}><Typography variant="overline">Segurança</Typography></Divider>
+                        <FormControl fullWidth>
+                            <FormLabel htmlFor="senha">Crie sua Senha</FormLabel>
+                            <TextField id="senha" name="senha" value={formValues.senha} onChange={handleInputChange} required fullWidth placeholder="••••••" type="password" autoComplete="new-password" error={!!errors.senha} helperText={errors.senha} />
+                        </FormControl>
+                    </Grid>
+                </Grid>
                     <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2, py: 1.5, fontSize: '1rem' }} disabled={isSubmitting}>
                         {isSubmitting ? 'Cadastrando...' : 'Criar Conta'}
                     </Button>

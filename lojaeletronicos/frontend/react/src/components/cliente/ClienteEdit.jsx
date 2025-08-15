@@ -34,7 +34,7 @@ function ClienteEditForm({ initialValues, onSubmit }) {
   );
 
   const handleFormSubmit = React.useCallback(async (formValues) => {
-    const { issues } = validateCliente(formValues, true); // isEditing = true
+    const { issues } = validateCliente(formValues, true);
     if (issues.length > 0) {
         const newErrors = issues.reduce((acc, issue) => {
           acc[issue.path[0]] = issue.message;

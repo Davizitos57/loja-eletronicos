@@ -24,9 +24,20 @@ export async function getMuitos({ paginationModel, filterModel, sortModel }) {
 
   let filteredProdutos = [...produtosDoBackend];
 
+  if (filterModel?.quickFilterValues?.length) {
+    const searchTerms = filterModel.quickFilterValues.map(term => String(term).toLowerCase());
+    filteredProdutos = filteredProdutos.filter(produto => {
+      return searchTerms.some(term =>
+        Object.values(produto).some(value =>
+          String(value).toLowerCase().includes(term)
+        )
+      );
+    });
+  }
+
   if (filterModel?.items?.length) {
     filterModel.items.forEach(({ field, value, operator }) => {
-      if (!field || value == null) {
+      if (!field || value == null || String(value).trim() === '') {
         return;
       }
       filteredProdutos = filteredProdutos.filter((produto) => {
@@ -34,16 +45,6 @@ export async function getMuitos({ paginationModel, filterModel, sortModel }) {
         switch (operator) {
           case 'contains':
             return String(produtoValue).toLowerCase().includes(String(value).toLowerCase());
-          case 'equals':
-            return produtoValue === value;
-          case 'startsWith':
-            return String(produtoValue).toLowerCase().startsWith(String(value).toLowerCase());
-          case 'endsWith':
-            return String(produtoValue).toLowerCase().endsWith(String(value).toLowerCase());
-          case '>':
-            return produtoValue > value;
-          case '<':
-            return produtoValue < value;
           default:
             return true;
         }

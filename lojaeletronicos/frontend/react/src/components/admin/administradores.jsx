@@ -1,13 +1,53 @@
 import api from '../../services/api';
 
-export async function getMuitos({ paginationModel }) {
+export async function getMuitos({ paginationModel, filterModel, sortModel }) {
   const response = await api.get('/usuarios');
-  const administradores = response.data.filter(user => user.tipoUsuario === 'ADMIN');
-  const items = administradores.map(user => ({...user, id: user.id}));
+  const adminsDoBackend = response.data.filter(user => user.tipoUsuario === 'ADMIN');
+  let filteredAdmins = adminsDoBackend.map(user => ({...user, id: user.id}));
+
+  if (filterModel?.quickFilterValues?.length) {
+    const searchTerms = filterModel.quickFilterValues.map(term => String(term).toLowerCase());
+    filteredAdmins = filteredAdmins.filter(admin => {
+      return searchTerms.some(term =>
+        Object.values(admin).some(value =>
+          String(value).toLowerCase().includes(term)
+        )
+      );
+    });
+  }
+  
+  if (filterModel?.items?.length) {
+    filterModel.items.forEach(({ field, value, operator }) => {
+      if (!field || value == null || String(value).trim() === '') {
+        return;
+      }
+      filteredAdmins = filteredAdmins.filter((admin) => {
+        const adminValue = admin[field];
+        switch (operator) {
+          case 'contains':
+            return String(adminValue).toLowerCase().includes(String(value).toLowerCase());
+          default:
+            return true;
+        }
+      });
+    });
+  }
+
+  if (sortModel?.length) {
+    filteredAdmins.sort((a, b) => {
+      for (const { field, sort } of sortModel) {
+        if (a[field] < b[field]) return sort === 'asc' ? -1 : 1;
+        if (a[field] > b[field]) return sort === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+  }
+
   const start = paginationModel.page * paginationModel.pageSize;
   const end = start + paginationModel.pageSize;
-  const paginatedItems = items.slice(start, end);
-  return { items: paginatedItems, itemCount: items.length };
+  const paginatedItems = filteredAdmins.slice(start, end);
+
+  return { items: paginatedItems, itemCount: filteredAdmins.length };
 }
 
 export async function getUm(adminId) {
@@ -24,7 +64,7 @@ export async function criarUm(data) {
     senha: data.senha,
     tipoUsuario: 'ADMIN',
     enderecos: [{
-        rua: 'N/A', numero: 0, cidade: 'N/A', estado: 'N/A', cep: '00000-000',
+        rua: 'N/A', numero: 0, cidade: 'N/A', estado: 'N/A', bairro: 'N/A', complemento: 'N/A', cep: '00000-000',
     }]
   };
   const response = await api.post('/usuarios', adminParaBackend);
