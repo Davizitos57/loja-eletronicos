@@ -1,10 +1,13 @@
 package com.trabalhobd.lojaeletronicos.services;
 
 import com.trabalhobd.lojaeletronicos.models.DTOs.LoginDTO;
+import com.trabalhobd.lojaeletronicos.models.Endereco;
 import com.trabalhobd.lojaeletronicos.models.Usuario;
+import com.trabalhobd.lojaeletronicos.repositories.EnderecoRepository;
 import com.trabalhobd.lojaeletronicos.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,6 +17,9 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private EnderecoRepository enderecoRepository;
+
     public Usuario verificarLoginInfo(LoginDTO login) {
         Usuario usuario = usuarioRepository.verificarLoginInfo(login);
         if (usuario == null) {
@@ -22,11 +28,25 @@ public class UsuarioService {
         return usuario;
     }
 
+    @Transactional
     public void criarNovoUsuario(Usuario usuario) {
         if (!isCpfNumerico(usuario.getCpf())) {
             throw new RuntimeException("O cpf deve conter apenas números!");
         }
-        usuarioRepository.criarNovoUsuario(usuario);
+        
+        if (usuario.getTipoUsuario() == null || usuario.getTipoUsuario().isEmpty()){
+            usuario.setTipoUsuario("BASIC");
+        }
+
+        Long usuarioId = usuarioRepository.criarNovoUsuario(usuario);
+        usuario.setId(usuarioId);
+
+        if (usuario.getEnderecos() != null && !usuario.getEnderecos().isEmpty()) {
+            for (Endereco endereco : usuario.getEnderecos()) {
+                endereco.setIdUsuario(usuarioId);
+                enderecoRepository.create(endereco);
+            }
+        }
     }
 
     public List<Usuario> todosUsuarios() {
@@ -49,7 +69,9 @@ public class UsuarioService {
         usuarioRepository.atualizarDadosUsuario(id, usuario);
     }
 
+    @Transactional
     public void deletarUsuarioPorId(Long id) {
+        enderecoRepository.deleteByUsuarioId(id);
         usuarioRepository.deletarUsuarioPorId(id);
     }
 

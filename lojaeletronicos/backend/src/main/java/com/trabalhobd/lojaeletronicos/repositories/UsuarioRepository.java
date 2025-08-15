@@ -8,9 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
-
+import java.sql.PreparedStatement;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 @AllArgsConstructor
@@ -47,11 +50,24 @@ public class UsuarioRepository {
         return usuario;
     }
 
-    public void criarNovoUsuario(Usuario usuario) {
-        String sql = "INSERT INTO usuarios (nome, email, cpf, telefone, senha) VALUES (?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, usuario.getNome(), usuario.getEmail(), usuario.getCpf(), usuario.getTelefone(), usuario.getSenha());
-    }
+    public Long criarNovoUsuario(Usuario usuario) {
+        String sql = "INSERT INTO usuarios (nome, email, cpf, telefone, senha, tipo_usuario) VALUES (?, ?, ?, ?, ?, ?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
 
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
+            ps.setString(1, usuario.getNome());
+            ps.setString(2, usuario.getEmail());
+            ps.setString(3, usuario.getCpf());
+            ps.setString(4, usuario.getTelefone());
+            ps.setString(5, usuario.getSenha());
+            ps.setString(6, usuario.getTipoUsuario());
+            return ps;
+        }, keyHolder);
+
+        return Objects.requireNonNull(keyHolder.getKey()).longValue();
+    }
+    
     public Usuario encontrarUsuarioPorId(Long id) {
         String sql = "SELECT * FROM usuarios WHERE id = ?";
         Usuario usuario;
@@ -95,7 +111,7 @@ public class UsuarioRepository {
         String sql = "SELECT * FROM usuarios WHERE email ILIKE ?";
         Usuario usuario;
         try {
-            usuario = jdbcTemplate.queryForObject(sql, userRowMapper, email + "%");
+            usuario = jdbcTemplate.queryForObject(sql, userRowMapper, email);
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
@@ -140,7 +156,7 @@ public class UsuarioRepository {
     }
 
     public void deletarUsuarioPorId(Long id) {
-        String sql = "UPDATE usuarios SET excluido = 1 WHERE id = ?";
+        String sql = "DELETE FROM usuarios WHERE id = ?";
         jdbcTemplate.update(sql, id);
     }
 }
