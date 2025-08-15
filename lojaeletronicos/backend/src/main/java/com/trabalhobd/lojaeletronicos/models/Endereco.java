@@ -13,6 +13,7 @@ public class Endereco implements Serializable {
     private Long idUsuario;
     private String rua;
     private Integer numero;
+    private String bairro;
     private String cidade;
     private String estado;
     private String cep;

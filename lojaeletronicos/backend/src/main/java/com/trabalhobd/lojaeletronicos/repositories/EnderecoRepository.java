@@ -22,6 +22,7 @@ public class EnderecoRepository {
         endereco.setIdUsuario(rs.getLong("id_usuario"));
         endereco.setRua(rs.getString("rua"));
         endereco.setNumero(rs.getInt("numero"));
+        endereco.setBairro(rs.getString("bairro"));
         endereco.setCidade(rs.getString("cidade"));
         endereco.setEstado(rs.getString("estado"));
         endereco.setCep(rs.getString("cep"));
@@ -30,8 +31,8 @@ public class EnderecoRepository {
     };
 
     public void create(Endereco endereco) {
-        String sql = "INSERT INTO enderecos (id_usuario, rua, numero, cidade, estado, cep) VALUES (?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, endereco.getIdUsuario(), endereco.getRua(), endereco.getNumero(), endereco.getCidade(), endereco.getEstado(), endereco.getCep());
+        String sql = "INSERT INTO enderecos (id_usuario, rua, numero, bairro, cidade, estado, cep) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, endereco.getIdUsuario(), endereco.getRua(), endereco.getNumero(), endereco.getBairro(), endereco.getCidade(), endereco.getEstado(), endereco.getCep());
     }
 
     public Endereco findById(Long idEndereco) {
@@ -59,8 +60,8 @@ public class EnderecoRepository {
     }
 
     public void updateEnderecoData(Long idEndereco, Endereco endereco) {
-        String sql = "UPDATE enderecos SET id_usuario = ?, rua = ?, numero = ?, cidade =?, estado=?, cep =?  WHERE id = ?";
-        jdbcTemplate.update(sql, endereco.getIdUsuario(), endereco.getRua(), endereco.getNumero(), endereco.getCidade(), endereco.getEstado(), endereco.getCep(), idEndereco);
+        String sql = "UPDATE enderecos SET id_usuario = ?, rua = ?, numero = ?, bairro = ? cidade =?, estado=?, cep =?  WHERE id = ?";
+        jdbcTemplate.update(sql, endereco.getIdUsuario(), endereco.getRua(), endereco.getNumero(), endereco.getBairro(), endereco.getCidade(), endereco.getEstado(), endereco.getCep(), idEndereco);
     }
 
     public void deleteById(Long id) {
