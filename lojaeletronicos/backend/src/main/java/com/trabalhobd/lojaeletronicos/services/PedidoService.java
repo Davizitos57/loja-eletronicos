@@ -1,5 +1,6 @@
 package com.trabalhobd.lojaeletronicos.services;
 
+import com.trabalhobd.lojaeletronicos.models.DTOs.ItemPedidoProduto;
 import com.trabalhobd.lojaeletronicos.models.DTOs.ItensCarrinhosDTO;
 import com.trabalhobd.lojaeletronicos.models.ItemPedido;
 import com.trabalhobd.lojaeletronicos.models.Pagamento;
@@ -99,11 +100,18 @@ public class PedidoService {
 
     }
 
-    public Long comprarProdutoDireto(Integer clienteId, Long produtoId, Integer quantidade) {
+    public Long comprarProdutoDireto(Integer clienteId, Long produtoId, Integer quantidade) throws Exception {
         // Buscar dados do produto
+
         var produto = produtoRepository.findById(produtoId);
         if (produto == null) {
             throw new RuntimeException("Produto não encontrado");
+        }
+        if (produto.getQuantidadeEstoque() < quantidade) {
+            throw new Exception(
+                    "Estoque insuficiente para o produto: " + produto.getNome()+
+                            ". Escolha outro produto ou diminua a quantidade a ser comprada!"
+            );
         }
 
         Double valorTotal = ((double) produto.getPrecoUnico()) * quantidade;
@@ -122,12 +130,26 @@ public class PedidoService {
         return itemPedidoRepository.listarItensPorPedido(carrinho.getId());
     }
 
-    public void finalizarCarrinho(Long pedidoId) {
+    public void finalizarCarrinho(Long pedidoId) throws Exception{
+        veridicarDisponibilidade(pedidoId);
         pedidoRepository.atualizarPedido(pedidoId, PedidoEnum.AGUARDANDO_PAGAMENTO.getStatus());
     }
 
-    public void concluirPagamento(Long pedidoId, String formaPagamento, Integer qtd_parcelas) {
+    private void veridicarDisponibilidade(Long pedidoId) throws Exception {
+        var itens = itemPedidoRepository.listarItensPedido(pedidoId);
 
+        for (ItemPedidoProduto i : itens) {
+            if (i.getQuantidadeEstoque() < i.getQuantidadeDesejada()) {
+                throw new Exception(
+                        "Estoque insuficiente para o produto: " + i.getNome()+
+                                ". Escolha outro produto ou diminua a quantidade a ser comprada!"
+                );
+            }
+
+        }
+    }
+
+    public void concluirPagamento(Long pedidoId, String formaPagamento, Integer qtd_parcelas) {
         Pedido pedido = pedidoRepository.encontrarPedidoPorId(pedidoId);
         float valorTotal = (float) (1.0F * pedido.getValorTotal());
 
@@ -140,6 +162,13 @@ public class PedidoService {
         pagamentoRepository.create(pagamento);
 
         pedidoRepository.atualizarPedido(pedidoId, PedidoEnum.CONCLUIDO.getStatus());
+
+        var itens = itemPedidoRepository.listarItensPedido(pedidoId);
+
+        itens.forEach( item -> {
+            produtoRepository.updateProdutoQuantidade(item.getProdutoId(),  -item.getQuantidadeDesejada());
+        });
+
     }
 
     public List<Pedido> buscarPedidosPorUsuarioId(Long usuarioId) {

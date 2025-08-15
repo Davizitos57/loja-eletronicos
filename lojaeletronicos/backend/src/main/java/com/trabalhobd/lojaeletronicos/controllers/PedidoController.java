@@ -16,8 +16,12 @@ public class PedidoController {
     private PedidoService pedidoService;
 
     @PostMapping("/finalizar")
-    public ResponseEntity<Void> finalizar(@RequestParam Long pedidoId) {
-        pedidoService.finalizarCarrinho(pedidoId);
+    public ResponseEntity<String> finalizar(@RequestParam Long pedidoId) {
+        try {
+            pedidoService.finalizarCarrinho(pedidoId);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
         return ResponseEntity.ok().build();
     }
 
@@ -33,13 +37,18 @@ public class PedidoController {
     }
 
     @PostMapping("/comprar-direto")
-    public ResponseEntity<Long> comprarDireto(
+    public ResponseEntity<String> comprarDireto(
             @RequestParam Integer clienteId,
             @RequestParam Long produtoId,
             @RequestParam Integer quantidade) {
 
-        Long pedidoId = pedidoService.comprarProdutoDireto(clienteId, produtoId, quantidade);
-        return ResponseEntity.ok(pedidoId);
+        Long pedidoId;
+        try {
+            pedidoId = pedidoService.comprarProdutoDireto(clienteId, produtoId, quantidade);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        return ResponseEntity.ok(pedidoId.toString());
     }
 
     @GetMapping("/{usuarioId}")

@@ -1,5 +1,6 @@
 package com.trabalhobd.lojaeletronicos.repositories;
 
+import com.trabalhobd.lojaeletronicos.models.DTOs.ItemPedidoProduto;
 import com.trabalhobd.lojaeletronicos.models.DTOs.ItensCarrinhosDTO;
 import com.trabalhobd.lojaeletronicos.models.ItemPedido;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,21 @@ public class ItemPedidoRepository {
         String sql =  "DELETE from itens_pedidos WHERE pedido_id = ? AND produto_id = ?";
         jdbcTemplate.update(sql, pedidoId, produtoId);
     }
+
+    public List<ItemPedidoProduto> listarItensPedido(Long pedidoId) {
+        String sql = "SELECT produto_id, nome, quantidade, quantidade_estoque from itens_pedidos inner join produtos on produtos.id = itens_pedidos.produto_id WHERE pedido_id = ?";
+        return jdbcTemplate.query(sql, itemPediProdRowMapper, pedidoId);
+    }
+
+    private final RowMapper<ItemPedidoProduto> itemPediProdRowMapper = (rs, rowNum) -> {
+        ItemPedidoProduto item = new ItemPedidoProduto();
+        item.setProdutoId(rs.getLong("produto_id"));
+        item.setNome(rs.getString("nome"));
+        item.setQuantidadeDesejada(rs.getInt("quantidade"));
+        item.setQuantidadeEstoque(rs.getInt("quantidade_estoque"));
+
+        return item;
+    };
 
     private final RowMapper<ItemPedido> itemRowMapper = (rs, rowNum) -> {
         ItemPedido item = new ItemPedido();
