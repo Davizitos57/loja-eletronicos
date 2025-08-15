@@ -25,7 +25,7 @@ public class UsuarioRepository {
     @Autowired
     private EnderecoRepository enderecoRepository;
 
-    private final RowMapper<Usuario> userRowMapper = (rs, rowNum) -> {
+    protected static final RowMapper<Usuario> userRowMapper = (rs, rowNum) -> {
         Usuario usuario = new Usuario();
         usuario.setId(rs.getLong("id"));
         usuario.setNome(rs.getString("nome"));
