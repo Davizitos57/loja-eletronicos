@@ -19,56 +19,30 @@ function ClienteEditForm({ initialValues, onSubmit }) {
   const notifications = useNotifications();
 
   const [formState, setFormState] = React.useState(() => ({
-    values: initialValues,
+    values: { ...initialValues, senha: '' },
     errors: {},
   }));
-  const formValues = formState.values;
-  const formErrors = formState.errors;
-
-  const setFormValues = React.useCallback((newFormValues) => {
-    setFormState((previousState) => ({
-      ...previousState,
-      values: newFormValues,
-    }));
-  }, []);
-
-  const setFormErrors = React.useCallback((newFormErrors) => {
-    setFormState((previousState) => ({
-      ...previousState,
-      errors: newFormErrors,
-    }));
-  }, []);
 
   const handleFormFieldChange = React.useCallback(
     (name, value) => {
-      const validateField = async (values) => {
-        const { issues } = validateCliente(values);
-        setFormErrors({
-          ...formErrors,
-          [name]: issues?.find((issue) => issue.path?.[0] === name)?.message,
-        });
-      };
-
-      const newFormValues = { ...formValues, [name]: value };
-      setFormValues(newFormValues);
-      validateField(newFormValues);
+      setFormState((previousState) => ({
+        ...previousState,
+        values: { ...previousState.values, [name]: value },
+      }));
     },
-    [formValues, formErrors, setFormErrors, setFormValues],
+    [],
   );
 
-  const handleFormReset = React.useCallback(() => {
-    setFormValues(initialValues);
-  }, [initialValues, setFormValues]);
-
-  const handleFormSubmit = React.useCallback(async () => {
-    const { issues } = validateCliente(formValues);
-    if (issues && issues.length > 0) {
-      setFormErrors(
-        Object.fromEntries(issues.map((issue) => [issue.path?.[0], issue.message])),
-      );
-      return;
+  const handleFormSubmit = React.useCallback(async (formValues) => {
+    const { issues } = validateCliente(formValues, true); // isEditing = true
+    if (issues.length > 0) {
+        const newErrors = issues.reduce((acc, issue) => {
+          acc[issue.path[0]] = issue.message;
+          return acc;
+        }, {});
+        setFormState(prevState => ({ ...prevState, errors: newErrors }));
+        return;
     }
-    setFormErrors({});
 
     try {
       await onSubmit(formValues);
@@ -78,34 +52,27 @@ function ClienteEditForm({ initialValues, onSubmit }) {
       });
       navigate('/cliente');
     } catch (editError) {
-      notifications.show(`Falha ao editar cliente. Razão: ${editError.message}`, {
+      notifications.show(`Falha ao editar cliente. Razão: ${editError.response?.data?.message || editError.message}`, {
         severity: 'error',
         autoHideDuration: 3000,
       });
-      throw editError;
     }
-  }, [formValues, navigate, notifications, onSubmit, setFormErrors]);
+  }, [navigate, notifications, onSubmit]);
 
   return (
     <ClienteForm
       formState={formState}
       onFieldChange={handleFormFieldChange}
-      onSubmit={handleFormSubmit}
-      onReset={handleFormReset}
+      onSubmit={() => handleFormSubmit(formState.values)}
       submitButtonLabel="Salvar"
       backButtonPath={`/cliente/${clienteId}`}
+      isEditing={true}
     />
   );
 }
 
 ClienteEditForm.propTypes = {
-  initialValues: PropTypes.shape({
-    nome: PropTypes.string,
-    email: PropTypes.string,
-    cpf: PropTypes.string,
-    telefone: PropTypes.string,
-    endereco: PropTypes.string,
-  }).isRequired,
+  initialValues: PropTypes.object.isRequired,
   onSubmit: PropTypes.func.isRequired,
 };
 
@@ -115,49 +82,40 @@ export default function ClienteEdit() {
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
 
-  const loadData = React.useCallback(async () => {
-    setError(null);
-    setIsLoading(true);
-    try {
-      const showData = await getCliente(Number(clienteId));
-      setCliente(showData);
-    } catch (showDataError) {
-      setError(showDataError);
-    }
-    setIsLoading(false);
-  }, [clienteId]);
-
   React.useEffect(() => {
+    async function loadData() {
+      try {
+        const showData = await getCliente(Number(clienteId));
+        setCliente(showData);
+      } catch (showDataError) {
+        setError(showDataError);
+      }
+      setIsLoading(false);
+    }
     loadData();
-  }, [loadData]);
+  }, [clienteId]);
 
   const handleSubmit = React.useCallback(
     async (formValues) => {
-      const updatedData = await updateCliente(Number(clienteId), formValues);
-      setCliente(updatedData);
+      await updateCliente(Number(clienteId), formValues);
     },
     [clienteId],
   );
 
-  const renderEdit = React.useMemo(() => {
-    if (isLoading) {
-      return (
-        <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <CircularProgress />
-        </Box>
-      );
-    }
-    if (error) {
-      return (
-        <Box sx={{ flexGrow: 1 }}>
-          <Alert severity="error">{error.message}</Alert>
-        </Box>
-      );
-    }
-    return cliente ? (
-      <ClienteEditForm initialValues={cliente} onSubmit={handleSubmit} />
-    ) : null;
-  }, [isLoading, error, cliente, handleSubmit]);
+  if (isLoading) {
+    return (
+      <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+  if (error) {
+    return (
+      <Box sx={{ flexGrow: 1 }}>
+        <Alert severity="error">{error.message}</Alert>
+      </Box>
+    );
+  }
 
   return (
     <PageContainer
@@ -168,7 +126,9 @@ export default function ClienteEdit() {
         { title: 'Editar' },
       ]}
     >
-      <Box sx={{ display: 'flex', flex: 1 }}>{renderEdit}</Box>
+      <Box sx={{ display: 'flex', flex: 1 }}>
+        {cliente ? <ClienteEditForm initialValues={cliente} onSubmit={handleSubmit} /> : null}
+      </Box>
     </PageContainer>
   );
 }

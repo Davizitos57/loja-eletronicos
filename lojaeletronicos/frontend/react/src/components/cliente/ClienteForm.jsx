@@ -17,6 +17,7 @@ function ClienteForm(props) {
     onReset,
     submitButtonLabel,
     backButtonPath,
+    isEditing = false,
   } = props;
 
   const formValues = formState.values;
@@ -29,7 +30,6 @@ function ClienteForm(props) {
   const handleSubmit = React.useCallback(
     async (event) => {
       event.preventDefault();
-
       setIsSubmitting(true);
       try {
         await onSubmit(formValues);
@@ -46,7 +46,7 @@ function ClienteForm(props) {
     },
     [onFieldChange],
   );
-
+  
   const handleNumberFieldChange = React.useCallback(
     (event) => {
       onFieldChange(event.target.name, Number(event.target.value));
@@ -121,6 +121,19 @@ function ClienteForm(props) {
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
+              value={formValues.senha ?? ''}
+              onChange={handleTextFieldChange}
+              name="senha"
+              label="Senha"
+              type="password"
+              error={!!formErrors.senha}
+              helperText={formErrors.senha || (isEditing ? 'Deixe em branco para não alterar' : ' ')}
+              fullWidth
+              autoComplete="new-password"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
               value={formValues.cep ?? ''}
               onChange={handleTextFieldChange}
               name="cep"
@@ -130,7 +143,7 @@ function ClienteForm(props) {
               fullWidth
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={6}>
             <TextField
               value={formValues.rua ?? ''}
               onChange={handleTextFieldChange}
@@ -141,7 +154,7 @@ function ClienteForm(props) {
               fullWidth
             />
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={2}>
             <TextField
               type="number"
               value={formValues.numero ?? ''}
@@ -208,6 +221,7 @@ ClienteForm.propTypes = {
   onReset: PropTypes.func,
   onSubmit: PropTypes.func.isRequired,
   submitButtonLabel: PropTypes.string.isRequired,
+  isEditing: PropTypes.bool,
 };
 
 export default ClienteForm;
