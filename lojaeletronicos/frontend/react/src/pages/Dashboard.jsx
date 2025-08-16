@@ -7,12 +7,7 @@ import { useAuth } from '../context/AuthContext';
 
 // Componentes das seções admin
 import DashboardOverview from '../components/admin/sections/DashboardOverview';
-// import GerenciarUsuarios from '../components/admin/sections/GerenciarUsuarios';
-// import GerenciarProdutos from '../components/admin/sections/GerenciarProdutos';
-// import CriarProduto from '../components/admin/sections/CriarProduto';
 // import Relatorios from '../components/admin/sections/Relatorios';
-// import Configuracoes from '../components/admin/sections/Configuracoes';
-
 
 export default function Dashboard() {
     const [searchParams] = useSearchParams();
@@ -51,29 +46,32 @@ export default function Dashboard() {
 
     const renderSecao = () => {
         switch (secaoAtiva) {
-            // case 'usuarios':
-            //     return <GerenciarUsuarios />;
-            // case 'produtos':
-            //     return <GerenciarProdutos />;
-            // case 'criar-produto':
-            //     return <CriarProduto />;
             // case 'relatorios':
             //     return <Relatorios />;
-            // case 'configuracoes':
-            //     return <Configuracoes />;
             default:
-                return <DashboardOverview onNavegar={setSecaoAtiva} />;
+                return <DashboardOverview onNavegar={handleNavegacao} />;
+        }
+    };
+
+    // Função para lidar com navegação, incluindo URLs externas
+    const handleNavegacao = (secao) => {
+        if (secao === 'clientes') {
+            navigate('/cliente');
+        } else if (secao === 'produtos') {
+            navigate('/produto');
+        } else {
+            setSecaoAtiva(secao);
+            // Atualizar URL com query param
+            navigate(`/administrador?secao=${secao}`);
         }
     };
 
     const getTituloSecao = () => {
         const titulos = {
             overview: 'Visão Geral',
-            usuarios: 'Gerenciar Usuários',
+            clientes: 'Gerenciar Clientes',
             produtos: 'Gerenciar Produtos',
-            'criar-produto': 'Criar Produto',
             relatorios: 'Relatórios',
-            configuracoes: 'Configurações'
         };
         return titulos[secaoAtiva] || 'Dashboard';
     };

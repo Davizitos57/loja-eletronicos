@@ -13,49 +13,46 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import PeopleIcon from '@mui/icons-material/People';
 import InventoryIcon from '@mui/icons-material/Inventory';
-import AddBoxIcon from '@mui/icons-material/AddBox';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
-import SettingsIcon from '@mui/icons-material/Settings';
 import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 export default function AdminDrawer({ aberto, onFechar, onNavegar }) {
     const { usuario } = useAuth();
+    const navigate = useNavigate();
 
+    // Removido 'criar-produto' e 'configuracoes' e adicionado URLs diretas
     const menuItems = [
         {
-            id: 'usuarios',
-            label: 'Gerenciar Usuários',
+            id: 'clientes',
+            label: 'Gerenciar Clientes',
             icon: <PeopleIcon />,
-            description: 'Listar, editar e excluir usuários'
+            description: 'Listar, criar, editar e excluir clientes',
+            url: '/cliente'  // URL direta
         },
         {
             id: 'produtos',
             label: 'Gerenciar Produtos',
             icon: <InventoryIcon />,
-            description: 'Editar e excluir produtos existentes'
-        },
-        {
-            id: 'criar-produto',
-            label: 'Criar Produto',
-            icon: <AddBoxIcon />,
-            description: 'Adicionar novos produtos ao catálogo'
+            description: 'Listar, criar, editar e excluir produtos',
+            url: '/produto'  // URL direta
         },
         {
             id: 'relatorios',
             label: 'Relatórios',
             icon: <AnalyticsIcon />,
             description: 'Vendas, estatísticas e métricas'
-        },
-        {
-            id: 'configuracoes',
-            label: 'Configurações',
-            icon: <SettingsIcon />,
-            description: 'Configurações gerais do sistema'
         }
     ];
 
-    const handleItemClick = (itemId) => {
-        onNavegar(itemId);
+    const handleItemClick = (item) => {
+        if (item.url) {
+            // Navegar diretamente para a URL especificada
+            navigate(item.url);
+        } else {
+            // Comportamento existente para abas internas do dashboard
+            onNavegar(item.id);
+        }
         onFechar();
     };
 
@@ -115,7 +112,7 @@ export default function AdminDrawer({ aberto, onFechar, onNavegar }) {
                             sx={{ mb: 1 }}
                         >
                             <ListItemButton
-                                onClick={() => handleItemClick(item.id)}
+                                onClick={() => handleItemClick(item)}
                                 sx={{
                                     borderRadius: 2,
                                     '&:hover': {
