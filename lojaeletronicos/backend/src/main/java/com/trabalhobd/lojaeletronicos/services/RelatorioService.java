@@ -1,7 +1,6 @@
 package com.trabalhobd.lojaeletronicos.services;
 
 import com.trabalhobd.lojaeletronicos.models.DTOs.UsuarioDTO;
-import com.trabalhobd.lojaeletronicos.models.Usuario;
 import com.trabalhobd.lojaeletronicos.repositories.RelatorioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,6 @@
 package com.trabalhobd.lojaeletronicos.controllers;
 
 import com.trabalhobd.lojaeletronicos.models.DTOs.UsuarioDTO;
-import com.trabalhobd.lojaeletronicos.models.Usuario;
 import com.trabalhobd.lojaeletronicos.services.RelatorioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
