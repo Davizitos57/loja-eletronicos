@@ -155,14 +155,6 @@ export default function SignIn(props) {
             variant="contained">
               Entrar
             </Button>
-            <Link 
-            component="button" 
-            type="button" 
-            onClick={handleClickOpen} 
-            variant="body2" 
-            sx={{ alignSelf: 'center' }}>
-              Esqueceu sua senha?
-            </Link>
           </Box>
           <Divider>ou</Divider>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
