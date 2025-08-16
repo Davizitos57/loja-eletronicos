@@ -15,8 +15,8 @@ export default function ProdutoAcoes({
         <DialogActions 
             sx={{ 
                 p: 3, 
-                bgcolor: '#f8f9fa',
-                borderTop: '3px solid #e9ecef',
+                bgcolor: 'background.paper',
+                borderTop: '3px solid',
                 gap: 3,
                 position: 'sticky',
                 bottom: 0,

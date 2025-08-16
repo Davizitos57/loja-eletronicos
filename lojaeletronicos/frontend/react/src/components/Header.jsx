@@ -8,6 +8,7 @@ import {
     IconButton,
     Paper
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -41,7 +42,7 @@ export default function Header({ onPesquisar }) {
     return (
         <Box
             sx={{
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                background: (theme) => `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
                 py: 8,
                 position: 'relative',
                 overflow: 'hidden',
@@ -73,12 +74,11 @@ export default function Header({ onPesquisar }) {
                             height: 47,
                             maxWidth: 800,
                             mx: 'auto',
-                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                            backdropFilter: 'blur(10px)',
+                            backgroundColor: 'white',
                             border: '2px solid transparent',
                             transition: 'all 0.3s ease',
                             '&:hover': {
-                                backgroundColor: 'white',
+                                 backgroundColor: '#f5f5f5',
                                 borderColor: 'rgba(255, 255, 255, 0.3)',
                                 transform: 'translateY(-2px)',
                                 boxShadow: 4,
@@ -116,14 +116,16 @@ export default function Header({ onPesquisar }) {
                                     </InputAdornment>
                                 ),
                                 sx: {
-                                    height: '100%', 
+                                    height: '100%',
+                                    bgcolor: 'transparent',
+                                    color: 'black',
                                     '& .MuiOutlinedInput-notchedOutline': {
                                         border: 'none',
                                     },
-                                    '& .MuiInputBase-input': {
-                                        py: 0.8, 
-                                        fontSize: '0.95rem', 
-                                    }
+                                    '& .MuiInputBase-input::placeholder': {
+                                        color: 'grey.600',
+                                        opacity: 1,
+                                    },
                                 }
                             }}
                         />

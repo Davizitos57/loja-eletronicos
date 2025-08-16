@@ -21,21 +21,20 @@ export default function AdminDrawer({ aberto, onFechar, onNavegar }) {
     const { usuario } = useAuth();
     const navigate = useNavigate();
 
-    // Removido 'criar-produto' e 'configuracoes' e adicionado URLs diretas
     const menuItems = [
         {
             id: 'clientes',
             label: 'Gerenciar Clientes',
             icon: <PeopleIcon />,
             description: 'Listar, criar, editar e excluir clientes',
-            url: '/cliente'  // URL direta
+            url: '/cliente'
         },
         {
             id: 'produtos',
             label: 'Gerenciar Produtos',
             icon: <InventoryIcon />,
             description: 'Listar, criar, editar e excluir produtos',
-            url: '/produto'  // URL direta
+            url: '/produto'
         },
         {
             id: 'relatorios',
@@ -47,10 +46,8 @@ export default function AdminDrawer({ aberto, onFechar, onNavegar }) {
 
     const handleItemClick = (item) => {
         if (item.url) {
-            // Navegar diretamente para a URL especificada
             navigate(item.url);
         } else {
-            // Comportamento existente para abas internas do dashboard
             onNavegar(item.id);
         }
         onFechar();
@@ -64,22 +61,23 @@ export default function AdminDrawer({ aberto, onFechar, onNavegar }) {
             sx={{
                 '& .MuiDrawer-paper': {
                     width: 380,
-                    boxShadow: 4
+                    boxShadow: 4,
+                    // Usa a cor de papel do tema, que é escura
+                    bgcolor: 'background.paper' 
                 }
             }}
         >
             <Box sx={{ 
                 height: '100%', 
-                bgcolor: '#fafafa', 
                 display: 'flex', 
                 flexDirection: 'column' 
             }}>
                 {/* Cabeçalho */}
                 <Box sx={{ 
                     p: 3, 
-                    bgcolor: 'linear-gradient(135deg, #f44336 0%, #d32f2f 100%)',
-                    background: 'linear-gradient(135deg, #f44336 0%, #d32f2f 100%)',
-                    color: 'white'
+                    // Usa o gradiente da cor primária do tema
+                    background: (theme) => `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
+                    color: 'primary.contrastText' // Garante que o texto seja legível
                 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
                         <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
@@ -87,7 +85,7 @@ export default function AdminDrawer({ aberto, onFechar, onNavegar }) {
                         </Typography>
                         <IconButton 
                             onClick={onFechar}
-                            sx={{ color: 'white' }}
+                            sx={{ color: 'primary.contrastText' }}
                         >
                             <CloseIcon />
                         </IconButton>
@@ -116,11 +114,8 @@ export default function AdminDrawer({ aberto, onFechar, onNavegar }) {
                                 sx={{
                                     borderRadius: 2,
                                     '&:hover': {
-                                        bgcolor: 'primary.light',
-                                        color: 'white',
-                                        '& .MuiListItemIcon-root': {
-                                            color: 'white'
-                                        }
+                                        // Usa a cor de 'hover' do tema
+                                        bgcolor: 'action.hover',
                                     }
                                 }}
                             >
@@ -139,7 +134,7 @@ export default function AdminDrawer({ aberto, onFechar, onNavegar }) {
                 </List>
 
                 {/* Rodapé */}
-                <Box sx={{ p: 2, bgcolor: 'grey.100', textAlign: 'center' }}>
+                <Box sx={{ p: 2, bgcolor: 'background.default', textAlign: 'center' }}>
                     <Typography variant="caption" color="text.secondary">
                         TecnoFácil Admin Panel v1.0
                     </Typography>

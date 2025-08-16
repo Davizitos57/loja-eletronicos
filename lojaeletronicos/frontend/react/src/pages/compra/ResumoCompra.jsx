@@ -19,7 +19,8 @@ import {
     DialogActions,
     CircularProgress,
     Alert,
-    IconButton
+    IconButton,
+    alpha
 } from '@mui/material';
 import {
     ArrowBack as ArrowBackIcon,
@@ -262,10 +263,10 @@ export default function ResumoCompra() {
                         {/* Prazo de entrega */}
                         <Box sx={{ 
                             p: 1.5, 
-                            bgcolor: 'success.50', 
+                            bgcolor: (theme) => alpha(theme.palette.success.main, 0.1),
                             borderRadius: 1,
                             border: '1px solid',
-                            borderColor: 'success.200'
+                            borderColor: (theme) => alpha(theme.palette.success.main, 0.3)
                         }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                 <ScheduleIcon sx={{ fontSize: 20, color: 'success.main' }} />
@@ -370,7 +371,7 @@ export default function ResumoCompra() {
                     </Typography>
 
                     {dadosPagamento && (
-                        <Card sx={{ mt: 2, bgcolor: 'success.50' }}>
+                        <Card sx={{ mt: 2, bgcolor: (theme) => alpha(theme.palette.success.main, 0.1) }}>
                             <CardContent sx={{ py: 2 }}>
                                 <Typography variant="h6" color="success.main" gutterBottom>
                                     Detalhes do Pagamento
@@ -396,7 +397,7 @@ export default function ResumoCompra() {
                     )}
 
                     {/* Informações de entrega no sucesso */}
-                    <Card sx={{ mt: 2, bgcolor: 'info.50' }}>
+                    <Card sx={{ mt: 2, bgcolor: (theme) => alpha(theme.palette.info.main, 0.1) }}>
                         <CardContent sx={{ py: 2 }}>
                             <Typography variant="h6" color="info.main" gutterBottom>
                                 📦 Informações de Entrega

@@ -65,7 +65,7 @@ export default function CategoriaSection({
                 sx={{
                     position: 'relative',
                     overflow: 'hidden',
-                    bgcolor: 'white',
+                    bgcolor: 'background.paper',
                     borderRadius: 2,
                     boxShadow: 1,
                     p: 1.5

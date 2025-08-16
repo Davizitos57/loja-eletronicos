@@ -138,7 +138,7 @@ export default function DashboardOverview({ onNavegar }) {
             </Grid>
 
             {/* Status do Sistema */}
-            <Box sx={{ mt: 4, p: 3, bgcolor: 'white', borderRadius: 2, boxShadow: 1 }}>
+            <Box sx={{ mt: 4, p: 3, bgcolor: 'background.paper', borderRadius: 2, boxShadow: 1 }}>
                 <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
                     🔧 Status do Sistema
                 </Typography>

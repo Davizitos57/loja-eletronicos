@@ -77,10 +77,9 @@ export default function Dashboard() {
     };
 
     return (
-        <Box sx={{ bgcolor: '#f5f5f5', minHeight: '100vh' }}>
+        <Box sx={{ minHeight: '100vh' }}>
             {/* Header do Dashboard */}
             <Box sx={{
-                bgcolor: 'white',
                 boxShadow: 1,
                 py: 3,
                 px: 3,

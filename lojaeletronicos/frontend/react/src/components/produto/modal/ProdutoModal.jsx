@@ -134,7 +134,7 @@ export default function ProdutoModal({
                         height: '100%',
                         overflow: 'auto',
                         p: 3,
-                        bgcolor: '#ffffff',
+                        bgcolor: 'background.paper',
                         '&::-webkit-scrollbar': {
                             width: '8px',
                         },

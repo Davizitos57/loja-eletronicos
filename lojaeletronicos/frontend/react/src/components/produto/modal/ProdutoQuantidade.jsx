@@ -42,9 +42,9 @@ export default function ProdutoQuantidade({
                 gap: 2, 
                 mb: 2,
                 p: 2,
-                bgcolor: '#f8f9fa',
+                bgcolor: 'background.paper',
                 borderRadius: 2,
-                border: '1px solid #e9ecef'
+                border: '1px solid'
             }}>
                 <IconButton 
                     onClick={handleDecrement}
@@ -72,7 +72,7 @@ export default function ProdutoQuantidade({
                     sx={{ 
                         width: '80px',
                         '& .MuiOutlinedInput-root': {
-                            bgcolor: 'white'
+                            bgcolor: 'background.default'
                         }
                     }}
                 />

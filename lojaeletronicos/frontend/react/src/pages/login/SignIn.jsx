@@ -106,13 +106,13 @@ export default function SignIn(props) {
         mr: 4 }}>
           Home
         </Link>
-        <Link 
+        {/*<Link 
         component={RouterLink} 
         to="/produto" 
         variant="body2" 
         sx={{ fontSize: '40px' }}>
           Cadastro de Produtos
-        </Link>
+        </Link>*/}
       </Box>
       <SignInContainer direction="column" justifyContent="space-between">
         <Card variant="outlined">

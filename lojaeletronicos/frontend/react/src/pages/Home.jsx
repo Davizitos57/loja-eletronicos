@@ -182,7 +182,6 @@ export default function Home() {
                     alignItems: 'center',
                     height: '100vh',
                     width: '100vw',
-                    bgcolor: '#f5f5f5',
                     gap: 3
                 }}
             >
@@ -215,7 +214,7 @@ export default function Home() {
     }
 
     return (
-        <Box sx={{ bgcolor: '#f5f5f5', minHeight: '100vh' }}>
+        <Box sx={{ minHeight: '100vh' }}>
             <Header onPesquisar={handlePesquisa} />
 
             {/* Botões flutuantes */}

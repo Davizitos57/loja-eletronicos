@@ -51,8 +51,7 @@ export default function ProdutoInfo({ produto }) {
             <Paper
                 elevation={3}
                 sx={{ 
-                    bgcolor: 'linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%)',
-                    background: 'linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%)',
+                    bgcolor: 'action.hover',
                     p: 3, 
                     borderRadius: 3, 
                     border: '2px solid #e1bee7',
