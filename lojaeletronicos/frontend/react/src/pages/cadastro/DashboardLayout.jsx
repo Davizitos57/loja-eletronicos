@@ -58,7 +58,7 @@ export default function DashboardLayout() {
       }}
     >
       <DashboardHeader
-        logo={<ComputerIcon />}
+        logo={ <img src='/images/logos/logo.png'></img>}
         title="TecnoFácil"
         menuOpen={isNavigationExpanded}
         onToggleMenu={handleToggleHeaderMenu}

@@ -152,12 +152,12 @@ export default function Header({ onPesquisar }) {
                 {/* Logo */}
                 <Box
                     component="img"
-                    src="/images/logo-tecnofacil.jpg"
+                    src="/images/logos/logoT.png"
                     alt="TecnoFácil Logo"
                     sx={{
                         height: { xs: '80px', md: '250px' },
                         width: '700px',
-                        maxWidth: '300px',
+                        maxWidth: '700px',
                         margin: '0 auto 2rem',
                         filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
                         transition: 'transform 0.3s ease',
