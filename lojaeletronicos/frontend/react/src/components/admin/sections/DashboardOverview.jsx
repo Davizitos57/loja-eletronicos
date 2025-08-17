@@ -5,40 +5,43 @@ import {
     Typography, 
     Box, 
     Button,
-    Chip
+    Chip,
+    CircularProgress
 } from '@mui/material';
 import PeopleIcon from '@mui/icons-material/People';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import { useDashboardStats } from '../../../hooks/useDashboardStats';
 
 export default function DashboardOverview({ onNavegar }) {
-    // Mock data - substituir por dados reais da API
-    const estatisticas = [
+    const { estatisticas, loading } = useDashboardStats();
+
+    const estatisticasCards = [
         {
-            titulo: 'Total de Usuários',
-            valor: '1,234',
+            titulo: 'Total de Clientes',
+            valor: loading ? '...' : estatisticas.totalUsuarios.toLocaleString('pt-BR'),
             icone: <PeopleIcon sx={{ fontSize: 40 }} />,
             cor: '#1976d2',
-            acao: 'usuarios'
+            acao: 'clientes'
         },
         {
             titulo: 'Produtos Cadastrados',
-            valor: '567',
+            valor: loading ? '...' : estatisticas.totalProdutos.toLocaleString('pt-BR'),
             icone: <InventoryIcon sx={{ fontSize: 40 }} />,
             cor: '#2e7d32',
             acao: 'produtos'
         },
         {
             titulo: 'Vendas do Mês',
-            valor: '89',
+            valor: loading ? '...' : estatisticas.vendasMes.toLocaleString('pt-BR'),
             icone: <ShoppingCartIcon sx={{ fontSize: 40 }} />,
             cor: '#ed6c02',
             acao: 'relatorios'
         },
         {
             titulo: 'Faturamento',
-            valor: 'R$ 45.678',
+            valor: loading ? '...' : `R$ ${estatisticas.faturamento.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`,
             icone: <AttachMoneyIcon sx={{ fontSize: 40 }} />,
             cor: '#9c27b0',
             acao: 'relatorios'
@@ -66,6 +69,14 @@ export default function DashboardOverview({ onNavegar }) {
         }
     ];
 
+    if (loading) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
+
     return (
         <Box>
             {/* Cards de Estatísticas */}
@@ -74,7 +85,7 @@ export default function DashboardOverview({ onNavegar }) {
             </Typography>
             
             <Grid container spacing={3} sx={{ mb: 4 }}>
-                {estatisticas.map((stat, index) => (
+                {estatisticasCards.map((stat, index) => (
                     <Grid item xs={12} sm={6} md={3} key={index}>
                         <Card 
                             sx={{ 
@@ -146,7 +157,7 @@ export default function DashboardOverview({ onNavegar }) {
                     <Chip label="Sistema Online" color="success" />
                     <Chip label="Banco de Dados OK" color="success" />
                     <Chip label="API Funcionando" color="success" />
-                    <Chip label="Última Atualização: Hoje" color="info" />
+                    <Chip label={`Última Atualização: ${new Date().toLocaleDateString('pt-BR')}`} color="info" />
                 </Box>
             </Box>
         </Box>

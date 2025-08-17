@@ -3,8 +3,8 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useCarrinho } from '../../context/CarrinhoContext';
 
 export default function CarrinhoFab({ onClick }) {
-    const { calcularQuantidadeTotal } = useCarrinho();
-    const quantidadeTotal = calcularQuantidadeTotal();
+    const { calcularTotal } = useCarrinho();
+    const quantidadeTotal = calcularTotal();
 
     return (
         <Fab
