@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext';
 
 // Componentes das seções admin
 import DashboardOverview from '../components/admin/sections/DashboardOverview';
-// import Relatorios from '../components/admin/sections/Relatorios';
+import Relatorios from '../components/admin/relatorio/Relatorios';
 
 export default function Dashboard() {
     const [searchParams] = useSearchParams();
@@ -46,8 +46,8 @@ export default function Dashboard() {
 
     const renderSecao = () => {
         switch (secaoAtiva) {
-            // case 'relatorios':
-            //     return <Relatorios />;
+            case 'relatorios':
+                return <Relatorios />;
             default:
                 return <DashboardOverview onNavegar={handleNavegacao} />;
         }
