@@ -63,21 +63,11 @@ export default function ProdutoInfo({ produto }) {
                 </Typography>
                 <Grid container spacing={3}>
                     <Grid item xs={6}>
-                        <Typography variant="body1" sx={{ mb: 1.5, fontSize: '1rem' }}>
-                            <strong>Marca:</strong> {produto.marca || 'TecnoFácil'}
-                        </Typography>
                         <Typography variant="body1" sx={{ fontSize: '1rem' }}>
                             <strong>Categoria:</strong> {produto.categoria || 'Eletrônicos'}
                         </Typography>
                     </Grid>
                     <Grid item xs={6}>
-                        <Typography variant="body1" sx={{ mb: 1.5, fontSize: '1rem' }}>
-                            <strong>Avaliação:</strong> 
-                            <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', ml: 1 }}>
-                                <StarIcon sx={{ color: '#ffc107', fontSize: 16, mr: 0.5 }} />
-                                {produto.avaliacoes || '4.5'} / 5.0
-                            </Box>
-                        </Typography>
                         <Typography variant="body1" sx={{ fontSize: '1rem' }}>
                             <strong>Estoque:</strong> {produto.estoque || 'Disponível'} unidades
                         </Typography>

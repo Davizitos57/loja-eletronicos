@@ -23,7 +23,6 @@ export async function getTodosProdutos() {
     categoria: categoriasMap.get(produto.idCategoria) || 'Sem Categoria',
     idCategoria: produto.idCategoria,
     // Adicionar campos necessários para compatibilidade com a Home
-    marca: produto.marca || 'Marca não informada',
     imagem: produto.imagem || null,
     estoque: produto.quantidadeEstoque > 0
   }));
@@ -40,7 +39,6 @@ export async function getProdutosPorCategoria(idCategoria) {
     quantidade: produto.quantidadeEstoque,
     categoria: produto.categoria || 'Sem Categoria',
     idCategoria: produto.idCategoria,
-    marca: produto.marca || 'Marca não informada',
     imagem: produto.imagem || null,
     estoque: produto.quantidadeEstoque > 0
   }));
