@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { useCarrinho } from '../context/CarrinhoContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useNavegacao } from '../hooks/useNavegacao.js';
-import { categoriasMock } from '../data/categoriasMock.js';
 import CarrinhoFab from '../components/carrinho/CarrinhoFab.jsx';
 import CarrinhoDrawer from '../components/carrinho/CarrinhoDrawer.jsx';
 import AdminFab from '../components/admin/AdminFab.jsx';
@@ -14,13 +13,14 @@ import FiltroDrawer from '../components/filtros/FiltroDrawer.jsx';
 import CategoriaSection from '../components/CategoriaSection.jsx';
 import Header from '../components/Header.jsx';
 import ProdutoModal from '../components/produto/modal/ProdutoModal.jsx';
-// import api from '../services/api'; // Comentado por enquanto
-
+import { getTodosProdutos, getCategorias } from '../components/produto/produtos.jsx';
+import { agruparProdutosPorCategoria } from '../components/produto/utils/produtoUtils.js';
 
 export default function Home() {
     const [loading, setLoading] = useState(true);
-    const [categorias, setCategorias] = useState(categoriasMock);
-    const [categoriasFiltradas, setCategoriasFiltradas] = useState(categoriasMock);
+    const [categorias, setCategorias] = useState([]);
+    const [categoriasFiltradas, setCategoriasFiltradas] = useState([]);
+    const [produtos, setProdutos] = useState([]);
     const [termoPesquisa, setTermoPesquisa] = useState('');
     const [carrinhoAberto, setCarrinhoAberto] = useState(false);
     const [adminAberto, setAdminAberto] = useState(false);
@@ -29,35 +29,49 @@ export default function Home() {
     const [categoriasSelecionadas, setCategoriasSelecionadas] = useState([]);
     const [filtroAtivo, setFiltroAtivo] = useState(false);
     const [filtroAberto, setFiltroAberto] = useState(false);
+    const [error, setError] = useState(null);
+    
     const { carrinho, adicionarAoCarrinho, removerDoCarrinho, calcularTotal } = useCarrinho();
     const { isAdmin } = useAuth();
     const { scrollPositions, navegarHorizontal, podeNavegar } = useNavegacao(categoriasFiltradas);
     const navigate = useNavigate();
     const total = calcularTotal();
 
+    // Carregar dados do backend
     useEffect(() => {
-        setLoading(true);
+        const carregarDados = async () => {
+            setLoading(true);
+            setError(null);
+            
+            try {
+                // Carregar produtos e categorias em paralelo
+                const [produtosData, categoriasData] = await Promise.all([
+                    getTodosProdutos(),
+                    getCategorias()
+                ]);
 
-        // Simular carregamento sem API por enquanto
-        setTimeout(() => {
-            console.log('Dados carregados:', categorias);
-            setLoading(false);
-        }, 1000);
-
-        // Quando estiver consumindo a API:
-        /*
-        api.get('/produtos')
-            .then(res => {
-                console.log('Dados da API:', res.data);
-                setCategorias(res.data);
-            })
-            .catch(err => {
-                console.error('Erro na API:', err);
-            })
-            .finally(() => {
+                setProdutos(produtosData);
+                
+                // Agrupar produtos por categoria
+                const categoriasComProdutos = agruparProdutosPorCategoria(produtosData, categoriasData);
+                
+                setCategorias(categoriasComProdutos);
+                setCategoriasFiltradas(categoriasComProdutos);
+                
+                console.log('Dados carregados:', {
+                    produtos: produtosData.length,
+                    categorias: categoriasComProdutos.length
+                });
+                
+            } catch (err) {
+                console.error('Erro ao carregar dados:', err);
+                setError(err.message || 'Erro ao carregar dados');
+            } finally {
                 setLoading(false);
-            });
-        */
+            }
+        };
+
+        carregarDados();
     }, []);
 
     // Efeito para aplicar filtros quando categorias selecionadas ou termo de pesquisa mudam
@@ -83,7 +97,8 @@ export default function Home() {
                 produtos: categoria.produtos.filter(produto =>
                     produto.nome.toLowerCase().includes(termoLower) ||
                     produto.marca.toLowerCase().includes(termoLower) ||
-                    produto.categoria.toLowerCase().includes(termoLower)
+                    produto.categoria.toLowerCase().includes(termoLower) ||
+                    produto.descricao.toLowerCase().includes(termoLower)
                 )
             })).filter(categoria => categoria.produtos.length > 0);
         }
@@ -98,7 +113,7 @@ export default function Home() {
     };
 
     const comprarProduto = (produto) => {
-        console.log('Comprando produto:', produto); // Debug
+        console.log('Comprando produto:', produto);
         navigate('/resumo-compra', {
             state: {
                 produto: {
@@ -135,23 +150,6 @@ export default function Home() {
 
     const handlePesquisa = (termo) => {
         setTermoPesquisa(termo);
-
-        if (!termo.trim()) {
-            setCategoriasFiltradas(categorias);
-            return;
-        }
-
-        const termoLower = termo.toLowerCase();
-        const categoriasFiltradas = categorias.map(categoria => ({
-            ...categoria,
-            produtos: categoria.produtos.filter(produto =>
-                produto.nome.toLowerCase().includes(termoLower) ||
-                produto.marca.toLowerCase().includes(termoLower) ||
-                produto.categoria.toLowerCase().includes(termoLower)
-            )
-        })).filter(categoria => categoria.produtos.length > 0);
-
-        setCategoriasFiltradas(categoriasFiltradas);
     };
 
     // Funções para filtros de categoria
@@ -170,14 +168,13 @@ export default function Home() {
         console.log('Filtros limpos');
     };
 
-
-
+    // Loading state
     if (loading) {
         return (
             <Box
                 sx={{
                     display: 'flex',
-                    flexDirection: 'column', // Empilhar verticalmente
+                    flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'center',
                     height: '100vh',
@@ -199,16 +196,38 @@ export default function Home() {
                         fontSize: { xs: '1.5rem', md: '2.125rem' }
                     }}
                 >
-                    Seja Bem-vindo à Plataforma!
                 </Typography>
+            </Box>
+        );
+    }
+
+    // Error state
+    if (error) {
+        return (
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100vh',
+                    width: '100vw',
+                    gap: 3
+                }}
+            >
                 <Typography
-                    variant="body1"
-                    sx={{
-                        color: 'text.secondary',
-                        textAlign: 'center'
-                    }}
+                    variant="h5"
+                    color="error"
+                    sx={{ textAlign: 'center' }}
                 >
+                    Erro ao carregar dados
                 </Typography>
+                <Typography variant="body1" color="text.secondary">
+                    {error}
+                </Typography>
+                <button onClick={() => window.location.reload()}>
+                    Tentar novamente
+                </button>
             </Box>
         );
     }
@@ -218,26 +237,18 @@ export default function Home() {
             <Header onPesquisar={handlePesquisa} />
 
             {/* Botões flutuantes */}
-            <CarrinhoFab
-                onClick={() => setCarrinhoAberto(true)}
-            />
-
-            {/* Botão de Filtros */}
+            <CarrinhoFab onClick={() => setCarrinhoAberto(true)} />
             <FiltroFab
                 onClick={() => setFiltroAberto(true)}
                 categoriasAtivaCount={categoriasSelecionadas.length}
             />
-
-            {/* Botão Admin - só aparece para admins */}
-            <AdminFab
-                onClick={() => setAdminAberto(true)}
-            />
+            <AdminFab onClick={() => setAdminAberto(true)} />
 
             {/* Conteúdo principal */}
             <Container
                 maxWidth={false}
                 sx={{
-                    py: 12, // Aumentado para acomodar o header maior
+                    py: 12,
                     px: 2,
                     width: '100%',
                     maxWidth: '100vw'
@@ -314,7 +325,6 @@ export default function Home() {
                 />
             )}
 
-            {/* Modal de detalhes do produto */}
             <ProdutoModal
                 produto={produtoSelecionado}
                 aberto={produtoModalAberto}

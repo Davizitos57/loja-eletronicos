@@ -5,6 +5,47 @@ export async function getCategorias() {
   return response.data;
 }
 
+// Nova função para buscar produtos para a Home (sem paginação)
+export async function getTodosProdutos() {
+  const [produtosResponse, categoriasResponse] = await Promise.all([
+    api.get('/loja/produtos'),
+    api.get('/categorias')
+  ]);
+  
+  const categoriasMap = new Map(categoriasResponse.data.map(cat => [cat.idCategoria, cat.nome]));
+
+  return produtosResponse.data.map(produto => ({
+    id: produto.idProduto,
+    nome: produto.nome,
+    descricao: produto.descricao,
+    preco: produto.precoUnico,
+    quantidade: produto.quantidadeEstoque,
+    categoria: categoriasMap.get(produto.idCategoria) || 'Sem Categoria',
+    idCategoria: produto.idCategoria,
+    // Adicionar campos necessários para compatibilidade com a Home
+    marca: produto.marca || 'Marca não informada',
+    imagem: produto.imagem || null,
+    estoque: produto.quantidadeEstoque > 0
+  }));
+}
+
+// Função para buscar produtos por categoria específica
+export async function getProdutosPorCategoria(idCategoria) {
+  const response = await api.get(`/loja/produtos/categoria/${idCategoria}`);
+  return response.data.map(produto => ({
+    id: produto.idProduto,
+    nome: produto.nome,
+    descricao: produto.descricao,
+    preco: produto.precoUnico,
+    quantidade: produto.quantidadeEstoque,
+    categoria: produto.categoria || 'Sem Categoria',
+    idCategoria: produto.idCategoria,
+    marca: produto.marca || 'Marca não informada',
+    imagem: produto.imagem || null,
+    estoque: produto.quantidadeEstoque > 0
+  }));
+}
+
 export async function getMuitos({ paginationModel, filterModel, sortModel }) {
   const [produtosResponse, categoriasResponse] = await Promise.all([
     api.get('/loja/produtos'),
