@@ -384,7 +384,7 @@ export const inputsCustomizations = {
         padding: '8px 12px',
         color: (theme.vars || theme).palette.text.primary,
         borderRadius: (theme.vars || theme).shape.borderRadius,
-        backgroundColor: (theme.vars || theme).palette.background.default,
+        backgroundColor: (theme.vars || theme).palette.background.paper,
         transition: 'border 120ms ease-in',
         '&:hover': {
           borderColor: gray[400],
