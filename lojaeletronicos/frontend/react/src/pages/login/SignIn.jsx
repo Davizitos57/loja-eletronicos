@@ -98,14 +98,14 @@ export default function SignIn(props) {
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
       <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', mb: 2 }}>
-        <Link 
+        {/*<Link 
         component={RouterLink} 
         to="/home" 
         variant="body2" 
         sx={{ fontSize: '40px', 
         mr: 4 }}>
           Home
-        </Link>
+        </Link>*/}
         {/*<Link 
         component={RouterLink} 
         to="/produto" 
