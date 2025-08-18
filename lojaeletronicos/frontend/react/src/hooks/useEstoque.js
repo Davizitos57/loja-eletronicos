@@ -60,7 +60,7 @@ export function useEstoque() {
     // Função para obter estoque disponível
     const obterEstoqueDisponivel = useCallback((produto) => {
         const reservado = reservas.get(produto.id) || 0;
-        return Math.max(0, produto.estoque - reservado);
+        return Math.max(0, produto.quantidadeEstoque - reservado);
     }, [reservas]);
 
     // Função para obter quantidade reservada

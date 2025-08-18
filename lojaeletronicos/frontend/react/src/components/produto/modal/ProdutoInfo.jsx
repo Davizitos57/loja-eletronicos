@@ -32,14 +32,13 @@ export default function ProdutoInfo({ produto }) {
                     R$ {produto.preco?.toFixed(2)}
                 </Typography>
 
-                {/* Status do estoque */}
                 <Chip 
                     icon={<InventoryIcon />}
-                    label={`${produto.estoque || 'Disponível'} em estoque`}
+                    label={`${produto.quantidadeEstoque || 0} em estoque`}
                     color={
-                        produto.estoque > 20 ? "success" : 
-                        produto.estoque > 5 ? "warning" : 
-                        produto.estoque > 0 ? "error" : "default"
+                        produto.quantidadeEstoque > 20 ? "success" : 
+                        produto.quantidadeEstoque > 5 ? "warning" : 
+                        produto.quantidadeEstoque > 0 ? "error" : "default"
                     }
                     variant="filled"
                     size="medium"
@@ -69,7 +68,7 @@ export default function ProdutoInfo({ produto }) {
                     </Grid>
                     <Grid item xs={6}>
                         <Typography variant="body1" sx={{ fontSize: '1rem' }}>
-                            <strong>Estoque:</strong> {produto.estoque || 'Disponível'} unidades
+                            <strong>Estoque:</strong> {produto.quantidadeEstoque || 'Disponível'} unidades
                         </Typography>
                     </Grid>
                 </Grid>

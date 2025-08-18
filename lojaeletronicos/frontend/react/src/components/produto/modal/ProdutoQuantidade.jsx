@@ -3,11 +3,11 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import WarningIcon from '@mui/icons-material/Warning';
 
-export default function ProdutoQuantidade({ 
-    produto, 
-    quantidade, 
-    onQuantidadeChange, 
-    estoqueDisponivel 
+export default function ProdutoQuantidade({
+    produto,
+    quantidade,
+    onQuantidadeChange,
+    estoqueDisponivel
 }) {
     const handleIncrement = () => {
         if (quantidade < estoqueDisponivel) {
@@ -34,26 +34,26 @@ export default function ProdutoQuantidade({
             <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2, color: 'primary.main' }}>
                 🛒 Selecionar Quantidade
             </Typography>
-            
+
             {/* Controles de quantidade */}
-            <Box sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: 2, 
+            <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 2,
                 mb: 2,
                 p: 2,
                 bgcolor: 'background.paper',
                 borderRadius: 2,
                 border: '1px solid'
             }}>
-                <IconButton 
+                <IconButton
                     onClick={handleDecrement}
                     disabled={quantidade <= 1}
-                    sx={{ 
+                    sx={{
                         bgcolor: quantidade <= 1 ? '#e0e0e0' : 'primary.main',
                         color: quantidade <= 1 ? '#757575' : 'white',
-                        '&:hover': { 
-                            bgcolor: quantidade <= 1 ? '#e0e0e0' : 'primary.dark' 
+                        '&:hover': {
+                            bgcolor: quantidade <= 1 ? '#e0e0e0' : 'primary.dark'
                         }
                     }}
                 >
@@ -64,12 +64,12 @@ export default function ProdutoQuantidade({
                     value={quantidade}
                     onChange={handleInputChange}
                     type="number"
-                    inputProps={{ 
-                        min: 1, 
+                    inputProps={{
+                        min: 1,
                         max: estoqueDisponivel,
                         style: { textAlign: 'center', fontSize: '1.2rem', fontWeight: 'bold' }
                     }}
-                    sx={{ 
+                    sx={{
                         width: '80px',
                         '& .MuiOutlinedInput-root': {
                             bgcolor: 'background.default'
@@ -77,14 +77,14 @@ export default function ProdutoQuantidade({
                     }}
                 />
 
-                <IconButton 
+                <IconButton
                     onClick={handleIncrement}
                     disabled={quantidade >= estoqueDisponivel}
-                    sx={{ 
+                    sx={{
                         bgcolor: quantidade >= estoqueDisponivel ? '#e0e0e0' : 'primary.main',
                         color: quantidade >= estoqueDisponivel ? '#757575' : 'white',
-                        '&:hover': { 
-                            bgcolor: quantidade >= estoqueDisponivel ? '#e0e0e0' : 'primary.dark' 
+                        '&:hover': {
+                            bgcolor: quantidade >= estoqueDisponivel ? '#e0e0e0' : 'primary.dark'
                         }
                     }}
                 >
@@ -93,9 +93,9 @@ export default function ProdutoQuantidade({
 
                 <Box sx={{ ml: 2 }}>
                     <Typography variant="body2" color="text.secondary">
-                        Disponível: {estoqueDisponivel}
+                        Disponível: {produto.quantidadeEstoque}
                     </Typography>
-                    {estoqueDisponivel <= 5 && (
+                    {produto.quantidadeEstoque <= 5 && (
                         <Chip
                             icon={<WarningIcon />}
                             label="Estoque baixo!"
@@ -108,9 +108,9 @@ export default function ProdutoQuantidade({
             </Box>
 
             {/* Valor total */}
-            <Box sx={{ 
-                p: 2, 
-                bgcolor: 'success.light', 
+            <Box sx={{
+                p: 2,
+                bgcolor: 'success.light',
                 borderRadius: 2,
                 border: '2px solid',
                 borderColor: 'success.main'
