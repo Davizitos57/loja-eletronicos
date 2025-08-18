@@ -13,7 +13,7 @@ import FiltroDrawer from '../components/filtros/FiltroDrawer.jsx';
 import CategoriaSection from '../components/CategoriaSection.jsx';
 import Header from '../components/Header.jsx';
 import ProdutoModal from '../components/produto/modal/ProdutoModal.jsx';
-import { getTodosProdutos, getCategorias } from '../components/produto/produtos.jsx';
+import { getTodosProdutos, getCategorias, buscarPorNome} from '../components/produto/produtos.jsx';
 import { agruparProdutosPorCategoria } from '../components/produto/utils/produtoUtils.js';
 
 export default function Home() {
@@ -95,10 +95,10 @@ export default function Home() {
             categoriasFiltradas = categoriasFiltradas.map(categoria => ({
                 ...categoria,
                 produtos: categoria.produtos.filter(produto =>
-                    produto.nome.toLowerCase().includes(termoLower) ||
-                    produto.marca.toLowerCase().includes(termoLower) ||
-                    produto.categoria.toLowerCase().includes(termoLower) ||
-                    produto.descricao.toLowerCase().includes(termoLower)
+                    (produto.nome || '').toLowerCase().includes(termoLower) ||
+                    (produto.marca || '').toLowerCase().includes(termoLower) ||
+                    (produto.categoria || '').toLowerCase().includes(termoLower) ||
+                    (produto.descricao || '').toLowerCase().includes(termoLower)
                 )
             })).filter(categoria => categoria.produtos.length > 0);
         }
@@ -148,8 +148,20 @@ export default function Home() {
         setProdutoSelecionado(null);
     };
 
-    const handlePesquisa = (termo) => {
+    const handlePesquisa = async (termo) => {
         setTermoPesquisa(termo);
+        setLoading(true);
+        try {
+            const produtosEncontrados = await buscarPorNome(termo);
+            const categoriasData = await getCategorias();
+            const categoriasComProdutos = agruparProdutosPorCategoria(produtosEncontrados, categoriasData);
+            setCategoriasFiltradas(categoriasComProdutos);
+        } catch (err) {
+            console.error('Erro ao buscar produtos:', err);
+            setError('Não foi possível realizar a busca.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Funções para filtros de categoria

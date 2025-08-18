@@ -124,6 +124,28 @@ export async function getUm(produtoId) {
     };
 }
 
+export async function buscarPorNome(nome) {
+  if (!nome) {
+    return getTodosProdutos();
+  }
+  const response = await api.get(`/loja/produtos/nome?nome=${nome}`);
+  
+  const categoriasResponse = await api.get('/categorias');
+  const categoriasMap = new Map(categoriasResponse.data.map(cat => [cat.idCategoria, cat.nome]));
+
+  return response.data.map(produto => ({
+    id: produto.idProduto,
+    nome: produto.nome,
+    descricao: produto.descricao,
+    preco: produto.precoUnico,
+    quantidade: produto.quantidadeEstoque,
+    categoria: categoriasMap.get(produto.idCategoria) || 'Sem Categoria',
+    idCategoria: produto.idCategoria,
+    imagem: produto.imagem || null,
+    estoque: produto.quantidadeEstoque > 0
+  }));
+}
+
 export async function criarUm(data) {
   const produtoParaBackend = {
     nome: data.nome,
