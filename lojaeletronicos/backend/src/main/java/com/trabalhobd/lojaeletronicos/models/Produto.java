@@ -20,7 +20,8 @@ public class Produto implements Serializable {
     private int quantidadeEstoque;
     private boolean aVenda = true;
     private int idCategoria;
-
+    private String imagem;
+    
     public Produto(String nome, String descricao, float precoUnico, int quantidadeEstoque){
         this.nome = nome;
         this.descricao = descricao;

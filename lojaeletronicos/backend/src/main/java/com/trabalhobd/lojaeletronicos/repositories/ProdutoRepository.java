@@ -27,13 +27,14 @@ public class ProdutoRepository {
         produto.setQuantidadeEstoque(rs.getInt("quantidade_estoque"));
         produto.setAVenda(rs.getBoolean("ativo"));
         produto.setIdCategoria(rs.getInt("id_categoria"));
+        produto.setImagem(rs.getString("imagem"));
         return produto;
     };
 
     public void create(Produto produto){
-        String sql = "INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque, id_categoria) VALUES (?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, produto.getNome(), produto.getDescricao(), produto.getPrecoUnico(), produto.getQuantidadeEstoque(), produto.getIdCategoria()); 
-    } 
+        String sql = "INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque, id_categoria, imagem) VALUES (?, ?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, produto.getNome(), produto.getDescricao(), produto.getPrecoUnico(), produto.getQuantidadeEstoque(), produto.getIdCategoria(), produto.getImagem());
+    }
 
     public Produto findById(Long idProduto){
         String sql = "SELECT * FROM produtos WHERE id = ?";

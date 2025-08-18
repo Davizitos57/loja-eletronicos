@@ -15,7 +15,8 @@ import lombok.Setter;
 public class Categoria implements Serializable {
     private Long idCategoria;
     private String nome;
-
+    private String imagemUrl;
+    
     public Categoria(String nome){
         this.nome = nome;
     }

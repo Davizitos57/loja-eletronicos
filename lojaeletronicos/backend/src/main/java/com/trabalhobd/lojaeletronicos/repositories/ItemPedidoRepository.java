@@ -4,6 +4,7 @@ import com.trabalhobd.lojaeletronicos.models.DTOs.ItemPedidoProduto;
 import com.trabalhobd.lojaeletronicos.models.DTOs.ItensCarrinhosDTO;
 import com.trabalhobd.lojaeletronicos.models.ItemPedido;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -78,4 +79,13 @@ public class ItemPedidoRepository {
 
         return item;
     };
+
+    public Double getPrecoDoItem(Long pedidoId, Long produtoId) {
+        String sql = "SELECT preco FROM itens_pedidos WHERE pedido_id = ? AND produto_id = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, Double.class, pedidoId, produtoId);
+        } catch (EmptyResultDataAccessException e) {
+            return 0.0;
+    }
+}
 }

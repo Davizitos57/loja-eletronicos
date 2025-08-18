@@ -20,6 +20,7 @@ public class CategoriaRepository{
         Categoria categoria = new Categoria();
         categoria.setIdCategoria(rs.getLong("id"));
         categoria.setNome(rs.getString("nome"));
+        categoria.setImagemUrl(rs.getString("imagem_url"));
         return categoria;
     };
 
