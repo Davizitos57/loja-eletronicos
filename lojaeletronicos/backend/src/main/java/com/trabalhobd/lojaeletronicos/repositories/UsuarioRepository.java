@@ -46,6 +46,17 @@ public class UsuarioRepository {
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
+
+        if (usuario != null) {
+            try {
+                List<Endereco> enderecos = enderecoRepository.findByUserId(usuario.getId());
+                usuario.setEnderecos(enderecos);
+            } catch (Exception e) {
+                usuario.setEnderecos(null);
+                System.err.println("Erro ao buscar endereços para o usuário no login: " + e.getMessage());
+            }
+        }
+
         System.out.println(usuario);
         return usuario;
     }
