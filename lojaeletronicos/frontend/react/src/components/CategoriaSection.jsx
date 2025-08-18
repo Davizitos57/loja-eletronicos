@@ -1,4 +1,4 @@
-import { Box, Typography, IconButton, Divider } from '@mui/material';
+import { Box, Typography, IconButton, Divider, Avatar } from '@mui/material'; // Adicionado Avatar
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ProdutoCard from './produto/ProdutoCard';
@@ -16,18 +16,28 @@ export default function CategoriaSection({
         <Box sx={{ mb: 3 }}>
             {/* Cabeçalho da categoria */}
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
-                <Typography 
-                    variant="h4" 
-                    sx={{ 
-                        fontWeight: 'bold', 
-                        color: 'primary.main',
-                        fontSize: { xs: '1.5rem', md: '2rem' }
-                    }}
-                >
-                    {categoria.nome} ({categoria.produtos.length})
-                </Typography>
+                {/* Alteração aqui: Adicionado um Box para agrupar Avatar e Typography */}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    {categoria.imagemUrl && (
+                        <Avatar
+                            src={categoria.imagemUrl}
+                            alt={categoria.nome}
+                            sx={{ width: 56, height: 56 }}
+                        />
+                    )}
+                    <Typography 
+                        variant="h4" 
+                        sx={{ 
+                            fontWeight: 'bold', 
+                            color: 'primary.main',
+                            fontSize: { xs: '1.5rem', md: '2rem' }
+                        }}
+                    >
+                        {categoria.nome} ({categoria.produtos.length})
+                    </Typography>
+                </Box>
                 
-                {/* Botões de navegação */}
+                {/* Botões de navegação (sem alteração) */}
                 <Box sx={{ display: 'flex', gap: 0.5 }}>
                     <IconButton
                         onClick={() => onNavigate(categoria.id, 'left')}
@@ -60,7 +70,7 @@ export default function CategoriaSection({
                 </Box>
             </Box>
 
-            {/* Container de produtos */}
+            {/* Container de produtos (sem alteração) */}
             <Box
                 sx={{
                     position: 'relative',

@@ -18,13 +18,16 @@ const INITIAL_FORM_VALUES = {
 
 export default function ProdutoCreate() {
   const navigate = useNavigate();
-
   const notifications = useNotifications();
 
   const [formState, setFormState] = React.useState(() => ({
     values: INITIAL_FORM_VALUES,
     errors: {},
   }));
+  
+  // 1. ADICIONAR ESTE ESTADO PARA GUARDAR O ARQUIVO DA IMAGEM
+  const [imagemFile, setImagemFile] = React.useState(null); 
+
   const formValues = formState.values;
   const formErrors = formState.errors;
 
@@ -62,8 +65,10 @@ export default function ProdutoCreate() {
 
   const handleFormReset = React.useCallback(() => {
     setFormValues(INITIAL_FORM_VALUES);
+    setImagemFile(null); // Limpar a imagem também
   }, [setFormValues]);
 
+  // 2. ATUALIZAR A FUNÇÃO DE SUBMISSÃO
   const handleFormSubmit = React.useCallback(async () => {
     const { issues } = validateProduto(formValues);
     if (issues && issues.length > 0) {
@@ -75,7 +80,9 @@ export default function ProdutoCreate() {
     setFormErrors({});
 
     try {
-      await createProduto(formValues);
+      // Agora passamos os valores do formulário E o arquivo da imagem
+      await createProduto(formValues, imagemFile); 
+      
       notifications.show('Produto criado com sucesso', {
         severity: 'success',
         autoHideDuration: 3000,
@@ -92,7 +99,7 @@ export default function ProdutoCreate() {
       );
       throw createError;
     }
-  }, [formValues, navigate, notifications, setFormErrors]);
+  }, [formValues, imagemFile, navigate, notifications, setFormErrors]); // Adicionar imagemFile aqui
 
   return (
     <PageContainer
@@ -105,6 +112,8 @@ export default function ProdutoCreate() {
         onSubmit={handleFormSubmit}
         onReset={handleFormReset}
         submitButtonLabel="Criar"
+        // 3. PASSAR A FUNÇÃO PARA ATUALIZAR O ARQUIVO DE IMAGEM
+        onImagemChange={setImagemFile} 
       />
     </PageContainer>
   );

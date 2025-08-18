@@ -1,13 +1,8 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import FormGroup from '@mui/material/FormGroup';
-import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
-import MenuItem from '@mui/material/MenuItem';
+import { Box, Button, FormGroup, Grid, Stack, TextField, MenuItem, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useNavigate } from 'react-router';
 import { getCategorias } from './produtos';
 
@@ -19,9 +14,11 @@ function ProdutoForm(props) {
     onReset,
     submitButtonLabel,
     backButtonPath,
+    onImagemChange, 
   } = props;
 
   const [categorias, setCategorias] = React.useState([]);
+  const [preview, setPreview] = React.useState(null);
   const formValues = formState.values;
   const formErrors = formState.errors;
   const navigate = useNavigate();
@@ -38,6 +35,21 @@ function ProdutoForm(props) {
     }
     carregarCategorias();
   }, []);
+
+  const handleImagemChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      onImagemChange(file); 
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      onImagemChange(null);
+      setPreview(null);
+    }
+  };
 
   const handleSubmit = React.useCallback(
     async (event) => {
@@ -100,6 +112,42 @@ function ProdutoForm(props) {
           <Grid item xs={12} sm={6}>
             <TextField type="number" value={formValues.quantidade ?? ''} onChange={handleNumberFieldChange} name="quantidade" label="Quantidade" error={!!formErrors.quantidade} helperText={formErrors.quantidade ?? ' '} fullWidth />
           </Grid>
+
+          <Grid item xs={12}>
+            <Typography variant="overline">Imagem do Produto</Typography>
+            <Button
+              component="label"
+              variant="contained"
+              startIcon={<CloudUploadIcon />}
+              fullWidth
+            >
+              Carregar Imagem
+              <input
+                type="file"
+                hidden
+                accept="image/*"
+                onChange={handleImagemChange}
+              />
+            </Button>
+            {preview && (
+              <Box
+                component="img"
+                sx={{
+                  height: 200,
+                  width: 'auto',
+                  maxHeight: { xs: 200, md: 180 },
+                  maxWidth: { xs: 300, md: 250 },
+                  mt: 2,
+                  borderRadius: 1,
+                  border: '1px solid',
+                  borderColor: 'divider'
+                }}
+                alt="Preview da imagem do produto."
+                src={preview}
+              />
+            )}
+          </Grid>
+          
         </Grid>
       </FormGroup>
       <Stack direction="row" spacing={2} justifyContent="space-between">
@@ -124,6 +172,7 @@ ProdutoForm.propTypes = {
   onReset: PropTypes.func,
   onSubmit: PropTypes.func.isRequired,
   submitButtonLabel: PropTypes.string.isRequired,
+  onImagemChange: PropTypes.func, 
 };
 
 export default ProdutoForm;

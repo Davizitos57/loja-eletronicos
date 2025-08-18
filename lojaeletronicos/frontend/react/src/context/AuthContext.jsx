@@ -55,6 +55,7 @@ export function AuthProvider({ children }) {
         setLoading(false);
     }, []);
 
+    /* <--- Adicione aqui para comentar o início do bloco
     useEffect(() => {
         if (!usuario && !loading) {
             const mockAdminUser = {
@@ -67,6 +68,7 @@ export function AuthProvider({ children }) {
             setUsuario(mockAdminUser);
         }
     }, [usuario, loading]);
+    */ //
 
     return (
         <AuthContext.Provider

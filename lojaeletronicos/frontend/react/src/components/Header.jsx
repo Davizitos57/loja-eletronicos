@@ -42,22 +42,10 @@ export default function Header({ onPesquisar }) {
     return (
         <Box
             sx={{
-                background: (theme) => `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
+                background: '#3392ffff',
                 py: 8,
                 position: 'relative',
                 overflow: 'hidden',
-                '&::before': {
-                    content: '""',
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    backgroundImage: 'url(https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1920&h=400&fit=crop&opacity=0.1)',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    opacity: 0.1,
-                }
             }}
         >
             <Container sx={{ position: 'relative', zIndex: 2, textAlign: 'center' }}>

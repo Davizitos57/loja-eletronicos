@@ -35,7 +35,9 @@ import {
 } from '@mui/icons-material';
 import { useCarrinho } from '../../context/CarrinhoContext.jsx';
 import SelecionarPagamento from './SelecionarPagamento.jsx';
-import { enderecoEntregaMock } from '../../data/enderecoMock.js';
+import { useEndereco } from '../../hooks/useEndereco';
+import { carrinhoService } from '../../services/carrinho';
+import { useAuth } from '../../context/AuthContext';
 
 export default function ResumoCompra() {
     const navigate = useNavigate();
@@ -46,9 +48,9 @@ export default function ResumoCompra() {
     const [pagamentoAberto, setPagamentoAberto] = useState(false);
     const [dadosPagamento, setDadosPagamento] = useState(null);
 
-    // Mock do endereço (futuramente virá do backend/context)
-    const [enderecoSelecionado] = useState(enderecoEntregaMock);
-
+    const { enderecoSelecionado, loading: enderecoLoading } = useEndereco();
+    const { usuario } = useAuth();
+    
     // Pega os dados vindos da navegação
     const produtoCompra = location.state?.produto;
     const carrinhoCompra = location.state?.carrinho;
@@ -94,12 +96,10 @@ export default function ResumoCompra() {
     const processarPagamento = async (dados) => {
         setProcessandoPagamento(true);
 
-        // Simula processamento do pagamento
         setTimeout(() => {
             setProcessandoPagamento(false);
             setPagamentoSucesso(true);
 
-            // Se for compra do carrinho, limpa o carrinho
             if (isCompraCarrinho) {
                 limparCarrinho();
             }
@@ -122,20 +122,31 @@ export default function ResumoCompra() {
     };
 
     const formatarCEP = (cep) => {
+        if (!cep) return '';
         return cep.replace(/(\d{5})(\d{3})/, '$1-$2');
     };
 
     const calcularPrazoEntrega = () => {
+        if (!enderecoSelecionado?.cep) return 0; // **CORREÇÃO AQUI**
         // Simulação simples baseada no CEP
         const cep = enderecoSelecionado.cep.replace(/\D/g, '');
         const prefixo = parseInt(cep.substring(0, 2));
-        
+
         // Simula prazos diferentes por região
         if (prefixo >= 30000 && prefixo <= 39999) return 2; // MG
         if (prefixo >= 1000 && prefixo <= 19999) return 1;   // SP
         if (prefixo >= 20000 && prefixo <= 28999) return 3;  // RJ
         return 5; // Outras regiões
     };
+
+    if (enderecoLoading) {
+        return (
+            <Container maxWidth="md" sx={{ py: 4, textAlign: 'center' }}>
+                <CircularProgress />
+                <Typography>Carregando dados da compra...</Typography>
+            </Container>
+        );
+    }
 
     if (itensCompra.length === 0) {
         return (
@@ -154,7 +165,7 @@ export default function ResumoCompra() {
         );
     }
 
-    const prazoEntrega = calcularPrazoEntrega();
+    const prazoEntrega = calcularPrazoEntrega(); // **CORREÇÃO AQUI**
 
     return (
         <Container maxWidth="md" sx={{ py: 4 }}>
@@ -226,66 +237,68 @@ export default function ResumoCompra() {
             </Card>
 
             {/* Endereço de Entrega */}
-            <Card sx={{ mb: 3 }}>
-                <CardContent>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                        <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center' }}>
-                            <LocalShippingIcon sx={{ mr: 1 }} />
-                            Endereço de Entrega
-                        </Typography>
-                        <IconButton 
-                            size="small" 
-                            sx={{ color: 'primary.main' }}
-                            onClick={() => {
-                                // Futuramente abrir modal para editar/selecionar endereço
-                                console.log('Editar endereço');
-                            }}
-                        >
-                            <EditIcon />
-                        </IconButton>
-                    </Box>
-
-                    <Box sx={{ bgcolor: 'grey.50', p: 2, borderRadius: 2, border: '1px solid', borderColor: 'grey.200' }}>
-                        {/* Informações do endereço */}
-                        <Typography variant="body2" color="text.primary" sx={{ mb: 1, fontWeight: 500 }}>
-                            {enderecoSelecionado.rua}, {enderecoSelecionado.numero}
-                            {enderecoSelecionado.complemento && `, ${enderecoSelecionado.complemento}`}
-                        </Typography>
-                        
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                            {enderecoSelecionado.bairro} - {enderecoSelecionado.cidade}, {enderecoSelecionado.estado}
-                        </Typography>
-                        
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                            CEP: {formatarCEP(enderecoSelecionado.cep)}
-                        </Typography>
-
-                        {/* Prazo de entrega */}
-                        <Box sx={{ 
-                            p: 1.5, 
-                            bgcolor: (theme) => alpha(theme.palette.success.main, 0.1),
-                            borderRadius: 1,
-                            border: '1px solid',
-                            borderColor: (theme) => alpha(theme.palette.success.main, 0.3)
-                        }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <ScheduleIcon sx={{ fontSize: 20, color: 'success.main' }} />
-                                <Typography variant="body2" fontWeight="bold" color="success.main">
-                                    Entrega prevista: {prazoEntrega} dia{prazoEntrega > 1 ? 's' : ''} út{prazoEntrega > 1 ? 'eis' : 'il'}
-                                </Typography>
-                            </Box>
-                            <Typography variant="caption" color="success.dark">
-                                {new Date(Date.now() + prazoEntrega * 24 * 60 * 60 * 1000).toLocaleDateString('pt-BR', {
-                                    weekday: 'long',
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric'
-                                })}
-                            </Typography>
-                        </Box>
-                    </Box>
-                </CardContent>
-            </Card>
+            {enderecoSelecionado && (
+                 <Card sx={{ mb: 3 }}>
+                 <CardContent>
+                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                         <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center' }}>
+                             <LocalShippingIcon sx={{ mr: 1 }} />
+                             Endereço de Entrega
+                         </Typography>
+                         <IconButton
+                             size="small"
+                             sx={{ color: 'primary.main' }}
+                             onClick={() => {
+                                 // Futuramente abrir modal para editar/selecionar endereço
+                                 console.log('Editar endereço');
+                             }}
+                         >
+                             <EditIcon />
+                         </IconButton>
+                     </Box>
+ 
+                     <Box sx={{ bgcolor: 'grey.50', p: 2, borderRadius: 2, border: '1px solid', borderColor: 'grey.200' }}>
+                         {/* Informações do endereço */}
+                         <Typography variant="body2" color="text.primary" sx={{ mb: 1, fontWeight: 500 }}>
+                             {enderecoSelecionado.rua}, {enderecoSelecionado.numero}
+                             {enderecoSelecionado.complemento && `, ${enderecoSelecionado.complemento}`}
+                         </Typography>
+                         
+                         <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                             {enderecoSelecionado.bairro} - {enderecoSelecionado.cidade}, {enderecoSelecionado.estado}
+                         </Typography>
+                         
+                         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                             CEP: {formatarCEP(enderecoSelecionado.cep)}
+                         </Typography>
+ 
+                         {/* Prazo de entrega */}
+                         <Box sx={{
+                             p: 1.5,
+                             bgcolor: (theme) => alpha(theme.palette.success.main, 0.1),
+                             borderRadius: 1,
+                             border: '1px solid',
+                             borderColor: (theme) => alpha(theme.palette.success.main, 0.3)
+                         }}>
+                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                 <ScheduleIcon sx={{ fontSize: 20, color: 'success.main' }} />
+                                 <Typography variant="body2" fontWeight="bold" color="success.main">
+                                     Entrega prevista: {prazoEntrega} dia{prazoEntrega > 1 ? 's' : ''} út{prazoEntrega > 1 ? 'eis' : 'il'}
+                                 </Typography>
+                             </Box>
+                             <Typography variant="caption" color="success.dark">
+                                 {new Date(Date.now() + prazoEntrega * 24 * 60 * 60 * 1000).toLocaleDateString('pt-BR', {
+                                     weekday: 'long',
+                                     year: 'numeric',
+                                     month: 'long',
+                                     day: 'numeric'
+                                 })}
+                             </Typography>
+                         </Box>
+                     </Box>
+                 </CardContent>
+             </Card>
+            )}
 
             {/* Resumo */}
             <Card sx={{ mb: 3 }}>
@@ -397,22 +410,24 @@ export default function ResumoCompra() {
                     )}
 
                     {/* Informações de entrega no sucesso */}
-                    <Card sx={{ mt: 2, bgcolor: (theme) => alpha(theme.palette.info.main, 0.1) }}>
-                        <CardContent sx={{ py: 2 }}>
-                            <Typography variant="h6" color="info.main" gutterBottom>
-                                📦 Informações de Entrega
-                            </Typography>
-                            <Typography variant="body2">
-                                Será entregue em: {enderecoSelecionado.rua}, {enderecoSelecionado.numero}
-                            </Typography>
-                            <Typography variant="body2">
-                                {enderecoSelecionado.bairro} - {enderecoSelecionado.cidade}, {enderecoSelecionado.estado}
-                            </Typography>
-                            <Typography variant="body2" color="info.main" fontWeight="bold">
-                                Prazo: {prazoEntrega} dia{prazoEntrega > 1 ? 's' : ''} útil{prazoEntrega > 1 ? 'is' : ''}
-                            </Typography>
-                        </CardContent>
-                    </Card>
+                    {enderecoSelecionado && (
+                        <Card sx={{ mt: 2, bgcolor: (theme) => alpha(theme.palette.info.main, 0.1) }}>
+                            <CardContent sx={{ py: 2 }}>
+                                <Typography variant="h6" color="info.main" gutterBottom>
+                                    📦 Informações de Entrega
+                                </Typography>
+                                <Typography variant="body2">
+                                    Será entregue em: {enderecoSelecionado.rua}, {enderecoSelecionado.numero}
+                                </Typography>
+                                <Typography variant="body2">
+                                    {enderecoSelecionado.bairro} - {enderecoSelecionado.cidade}, {enderecoSelecionado.estado}
+                                </Typography>
+                                <Typography variant="body2" color="info.main" fontWeight="bold">
+                                    Prazo: {prazoEntrega} dia{prazoEntrega > 1 ? 's' : ''} útil{prazoEntrega > 1 ? 'is' : ''}
+                                </Typography>
+                            </CardContent>
+                        </Card>
+                    )}
                 </DialogContent>
                 <DialogActions sx={{ justifyContent: 'center', pb: 3 }}>
                     <Button

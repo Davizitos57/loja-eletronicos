@@ -8,13 +8,21 @@ import {
 } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import api from '../../services/api'; 
 
 export default function ProdutoCard({ 
     produto, 
     onAdicionarCarrinho, 
     onComprar,
-    onVerDetalhes // Nova prop
+    onVerDetalhes
 }) {
+
+    const isUploadedImage = produto.imagem && produto.imagem.startsWith('/uploads/');
+    
+    const imageUrl = isUploadedImage
+        ? `${api.defaults.baseURL}${produto.imagem}` 
+        : produto.imagem || `https://picsum.photos/260/180?random=${produto.id}`;
+
     return (
         <Card
             sx={{
@@ -24,18 +32,18 @@ export default function ProdutoCard({
                 flexDirection: 'column',
                 transition: 'transform 0.2s, box-shadow 0.2s',
                 flexShrink: 0,
-                cursor: 'pointer', // Indicar que é clicável
+                cursor: 'pointer',
                 '&:hover': {
                     transform: 'translateY(-4px)',
                     boxShadow: 4
                 }
             }}
-            onClick={() => onVerDetalhes(produto)} // Abrir modal ao clicar no card
+            onClick={() => onVerDetalhes(produto)}
         >
             <CardMedia
                 component="img"
                 height="180"
-                image={produto.imagem || `https://picsum.photos/260/180?random=${produto.id}`}
+                image={imageUrl}
                 alt={produto.nome}
             />
             <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', p: 1.5 }}>
@@ -57,7 +65,7 @@ export default function ProdutoCard({
                         fullWidth
                         sx={{ mb: 1, py: 0.8 }}
                         onClick={(e) => {
-                            e.stopPropagation(); // Evitar que abra o modal
+                            e.stopPropagation(); 
                             onComprar(produto);
                         }}
                     >
@@ -68,7 +76,7 @@ export default function ProdutoCard({
                         fullWidth
                         sx={{ py: 0.8 }}
                         onClick={(e) => {
-                            e.stopPropagation(); // Evitar que abra o modal
+                            e.stopPropagation();
                             onAdicionarCarrinho(produto);
                         }}
                         startIcon={<ShoppingCartIcon />}

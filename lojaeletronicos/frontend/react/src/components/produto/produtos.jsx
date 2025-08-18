@@ -5,13 +5,12 @@ export async function getCategorias() {
   return response.data;
 }
 
-// Nova função para buscar produtos para a Home (sem paginação)
 export async function getTodosProdutos() {
   const [produtosResponse, categoriasResponse] = await Promise.all([
     api.get('/loja/produtos'),
     api.get('/categorias')
   ]);
-  
+
   const categoriasMap = new Map(categoriasResponse.data.map(cat => [cat.idCategoria, cat.nome]));
 
   return produtosResponse.data.map(produto => ({
@@ -22,13 +21,11 @@ export async function getTodosProdutos() {
     quantidade: produto.quantidadeEstoque,
     categoria: categoriasMap.get(produto.idCategoria) || 'Sem Categoria',
     idCategoria: produto.idCategoria,
-    // Adicionar campos necessários para compatibilidade com a Home
-    imagem: produto.imagem || null,
+    imagem: produto.imagem || null, 
     estoque: produto.quantidadeEstoque > 0
   }));
 }
 
-// Função para buscar produtos por categoria específica
 export async function getProdutosPorCategoria(idCategoria) {
   const response = await api.get(`/loja/produtos/categoria/${idCategoria}`);
   return response.data.map(produto => ({
@@ -146,13 +143,35 @@ export async function buscarPorNome(nome) {
   }));
 }
 
-export async function criarUm(data) {
+export async function criarUm(data, imagemFile) {
+  let imagemUrl = null;
+
+  if (imagemFile) {
+    const formData = new FormData();
+    formData.append('imagemFile', imagemFile);
+    formData.append('idCategoria', data.categoria); 
+    formData.append('nomeProduto', data.nome);     
+
+    try {
+      const response = await api.post('/loja/produtos/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      imagemUrl = response.data;
+    } catch (error) {
+      console.error("Erro no upload da imagem:", error);
+      throw new Error('Falha ao fazer upload da imagem.');
+    }
+  }
+
   const produtoParaBackend = {
     nome: data.nome,
     descricao: data.descricao,
     precoUnico: data.preco,
     quantidadeEstoque: data.quantidade,
     idCategoria: data.categoria,
+    imagem: imagemUrl, 
   };
   const response = await api.post('/loja/produtos', produtoParaBackend);
   return response.data;

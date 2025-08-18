@@ -38,10 +38,12 @@ export function CarrinhoProvider({ children }) {
 
         try {
             await carrinhoService.adicionarItem(usuario.id, produto.id, quantidade);
-            await carregarCarrinho(); // Recarrega o carrinho
+            await carregarCarrinho();
+            
         } catch (error) {
             console.error('Erro ao adicionar ao carrinho:', error);
-            alert('Erro ao adicionar produto ao carrinho');
+            const errorMsg = error.response?.data?.message || 'Erro ao adicionar produto ao carrinho. Tente novamente.';
+            alert(errorMsg);
         }
     };
 
@@ -50,7 +52,7 @@ export function CarrinhoProvider({ children }) {
 
         try {
             await carrinhoService.removerItem(usuario.id, produtoId);
-            await carregarCarrinho(); // Recarrega o carrinho
+            await carregarCarrinho(); 
         } catch (error) {
             console.error('Erro ao remover do carrinho:', error);
             alert('Erro ao remover produto do carrinho');

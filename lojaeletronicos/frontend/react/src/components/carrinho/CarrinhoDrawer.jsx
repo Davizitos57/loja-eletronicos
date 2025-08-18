@@ -151,12 +151,12 @@ export default function CarrinhoDrawer({
                                                 </Box>
 
                                                 <IconButton
-                                                    onClick={() => onRemoverItem(index)}
-                                                    color="error"
-                                                    size="small"
-                                                >
-                                                    <DeleteIcon />
-                                                </IconButton>
+                                                onClick={() => onRemoverItem(item.produtoId)}
+                                                color="error"
+                                                size="small"
+                                            >
+                                                <DeleteIcon />
+                                            </IconButton>
                                             </Box>
 
                                             {/* Subtotal */}
