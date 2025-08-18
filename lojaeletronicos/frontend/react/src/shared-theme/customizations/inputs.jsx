@@ -428,6 +428,7 @@ export const inputsCustomizations = {
         color: (theme.vars || theme).palette.grey[500],
         ...theme.applyStyles('dark', {
           color: (theme.vars || theme).palette.grey[400],
+          border: `1px solid ${alpha(gray[700], 0.4)}`,
         }),
       }),
     },
