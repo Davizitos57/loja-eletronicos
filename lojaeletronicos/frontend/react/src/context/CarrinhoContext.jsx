@@ -18,13 +18,14 @@ export function CarrinhoProvider({ children }) {
 
     const carregarCarrinho = async () => {
         if (!usuario?.id) return;
-        
+
         try {
             setLoading(true);
             const itens = await carrinhoService.listarItens(usuario.id);
-            setCarrinho(itens);
+            setCarrinho(itens || []); // Garante que sempre será um array, mesmo que vazio
         } catch (error) {
             console.error('Erro ao carregar carrinho:', error);
+            setCarrinho([]); // Em caso de erro, inicializa com array vazio
         } finally {
             setLoading(false);
         }
@@ -39,7 +40,7 @@ export function CarrinhoProvider({ children }) {
         try {
             await carrinhoService.adicionarItem(usuario.id, produto.id, quantidade);
             await carregarCarrinho();
-            
+
         } catch (error) {
             console.error('Erro ao adicionar ao carrinho:', error);
             const errorMsg = error.response?.data?.message || 'Erro ao adicionar produto ao carrinho. Tente novamente.';
@@ -52,7 +53,7 @@ export function CarrinhoProvider({ children }) {
 
         try {
             await carrinhoService.removerItem(usuario.id, produtoId);
-            await carregarCarrinho(); 
+            await carregarCarrinho();
         } catch (error) {
             console.error('Erro ao remover do carrinho:', error);
             alert('Erro ao remover produto do carrinho');
