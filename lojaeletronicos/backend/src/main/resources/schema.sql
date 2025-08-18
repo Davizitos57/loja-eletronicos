@@ -8,11 +8,11 @@ DROP TABLE IF EXISTS usuarios;
 
 CREATE TABLE usuarios (
     id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    nome VARCHAR(20) NOT NULL,
-    email VARCHAR(20) UNIQUE NOT NULL,
+    nome VARCHAR(50) NOT NULL,
+    email VARCHAR(40) UNIQUE NOT NULL,
     cpf VARCHAR(11) UNIQUE NOT NULL,
     telefone TEXT,
-    senha VARCHAR(20),
+    senha VARCHAR(100),
     tipo_usuario VARCHAR(5) DEFAULT 'BASIC',
     excluido integer DEFAULT 0
 );

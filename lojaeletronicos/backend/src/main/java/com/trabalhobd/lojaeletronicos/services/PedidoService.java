@@ -127,6 +127,9 @@ public class PedidoService {
 
     public List<ItensCarrinhosDTO> listarItensDoCarrinho(Long clienteId) {
         Pedido carrinho = pedidoRepository.buscarCarrinhoPorCliente(clienteId);
+        if (carrinho == null) {
+            return List.of();
+        }
         return itemPedidoRepository.listarItensPorPedido(carrinho.getId());
     }
 

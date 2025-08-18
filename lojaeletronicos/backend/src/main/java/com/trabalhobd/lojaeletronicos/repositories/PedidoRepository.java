@@ -59,7 +59,7 @@ public class PedidoRepository {
         try {
             pedido = jdbcTemplate.queryForObject(sql, pedidoRowMapper, clienteId);
         } catch (EmptyResultDataAccessException e) {
-            throw new EmptyResultDataAccessException(1);
+            return null; // Retorna null ao invés de lançar exceção
         }
         return pedido;
     }
