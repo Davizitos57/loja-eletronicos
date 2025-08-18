@@ -31,37 +31,6 @@ public class PedidoService {
     @Autowired
     private PagamentoRepository pagamentoRepository;
 
-
-//    public void adicionarAoCarrinho(Long clienteId, Long produtoId, Integer quantidade) {
-//        Pedido carrinho;
-//        Long novoPedidoId = 0L;
-//        try {
-//            carrinho = pedidoRepository.buscarCarrinhoPorCliente(clienteId);
-//            novoPedidoId = carrinho.getId();
-//
-//        } catch (EmptyResultDataAccessException e) {
-//            novoPedidoId = pedidoRepository.criarCarrinho(clienteId);
-//            carrinho = new Pedido();
-//            carrinho.setId(novoPedidoId);
-//            carrinho.setIdUsuario(clienteId);
-//            carrinho.setStatus(PedidoEnum.RASCUNHO.getStatus());
-//            carrinho.setValorTotal(0.0);
-//        }
-//
-//        Produto produto = produtoRepository.findById(produtoId);
-//        double novoValor = produto.getPrecoUnico() * quantidade;
-//
-//        try {
-//            itemPedidoRepository.adicionarItem(novoPedidoId, produtoId, quantidade, novoValor);
-//        } catch (Exception e) {
-//            atualizarItemPedido(novoPedidoId, produtoId, quantidade, true);
-//            return;
-//        }
-//
-//        Double novoTotal = carrinho.getValorTotal() + novoValor;
-//        pedidoRepository.atualizarValorTotal(carrinho.getId(), novoTotal);
-//    }
-
     public void adicionarAoCarrinho(Long clienteId, Long produtoId, Integer quantidade) {
         try {
             Pedido carrinho = pedidoRepository.buscarCarrinhoPorCliente(clienteId);
@@ -101,14 +70,15 @@ public class PedidoService {
         }
     }
 
-    public void removerItem(Long idUsuario, Long idProduto) {
-        //itemPedidoRepository.removerItem(idUsuario, idProduto);
-        var carrinho = pedidoRepository.buscarCarrinhoPorCliente(idUsuario);
+    public void removerItem(Long clienteId, Long produtoId) {
+        // Busca o carrinho do cliente
+        Pedido carrinho = pedidoRepository.buscarCarrinhoPorCliente(clienteId);
         if (carrinho == null) {
-            return;
+            throw new RuntimeException("Carrinho não encontrado");
         }
-        atualizarItemPedido(carrinho.getId(), idProduto, 1, false);
 
+        // Remove completamente o item do carrinho
+        itemPedidoRepository.removerItem(carrinho.getId(), produtoId);
     }
 
     public void atualizarItemPedido(Long pedidoId, Long produtoId, Integer quantidade, boolean aumentar) {

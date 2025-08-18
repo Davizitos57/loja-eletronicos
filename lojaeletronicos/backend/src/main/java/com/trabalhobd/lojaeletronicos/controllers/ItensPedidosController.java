@@ -10,7 +10,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/itens")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:5173", methods = {
+    RequestMethod.GET, RequestMethod.POST, RequestMethod.DELETE, RequestMethod.OPTIONS
+}, allowedHeaders = "*")
 public class ItensPedidosController {
 
     @Autowired
@@ -25,10 +27,16 @@ public class ItensPedidosController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> removerProduto(@RequestParam Long clienteId,
-                                               @RequestParam Long produtoId) {
-        pedidoService.removerItem(clienteId, produtoId);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Void> removerProduto(
+        @RequestParam Long clienteId,
+        @RequestParam Long produtoId
+    ) {
+        try {
+            pedidoService.removerItem(clienteId, produtoId);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping

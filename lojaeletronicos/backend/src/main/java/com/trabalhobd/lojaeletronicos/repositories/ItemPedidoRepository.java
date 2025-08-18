@@ -44,8 +44,13 @@ public class ItemPedidoRepository {
     }
 
     public void removerItem(Long pedidoId, Long produtoId) {
-        String sql =  "DELETE from itens_pedidos WHERE pedido_id = ? AND produto_id = ?";
+        String sql = "DELETE FROM itens_pedidos WHERE pedido_id = ? AND produto_id = ?";
         jdbcTemplate.update(sql, pedidoId, produtoId);
+
+        // Atualiza o valor total do pedido após remover o item
+        double novoTotal = calcularValorTotalPedido(pedidoId);
+        String updatePedidoSql = "UPDATE pedidos SET valor_total = ? WHERE id = ?";
+        jdbcTemplate.update(updatePedidoSql, novoTotal, pedidoId);
     }
 
     public List<ItemPedidoProduto> listarItensPedido(Long pedidoId) {

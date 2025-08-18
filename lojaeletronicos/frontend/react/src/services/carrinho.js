@@ -8,12 +8,12 @@ export const carrinhoService = {
     return response.data;
   },
 
-  async removerItem(clienteId, produtoId) {
-    const response = await api.delete('/itens', {
-      params: { clienteId, produtoId }
-    });
-    return response.data;
-  },
+    async removerItem(clienteId, produtoId) {
+        const response = await api.delete('/itens', {
+            params: { clienteId, produtoId }
+        });
+        return response.data;
+    },
 
   async listarItens(clienteId) {
     const response = await api.get('/itens', {

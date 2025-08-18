@@ -25,15 +25,31 @@ export default function CarrinhoDrawer({
     aberto,
     onFechar,
     carrinho,
-    onRemoverItem,
     onFinalizarCompra
 }) {
-    const { atualizarQuantidade, calcularTotal } = useCarrinho();
-
+    const { atualizarQuantidade, calcularTotal, removerDoCarrinho, loading } = useCarrinho();
     const total = calcularTotal();
 
-    const handleQuantidadeChange = (index, novaQuantidade) => {
-        atualizarQuantidade(index, novaQuantidade);
+    const handleQuantidadeChange = async (index, novaQuantidade) => {
+        if (novaQuantidade < 1) return;
+
+        // Evitar atualizações muito rápidas
+        const item = carrinho[index];
+        if (!item) return;
+
+        // Garantir que a quantidade não seja menor que 1
+        const quantidadeFinal = Math.max(1, novaQuantidade);
+
+        // Atualizar quantidade
+        await atualizarQuantidade(index, quantidadeFinal);
+    };
+
+    const handleRemoverItem = async (produtoId) => {
+        try {
+            await removerDoCarrinho(produtoId);
+        } catch (error) {
+            console.error('Erro ao remover item:', error);
+        }
     };
 
     return (
@@ -76,7 +92,7 @@ export default function CarrinhoDrawer({
                     <>
                         <List sx={{ flexGrow: 1, overflow: 'auto' }}>
                             {carrinho.map((item, index) => {
-                                const quantidade = item.quantidadeSelecionada || 1;
+                                const quantidade = item.quantidade || 1;
                                 const subtotal = item.preco * quantidade;
 
                                 return (
@@ -151,12 +167,13 @@ export default function CarrinhoDrawer({
                                                 </Box>
 
                                                 <IconButton
-                                                onClick={() => onRemoverItem(item.produtoId)}
-                                                color="error"
-                                                size="small"
-                                            >
-                                                <DeleteIcon />
-                                            </IconButton>
+                                                    onClick={() => handleRemoverItem(item.produtoId)}
+                                                    color="error"
+                                                    size="small"
+                                                    disabled={loading}
+                                                >
+                                                    <DeleteIcon />
+                                                </IconButton>
                                             </Box>
 
                                             {/* Subtotal */}
@@ -184,7 +201,6 @@ export default function CarrinhoDrawer({
                         </List>
 
                         <Divider sx={{ my: 2 }} />
-
                         {/* Total */}
                         <Paper
                             elevation={3}
@@ -206,7 +222,7 @@ export default function CarrinhoDrawer({
                             variant="contained"
                             fullWidth
                             size="large"
-                            onClick={onFinalizarCompra} // Esta função vem do Home.jsx
+                            onClick={onFinalizarCompra}
                             sx={{
                                 py: 1.5,
                                 fontWeight: 'bold',

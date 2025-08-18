@@ -16,6 +16,7 @@ export function CarrinhoProvider({ children }) {
         }
     }, [usuario]);
 
+
     const carregarCarrinho = async () => {
         if (!usuario?.id) return;
 
@@ -31,43 +32,83 @@ export function CarrinhoProvider({ children }) {
         }
     };
 
-const adicionarAoCarrinho = async (produto, quantidade = 1) => {
-    if (!usuario?.id) {
-        alert('Faça login para adicionar produtos ao carrinho');
-        return;
-    }
+    const adicionarAoCarrinho = async (produto, quantidade = 1) => {
+        if (!usuario?.id) {
+            alert('Faça login para adicionar produtos ao carrinho');
+            return;
+        }
+
+        try {
+            setLoading(true);
+            await carrinhoService.adicionarItem(usuario.id, produto.idProduto || produto.id, quantidade);
+            await carregarCarrinho();
+        } catch (error) {
+            console.error('Erro ao adicionar ao carrinho:', error.response?.data || error);
+            const errorMsg = error.response?.data?.message || 'Erro ao adicionar produto ao carrinho. Tente novamente.';
+            alert(errorMsg);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const calcularTotal = () => {
+        return carrinho.reduce((total, item) => {
+            const quantidade = item.quantidade || 1;
+            return total + (item.preco * quantidade);
+        }, 0);
+    };
+
+const removerDoCarrinho = async (produtoId) => {
+    if (!usuario?.id) return;
 
     try {
         setLoading(true);
-        await carrinhoService.adicionarItem(usuario.id, produto.id, quantidade);
+        await carrinhoService.removerItem(usuario.id, produtoId);
+        // Ao invés de atualizar o estado local, recarrega o carrinho do backend
         await carregarCarrinho();
     } catch (error) {
-        console.error('Erro ao adicionar ao carrinho:', error.response?.data || error);
-        const errorMsg = error.response?.data?.message || 'Erro ao adicionar produto ao carrinho. Tente novamente.';
-        alert(errorMsg);
+        console.error('Erro ao remover do carrinho:', error);
+        alert('Erro ao remover produto do carrinho');
     } finally {
         setLoading(false);
     }
 };
 
-    const removerDoCarrinho = async (produtoId) => {
-        if (!usuario?.id) return;
-
-        try {
-            await carrinhoService.removerItem(usuario.id, produtoId);
-            await carregarCarrinho();
-        } catch (error) {
-            console.error('Erro ao remover do carrinho:', error);
-            alert('Erro ao remover produto do carrinho');
-        }
-    };
-
-    const calcularTotal = () => {
-        return carrinho.reduce((total, item) => total + (item.preco * item.quantidade), 0);
-    };
-
     const limparCarrinho = () => {
         setCarrinho([]);
+    };
+
+    const atualizarQuantidade = async (index, novaQuantidade) => {
+        if (!usuario?.id) return;
+
+        const item = carrinho[index];
+        if (!item) return;
+
+        try {
+            setLoading(true);
+            // Garantir que a quantidade não seja menor que 1
+            const quantidadeFinal = Math.max(1, novaQuantidade);
+
+            // Atualizar no backend
+            await carrinhoService.adicionarItem(
+                usuario.id,
+                item.produtoId,
+                quantidadeFinal
+            );
+
+            // Atualizar o estado local com a nova quantidade
+            const novoCarrinho = carrinho.map((item, idx) =>
+                idx === index
+                    ? { ...item, quantidade: quantidadeFinal }
+                    : item
+            );
+            setCarrinho(novoCarrinho);
+        } catch (error) {
+            console.error('Erro ao atualizar quantidade:', error);
+            alert('Erro ao atualizar quantidade do produto');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -78,7 +119,8 @@ const adicionarAoCarrinho = async (produto, quantidade = 1) => {
             removerDoCarrinho,
             calcularTotal,
             limparCarrinho,
-            carregarCarrinho
+            carregarCarrinho,
+            atualizarQuantidade
         }}>
             {children}
         </CarrinhoContext.Provider>

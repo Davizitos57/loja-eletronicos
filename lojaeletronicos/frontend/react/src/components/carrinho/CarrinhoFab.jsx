@@ -5,7 +5,9 @@ import { useCarrinho } from '../../context/CarrinhoContext';
 export default function CarrinhoFab({ onClick }) {
     const { carrinho } = useCarrinho();
     
-    const quantidadeTotal = carrinho.reduce((total, item) => total + item.quantidade, 0);
+    const quantidadeTotal = carrinho.reduce((total, item) => {
+        return total + (item.quantidade || 1);
+    }, 0);
 
     return (
         <Fab
