@@ -12,7 +12,6 @@ import com.trabalhobd.lojaeletronicos.repositories.PagamentoRepository;
 import com.trabalhobd.lojaeletronicos.repositories.PedidoRepository;
 import com.trabalhobd.lojaeletronicos.repositories.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
