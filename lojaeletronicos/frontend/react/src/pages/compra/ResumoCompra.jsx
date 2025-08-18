@@ -38,6 +38,8 @@ import SelecionarPagamento from './SelecionarPagamento.jsx';
 import { useEndereco } from '../../hooks/useEndereco';
 import { carrinhoService } from '../../services/carrinho';
 import { useAuth } from '../../context/AuthContext';
+import EnderecoEditModal from '../../components/endereco/EnderecoEditModal.jsx';
+
 
 export default function ResumoCompra() {
     const navigate = useNavigate();
@@ -47,33 +49,36 @@ export default function ResumoCompra() {
     const [pagamentoSucesso, setPagamentoSucesso] = useState(false);
     const [pagamentoAberto, setPagamentoAberto] = useState(false);
     const [dadosPagamento, setDadosPagamento] = useState(null);
+    const [modalEnderecoAberto, setModalEnderecoAberto] = useState(false);
 
-    const { enderecoSelecionado, loading: enderecoLoading } = useEndereco();
+    const { enderecoSelecionado, loading: enderecoLoading, atualizarEndereco } = useEndereco();
     const { usuario } = useAuth();
     
-    // Pega os dados vindos da navegação
     const produtoCompra = location.state?.produto;
     const carrinhoCompra = location.state?.carrinho;
     const totalCompra = location.state?.total;
 
-    // Determina se é compra única ou do carrinho
     const isCompraUnica = !!produtoCompra;
     const isCompraCarrinho = !!carrinhoCompra;
 
-    // Define os itens para exibir e o total
     let itensCompra = [];
     let total = 0;
 
     if (isCompraUnica) {
-        // Compra direta de um produto
         itensCompra = [produtoCompra];
         const quantidade = produtoCompra.quantidade || produtoCompra.quantidadeSelecionada || 1;
         total = produtoCompra.preco * quantidade;
     } else if (isCompraCarrinho) {
-        // Compra do carrinho
         itensCompra = carrinhoCompra;
         total = totalCompra || 0;
     }
+
+    const handleSalvarEndereco = async (dadosAtualizados) => {
+        if (enderecoSelecionado) {
+            await atualizarEndereco(enderecoSelecionado.id, dadosAtualizados);
+            setModalEnderecoAberto(false); 
+        }
+    };
 
     const voltarParaHome = () => {
         navigate('/home');
@@ -127,16 +132,14 @@ export default function ResumoCompra() {
     };
 
     const calcularPrazoEntrega = () => {
-        if (!enderecoSelecionado?.cep) return 0; // **CORREÇÃO AQUI**
-        // Simulação simples baseada no CEP
+        if (!enderecoSelecionado?.cep) return 0;
         const cep = enderecoSelecionado.cep.replace(/\D/g, '');
         const prefixo = parseInt(cep.substring(0, 2));
 
-        // Simula prazos diferentes por região
-        if (prefixo >= 30000 && prefixo <= 39999) return 2; // MG
-        if (prefixo >= 1000 && prefixo <= 19999) return 1;   // SP
-        if (prefixo >= 20000 && prefixo <= 28999) return 3;  // RJ
-        return 5; // Outras regiões
+        if (prefixo >= 30000 && prefixo <= 39999) return 2;
+        if (prefixo >= 1000 && prefixo <= 19999) return 1;
+        if (prefixo >= 20000 && prefixo <= 28999) return 3;
+        return 5;
     };
 
     if (enderecoLoading) {
@@ -165,11 +168,10 @@ export default function ResumoCompra() {
         );
     }
 
-    const prazoEntrega = calcularPrazoEntrega(); // **CORREÇÃO AQUI**
+    const prazoEntrega = calcularPrazoEntrega();
 
     return (
         <Container maxWidth="md" sx={{ py: 4 }}>
-            {/* Header */}
             <Box sx={{ mb: 3 }}>
                 <Button
                     startIcon={<ArrowBackIcon />}
@@ -186,7 +188,6 @@ export default function ResumoCompra() {
                 </Typography>
             </Box>
 
-            {/* Lista de itens */}
             <Card sx={{ mb: 3 }}>
                 <CardContent>
                     <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
@@ -248,17 +249,13 @@ export default function ResumoCompra() {
                          <IconButton
                              size="small"
                              sx={{ color: 'primary.main' }}
-                             onClick={() => {
-                                 // Futuramente abrir modal para editar/selecionar endereço
-                                 console.log('Editar endereço');
-                             }}
+                             onClick={() => setModalEnderecoAberto(true)}
                          >
                              <EditIcon />
                          </IconButton>
                      </Box>
  
                      <Box sx={{ bgcolor: 'grey.50', p: 2, borderRadius: 2, border: '1px solid', borderColor: 'grey.200' }}>
-                         {/* Informações do endereço */}
                          <Typography variant="body2" color="text.primary" sx={{ mb: 1, fontWeight: 500 }}>
                              {enderecoSelecionado.rua}, {enderecoSelecionado.numero}
                              {enderecoSelecionado.complemento && `, ${enderecoSelecionado.complemento}`}
@@ -272,7 +269,6 @@ export default function ResumoCompra() {
                              CEP: {formatarCEP(enderecoSelecionado.cep)}
                          </Typography>
  
-                         {/* Prazo de entrega */}
                          <Box sx={{
                              p: 1.5,
                              bgcolor: (theme) => alpha(theme.palette.success.main, 0.1),
@@ -300,7 +296,6 @@ export default function ResumoCompra() {
              </Card>
             )}
 
-            {/* Resumo */}
             <Card sx={{ mb: 3 }}>
                 <CardContent>
                     <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
@@ -325,7 +320,6 @@ export default function ResumoCompra() {
                 </CardContent>
             </Card>
 
-            {/* Botão de escolher pagamento */}
             <Button
                 variant="contained"
                 size="large"
@@ -337,7 +331,6 @@ export default function ResumoCompra() {
                 Escolher Forma de Pagamento
             </Button>
 
-            {/* Modal de seleção de pagamento */}
             <SelecionarPagamento
                 aberto={pagamentoAberto}
                 onFechar={fecharSelecaoPagamento}
@@ -345,7 +338,6 @@ export default function ResumoCompra() {
                 onConfirmarPagamento={confirmarPagamento}
             />
 
-            {/* Dialog de processamento */}
             <Dialog open={processandoPagamento}>
                 <DialogContent sx={{ textAlign: 'center', py: 4 }}>
                     <CircularProgress size={60} sx={{ mb: 2 }} />
@@ -370,7 +362,6 @@ export default function ResumoCompra() {
                 </DialogContent>
             </Dialog>
 
-            {/* Dialog de sucesso */}
             <Dialog open={pagamentoSucesso} onClose={finalizarCompra}>
                 <DialogTitle sx={{ textAlign: 'center' }}>
                     <CheckCircleIcon color="success" sx={{ fontSize: 60, mb: 1 }} />
@@ -409,7 +400,6 @@ export default function ResumoCompra() {
                         </Card>
                     )}
 
-                    {/* Informações de entrega no sucesso */}
                     {enderecoSelecionado && (
                         <Card sx={{ mt: 2, bgcolor: (theme) => alpha(theme.palette.info.main, 0.1) }}>
                             <CardContent sx={{ py: 2 }}>
@@ -439,6 +429,15 @@ export default function ResumoCompra() {
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            {enderecoSelecionado && (
+                <EnderecoEditModal
+                    open={modalEnderecoAberto}
+                    onClose={() => setModalEnderecoAberto(false)}
+                    endereco={enderecoSelecionado}
+                    onSave={handleSalvarEndereco}
+                />
+            )}
         </Container>
     );
 }

@@ -10,11 +10,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/enderecos")
+@CrossOrigin(origins = "http://localhost:5173")
 public class EnderecoController {
 
     @Autowired
     private EnderecoService enderecoService;
 
+    // ... (outros endpoints como POST, PUT, DELETE sem alteração) ...
     @PostMapping
     public ResponseEntity<Void> criarEndereco(@RequestBody Endereco endereco) {
         enderecoService.criarEndereco(endereco);
@@ -38,17 +40,15 @@ public class EnderecoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Endereco> deletarEndereco(@PathVariable Long id) {
+    public ResponseEntity<Void> deletarEndereco(@PathVariable Long id) { // Retorno corrigido para Void
         enderecoService.deletarEndereco(id);
         return ResponseEntity.ok().build();
     }
 
+
     @GetMapping
     public ResponseEntity<List<Endereco>> buscarEnderecoPorUsuarioId(@RequestParam Long usuarioId) {
-        var enderecos = enderecoService.buscarEnderecoPorUsuarioId(usuarioId);
-        if (enderecos == null) {
-            return ResponseEntity.notFound().build();
-        }
+        List<Endereco> enderecos = enderecoService.buscarEnderecoPorUsuarioId(usuarioId);
         return ResponseEntity.ok(enderecos);
     }
 }

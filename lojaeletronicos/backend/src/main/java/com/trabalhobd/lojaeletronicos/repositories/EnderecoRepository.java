@@ -17,7 +17,6 @@ public class EnderecoRepository {
 
     private final RowMapper<Endereco> enderecoRowMapper = (rs, rowNum) -> {
         Endereco endereco = new Endereco();
-
         endereco.setId(rs.getLong("id"));
         endereco.setIdUsuario(rs.getLong("id_usuario"));
         endereco.setRua(rs.getString("rua"));
@@ -27,10 +26,10 @@ public class EnderecoRepository {
         endereco.setEstado(rs.getString("estado"));
         endereco.setComplemento(rs.getString("complemento"));
         endereco.setCep(rs.getString("cep"));
-
         return endereco;
     };
 
+    // ... (outros métodos como create, findById, etc. sem alteração) ...
     public void create(Endereco endereco) {
         String sql = "INSERT INTO enderecos (id_usuario, rua, numero, bairro, cidade, estado, complemento, cep) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql, endereco.getIdUsuario(), endereco.getRua(), endereco.getNumero(), endereco.getBairro(), endereco.getCidade(), endereco.getEstado(), endereco.getComplemento(), endereco.getCep());
@@ -48,16 +47,12 @@ public class EnderecoRepository {
         return endereco;
     }
 
+    // A ALTERAÇÃO PRINCIPAL ESTÁ AQUI
     public List<Endereco> findByUserId(Long usuarioID) {
         String sql = "SELECT * FROM enderecos WHERE id_usuario = ?";
-        List<Endereco> endereco;
-        try {
-            endereco = jdbcTemplate.query(sql, enderecoRowMapper, usuarioID);
-        } catch (EmptyResultDataAccessException e) {
-            return null;
-        }
-
-        return endereco;
+        // Esta chamada já retorna uma lista vazia se não encontrar nada.
+        // O try-catch foi removido pois não é necessário aqui.
+        return jdbcTemplate.query(sql, enderecoRowMapper, usuarioID);
     }
 
     public void updateEnderecoData(Long idEndereco, Endereco endereco) {
