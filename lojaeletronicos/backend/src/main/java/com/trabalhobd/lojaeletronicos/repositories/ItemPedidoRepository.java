@@ -22,7 +22,7 @@ public class ItemPedidoRepository {
     }
 
     public List<ItensCarrinhosDTO> listarItensPorPedido(Long pedidoId) {
-        String sql = "SELECT pedido_id, nome, descricao, quantidade, preco FROM itens_pedidos " +
+        String sql = "SELECT produto_id, nome, descricao, quantidade, preco FROM itens_pedidos " +
                 "inner join produtos on itens_pedidos.produto_id = produtos.id " +
                 "WHERE pedido_id = ?";
         return jdbcTemplate.query(sql, itensCarrinhoDTO, pedidoId);
@@ -70,7 +70,7 @@ public class ItemPedidoRepository {
 
     private final RowMapper<ItensCarrinhosDTO> itensCarrinhoDTO = (rs, rowNum) -> {
         ItensCarrinhosDTO item = new ItensCarrinhosDTO();
-        item.setPedidoId(rs.getLong("pedido_id"));
+        item.setProdutoId(rs.getLong("produto_id"));
         item.setNome(rs.getString("nome"));
         item.setDescricao(rs.getString("descricao"));
         item.setQuantidade(rs.getInt("quantidade"));

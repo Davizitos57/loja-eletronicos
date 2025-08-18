@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Setter
 public class ItensCarrinhosDTO implements Serializable {
 
-    private Long pedidoId;
+    private Long produtoId;
     private String nome;
     private String descricao;
     private Integer quantidade;

@@ -60,7 +60,9 @@ CREATE TABLE itens_pedidos (
     preco DECIMAL NOT NULL,
     quantidade INTEGER NOT NULL,
 
-    CONSTRAINT itens_pedidos_pk PRIMARY KEY (pedido_id, produto_id)
+    CONSTRAINT itens_pedidos_pk PRIMARY KEY (pedido_id, produto_id),
+    FOREIGN KEY (pedido_id) REFERENCES pedidos(id),
+    FOREIGN KEY (produto_id) REFERENCES produtos(id)
 );
 
 CREATE TABLE pagamentos (
