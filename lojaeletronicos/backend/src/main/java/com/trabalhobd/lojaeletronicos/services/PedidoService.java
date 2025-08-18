@@ -33,34 +33,73 @@ public class PedidoService {
     private PagamentoRepository pagamentoRepository;
 
 
+//    public void adicionarAoCarrinho(Long clienteId, Long produtoId, Integer quantidade) {
+//        Pedido carrinho;
+//        Long novoPedidoId = 0L;
+//        try {
+//            carrinho = pedidoRepository.buscarCarrinhoPorCliente(clienteId);
+//            novoPedidoId = carrinho.getId();
+//
+//        } catch (EmptyResultDataAccessException e) {
+//            novoPedidoId = pedidoRepository.criarCarrinho(clienteId);
+//            carrinho = new Pedido();
+//            carrinho.setId(novoPedidoId);
+//            carrinho.setIdUsuario(clienteId);
+//            carrinho.setStatus(PedidoEnum.RASCUNHO.getStatus());
+//            carrinho.setValorTotal(0.0);
+//        }
+//
+//        Produto produto = produtoRepository.findById(produtoId);
+//        double novoValor = produto.getPrecoUnico() * quantidade;
+//
+//        try {
+//            itemPedidoRepository.adicionarItem(novoPedidoId, produtoId, quantidade, novoValor);
+//        } catch (Exception e) {
+//            atualizarItemPedido(novoPedidoId, produtoId, quantidade, true);
+//            return;
+//        }
+//
+//        Double novoTotal = carrinho.getValorTotal() + novoValor;
+//        pedidoRepository.atualizarValorTotal(carrinho.getId(), novoTotal);
+//    }
+
     public void adicionarAoCarrinho(Long clienteId, Long produtoId, Integer quantidade) {
-        Pedido carrinho;
-        Long novoPedidoId = 0L;
         try {
-            carrinho = pedidoRepository.buscarCarrinhoPorCliente(clienteId);
-            novoPedidoId = carrinho.getId();
+            Pedido carrinho = pedidoRepository.buscarCarrinhoPorCliente(clienteId);
+            Long pedidoId;
 
-        } catch (EmptyResultDataAccessException e) {
-            novoPedidoId = pedidoRepository.criarCarrinho(clienteId);
-            carrinho = new Pedido();
-            carrinho.setId(novoPedidoId);
-            carrinho.setIdUsuario(clienteId);
-            carrinho.setStatus(PedidoEnum.RASCUNHO.getStatus());
-            carrinho.setValorTotal(0.0);
-        }
+            // Se não existir carrinho, cria um novo
+            if (carrinho == null) {
+                pedidoId = pedidoRepository.criarCarrinho(clienteId);
+            } else {
+                pedidoId = carrinho.getId();
+            }
 
-        Produto produto = produtoRepository.findById(produtoId);
-        double novoValor = produto.getPrecoUnico() * quantidade;
+            Produto produto = produtoRepository.findById(produtoId);
+            if (produto == null) {
+                throw new RuntimeException("Produto não encontrado");
+            }
 
-        try {
-            itemPedidoRepository.adicionarItem(novoPedidoId, produtoId, quantidade, novoValor);
+            double valorItem = produto.getPrecoUnico() * quantidade;
+            ItemPedido itemExistente = itemPedidoRepository.buscarItemPedido(pedidoId, produtoId);
+
+            if (itemExistente == null) {
+                // Adiciona novo item
+                itemPedidoRepository.adicionarItem(pedidoId, produtoId, quantidade, valorItem);
+            } else {
+                // Atualiza item existente
+                int novaQuantidade = itemExistente.getQuantidade() + quantidade;
+                double novoValor = produto.getPrecoUnico() * novaQuantidade;
+                itemPedidoRepository.atualizarItemPedido(pedidoId, produtoId, novaQuantidade, novoValor);
+            }
+
+            // Atualiza o valor total do pedido
+            double valorTotal = itemPedidoRepository.calcularValorTotalPedido(pedidoId);
+            pedidoRepository.atualizarValorTotal(pedidoId, valorTotal);
+
         } catch (Exception e) {
-            atualizarItemPedido(novoPedidoId, produtoId, quantidade, true);
-            return;
+            throw new RuntimeException("Erro ao adicionar item ao carrinho: " + e.getMessage());
         }
-
-        Double novoTotal = carrinho.getValorTotal() + novoValor;
-        pedidoRepository.atualizarValorTotal(carrinho.getId(), novoTotal);
     }
 
     public void removerItem(Long idUsuario, Long idProduto) {

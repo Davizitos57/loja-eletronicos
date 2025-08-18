@@ -31,7 +31,11 @@ public class ItemPedidoRepository {
 
     public ItemPedido buscarItemPedido(Long pedidoId, Long produtoId) {
         String sql = "SELECT * FROM itens_pedidos WHERE pedido_id = ? AND produto_id = ?";
-        return jdbcTemplate.queryForObject(sql, itemRowMapper, pedidoId, produtoId);
+        try {
+            return jdbcTemplate.queryForObject(sql, itemRowMapper, pedidoId, produtoId);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     public void atualizarItemPedido(Long pedidoId, Long produtoId, Integer quantidade, Double preco) {
@@ -88,4 +92,10 @@ public class ItemPedidoRepository {
             return 0.0;
     }
 }
+
+    public double calcularValorTotalPedido(Long pedidoId) {
+        String sql = "SELECT COALESCE(SUM(preco), 0) FROM itens_pedidos WHERE pedido_id = ?";
+        return jdbcTemplate.queryForObject(sql, Double.class, pedidoId);
+    }
+
 }

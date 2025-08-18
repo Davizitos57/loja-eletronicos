@@ -31,22 +31,24 @@ export function CarrinhoProvider({ children }) {
         }
     };
 
-    const adicionarAoCarrinho = async (produto, quantidade = 1) => {
-        if (!usuario?.id) {
-            alert('Faça login para adicionar produtos ao carrinho');
-            return;
-        }
+const adicionarAoCarrinho = async (produto, quantidade = 1) => {
+    if (!usuario?.id) {
+        alert('Faça login para adicionar produtos ao carrinho');
+        return;
+    }
 
-        try {
-            await carrinhoService.adicionarItem(usuario.id, produto.id, quantidade);
-            await carregarCarrinho();
-
-        } catch (error) {
-            console.error('Erro ao adicionar ao carrinho:', error);
-            const errorMsg = error.response?.data?.message || 'Erro ao adicionar produto ao carrinho. Tente novamente.';
-            alert(errorMsg);
-        }
-    };
+    try {
+        setLoading(true);
+        await carrinhoService.adicionarItem(usuario.id, produto.id, quantidade);
+        await carregarCarrinho();
+    } catch (error) {
+        console.error('Erro ao adicionar ao carrinho:', error.response?.data || error);
+        const errorMsg = error.response?.data?.message || 'Erro ao adicionar produto ao carrinho. Tente novamente.';
+        alert(errorMsg);
+    } finally {
+        setLoading(false);
+    }
+};
 
     const removerDoCarrinho = async (produtoId) => {
         if (!usuario?.id) return;
