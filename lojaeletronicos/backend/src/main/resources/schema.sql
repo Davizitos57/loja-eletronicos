@@ -87,10 +87,15 @@ INSERT INTO enderecos (rua, numero, bairro, cidade, estado, complemento, cep, id
 
 INSERT INTO categorias (nome) VALUES ('Sem Categoria');
 INSERT INTO categorias (nome) VALUES ('Computadores e Notebooks');
-INSERT INTO categorias (nome) VALUES ('Consoles');
-INSERT INTO categorias (nome) VALUES ('Periféricos e Acessórios');
+INSERT INTO categorias (nome) VALUES ('Celulares e Smartphones');
+INSERT INTO categorias (nome) VALUES ('Tablets');
+INSERT INTO categorias (nome) VALUES ('E-Readers');
+INSERT INTO categorias (nome) VALUES ('Televisões');
+INSERT INTO categorias (nome) VALUES ('Games e Consoles');
+INSERT INTO categorias (nome) VALUES ('Componentes de Hardware');
+INSERT INTO categorias (nome) VALUES ('Acessórios');
+INSERT INTO categorias (nome) VALUES ('Periféricos');
 INSERT INTO categorias (nome) VALUES ('Wearables');
-INSERT INTO categorias (nome) VALUES ('Eletrodomésticos');
 
 INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque, id_categoria) VALUES ('Notebook Lenovo IdeaPad 3', 'Processador Intel Core i5, 8GB RAM, SSD 256GB, Tela 15.6"', 2899.00, 20, 2);
 INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque, id_categoria) VALUES ('Console PlayStation 5', 'Console com SSD de altíssima velocidade e controle DualSense', 4599.99, 10, 3);
