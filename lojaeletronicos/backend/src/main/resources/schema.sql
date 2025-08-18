@@ -121,7 +121,7 @@ INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque, id_categ
 INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque, id_categoria) VALUES ('Smart TV LG 50"', 'Smart TV LED 4K UHD 50 polegadas', 2300.00, 6, 6);
 INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque, id_categoria) VALUES ('Smart TV Samsung 65"', 'TV 4K UHD Crystal 65 polegadas', 3800.00, 4, 6);
 INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque, id_categoria) VALUES ('Smart TV TCL 43"', 'Smart TV Full HD Android 43 polegadas', 1600.00, 9, 6);
-INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque, id_categoria) VALUES ('Projetor Portátil', 'Projetor Full HD 3000 lumens', 1500.00, 10, 6);
+INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque, id_categoria) VALUES ('Smart TV Philips 55"', 'Smart TV Philips 4K UHD 55 polegadas com Ambilight', 3100.00, 6, 6);
 INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque, id_categoria) VALUES ('PlayStation 5', 'Console Sony PlayStation 5, 825GB SSD', 4200.00, 5, 7);
 INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque, id_categoria) VALUES ('Xbox Series X', 'Console Microsoft Xbox Series X, 1TB SSD', 3900.00, 7, 7);
 INSERT INTO produtos (nome, descricao, preco_unico, quantidade_estoque, id_categoria) VALUES ('Xbox Series S', 'Console Microsoft Xbox Series S, 512 SSD', 3900.00, 7, 7);
