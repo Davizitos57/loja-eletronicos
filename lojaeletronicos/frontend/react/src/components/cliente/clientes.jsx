@@ -84,6 +84,16 @@ export async function atualizarUm(clienteId, data) {
     cpf: data.cpf.replace(/[^\d]/g, ''),
     telefone: data.telefone,
     tipoUsuario: 'BASIC',
+    enderecos: [{
+      id: data.enderecos && data.enderecos.length > 0 ? data.enderecos[0].id : undefined,
+      rua: data.rua,
+      numero: data.numero,
+      cidade: data.cidade,
+      estado: data.estado,
+      bairro: data.bairro,
+      complemento: data.complemento,
+      cep: data.cep,
+    }]
   };
   if (data.senha && data.senha !== '') {
     clienteParaBackend.senha = data.senha;

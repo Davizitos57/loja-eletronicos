@@ -65,8 +65,20 @@ public class UsuarioService {
         return usuarioRepository.encontrarUsuarioPorEmail(email);
     }
 
+    @Transactional
     public void atualizarDadosUsuario(Long id, Usuario usuario) {
         usuarioRepository.atualizarDadosUsuario(id, usuario);
+
+        if (usuario.getEnderecos() != null && !usuario.getEnderecos().isEmpty()) {
+            for (Endereco endereco : usuario.getEnderecos()) {
+                if (endereco.getId() != null) {
+                    enderecoRepository.updateEnderecoData(endereco.getId(), endereco);
+                } else {
+                    endereco.setIdUsuario(id);
+                    enderecoRepository.create(endereco);
+                }
+            }
+        }
     }
 
     @Transactional
