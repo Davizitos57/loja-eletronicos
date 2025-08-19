@@ -13,7 +13,7 @@ import FiltroDrawer from '../components/filtros/FiltroDrawer.jsx';
 import CategoriaSection from '../components/CategoriaSection.jsx';
 import Header from '../components/Header.jsx';
 import ProdutoModal from '../components/produto/modal/ProdutoModal.jsx';
-import { getTodosProdutos, getCategorias, buscarPorNome} from '../components/produto/produtos.jsx';
+import { getTodosProdutos, getCategorias, buscarPorNome } from '../components/produto/produtos.jsx';
 import { agruparProdutosPorCategoria } from '../components/produto/utils/produtoUtils.js';
 
 export default function Home() {
@@ -30,7 +30,7 @@ export default function Home() {
     const [filtroAtivo, setFiltroAtivo] = useState(false);
     const [filtroAberto, setFiltroAberto] = useState(false);
     const [error, setError] = useState(null);
-    
+
     const { carrinho, adicionarAoCarrinho, removerDoCarrinho, calcularTotal } = useCarrinho();
     const { isAdmin } = useAuth();
     const { scrollPositions, navegarHorizontal, podeNavegar } = useNavegacao(categoriasFiltradas);
@@ -42,7 +42,7 @@ export default function Home() {
         const carregarDados = async () => {
             setLoading(true);
             setError(null);
-            
+
             try {
                 // Carregar produtos e categorias em paralelo
                 const [produtosData, categoriasData] = await Promise.all([
@@ -51,18 +51,24 @@ export default function Home() {
                 ]);
 
                 setProdutos(produtosData);
-                
+
                 // Agrupar produtos por categoria
                 const categoriasComProdutos = agruparProdutosPorCategoria(produtosData, categoriasData);
-                
+
+                categoriasComProdutos.sort((a, b) => {
+                    if (a.nome === "Sem Categoria") return 1;
+                    if (b.nome === "Sem Categoria") return -1;
+                    return a.nome.localeCompare(b.nome);
+                });
+
                 setCategorias(categoriasComProdutos);
                 setCategoriasFiltradas(categoriasComProdutos);
-                
+
                 console.log('Dados carregados:', {
                     produtos: produtosData.length,
                     categorias: categoriasComProdutos.length
                 });
-                
+
             } catch (err) {
                 console.error('Erro ao carregar dados:', err);
                 setError(err.message || 'Erro ao carregar dados');
@@ -127,7 +133,7 @@ export default function Home() {
     const finalizarCompra = () => {
         navigate('/resumo-compra', {
             state: {
-                carrinho: [...carrinho], 
+                carrinho: [...carrinho],
                 total: calcularTotal()
             }
         });
