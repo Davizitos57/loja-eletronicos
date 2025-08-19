@@ -23,9 +23,9 @@ public class ItemPedidoRepository {
     }
 
     public List<ItensCarrinhosDTO> listarItensPorPedido(Long pedidoId) {
-        String sql = "SELECT produto_id, nome, descricao, quantidade, preco FROM itens_pedidos " +
-                "inner join produtos on itens_pedidos.produto_id = produtos.id " +
-                "WHERE pedido_id = ?";
+        String sql = "SELECT produto_id, p.nome, p.descricao, ip.quantidade, ip.preco, p.imagem FROM itens_pedidos ip " +
+                "inner join produtos p on ip.produto_id = p.id " +
+                "WHERE ip.pedido_id = ?";
         return jdbcTemplate.query(sql, itensCarrinhoDTO, pedidoId);
     }
 
@@ -47,7 +47,6 @@ public class ItemPedidoRepository {
         String sql = "DELETE FROM itens_pedidos WHERE pedido_id = ? AND produto_id = ?";
         jdbcTemplate.update(sql, pedidoId, produtoId);
 
-        // Atualiza o valor total do pedido após remover o item
         double novoTotal = calcularValorTotalPedido(pedidoId);
         String updatePedidoSql = "UPDATE pedidos SET valor_total = ? WHERE id = ?";
         jdbcTemplate.update(updatePedidoSql, novoTotal, pedidoId);
@@ -78,6 +77,7 @@ public class ItemPedidoRepository {
         return item;
     };
 
+
     private final RowMapper<ItensCarrinhosDTO> itensCarrinhoDTO = (rs, rowNum) -> {
         ItensCarrinhosDTO item = new ItensCarrinhosDTO();
         item.setProdutoId(rs.getLong("produto_id"));
@@ -85,10 +85,9 @@ public class ItemPedidoRepository {
         item.setDescricao(rs.getString("descricao"));
         item.setQuantidade(rs.getInt("quantidade"));
         item.setPreco(rs.getDouble("preco"));
-
+        item.setImagem(rs.getString("imagem"));
         return item;
     };
-
     public Double getPrecoDoItem(Long pedidoId, Long produtoId) {
         String sql = "SELECT preco FROM itens_pedidos WHERE pedido_id = ? AND produto_id = ?";
         try {

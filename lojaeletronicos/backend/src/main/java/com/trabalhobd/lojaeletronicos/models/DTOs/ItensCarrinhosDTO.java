@@ -14,4 +14,5 @@ public class ItensCarrinhosDTO implements Serializable {
     private String descricao;
     private Integer quantidade;
     private Double preco;
+    private String imagem;
 }
