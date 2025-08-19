@@ -53,12 +53,12 @@ export default function ProdutoInfo({ produto }) {
                     bgcolor: 'action.hover',
                     p: 3, 
                     borderRadius: 3, 
-                    border: '2px solid #e1bee7',
+                    border: '2px solid #000000ff',
                     mb: 3 
                 }}
             >
                 <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', color: 'primary.main', mb: 2 }}>
-                    📋 Informações do Produto
+                    Informações do Produto
                 </Typography>
                 <Grid container spacing={3}>
                     <Grid item xs={6}>

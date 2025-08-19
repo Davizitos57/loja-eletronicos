@@ -26,8 +26,8 @@ export default function ProdutoCard({
     return (
         <Card
             sx={{
-                width: 260,
-                height: 380,
+                width: 280,
+                height: 420,
                 display: 'flex',
                 flexDirection: 'column',
                 transition: 'transform 0.2s, box-shadow 0.2s',
