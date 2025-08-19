@@ -9,8 +9,10 @@ export default function ProdutoQuantidade({
     onQuantidadeChange,
     estoqueDisponivel
 }) {
+
     const handleIncrement = () => {
-        if (quantidade < estoqueDisponivel) {
+        // Permite incrementar até incluir o limite do estoque disponível
+        if (quantidade <= produto.quantidadeEstoque - 1) {
             onQuantidadeChange(quantidade + 1);
         }
     };
@@ -23,7 +25,8 @@ export default function ProdutoQuantidade({
 
     const handleInputChange = (event) => {
         const valor = parseInt(event.target.value) || 1;
-        const valorLimitado = Math.min(Math.max(valor, 1), estoqueDisponivel);
+        // Limita o valor entre 1 e o total em estoque
+        const valorLimitado = Math.min(Math.max(valor, 1), produto.quantidadeEstoque);
         onQuantidadeChange(valorLimitado);
     };
 
@@ -66,7 +69,7 @@ export default function ProdutoQuantidade({
                     type="number"
                     inputProps={{
                         min: 1,
-                        max: estoqueDisponivel,
+                        max: produto.quantidadeEstoque,
                         style: { textAlign: 'center', fontSize: '1.2rem', fontWeight: 'bold' }
                     }}
                     sx={{
@@ -79,12 +82,12 @@ export default function ProdutoQuantidade({
 
                 <IconButton
                     onClick={handleIncrement}
-                    disabled={quantidade >= estoqueDisponivel}
+                    disabled={quantidade > produto.quantidadeEstoque}
                     sx={{
-                        bgcolor: quantidade >= estoqueDisponivel ? '#e0e0e0' : 'primary.main',
-                        color: quantidade >= estoqueDisponivel ? '#757575' : 'white',
+                        bgcolor: quantidade > produto.quantidadeEstoque ? '#e0e0e0' : 'primary.main',
+                        color: quantidade > produto.quantidadeEstoque ? '#757575' : 'white',
                         '&:hover': {
-                            bgcolor: quantidade >= estoqueDisponivel ? '#e0e0e0' : 'primary.dark'
+                            bgcolor: quantidade > produto.quantidadeEstoque ? '#e0e0e0' : 'primary.dark'
                         }
                     }}
                 >
