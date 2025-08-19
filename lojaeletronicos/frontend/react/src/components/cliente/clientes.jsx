@@ -113,7 +113,7 @@ export function validar(cliente, isEditing = false) {
     if (!cliente.email) issues.push({ message: 'Email é obrigatório', path: ['email'] });
     if (!cliente.cpf) issues.push({ message: 'CPF é obrigatório', path: ['cpf'] });
     if (!cliente.telefone) issues.push({ message: 'Telefone é obrigatório', path: ['telefone'] });
-    if (!isEditing && (!cliente.senha || cliente.senha.length < 1)) {
+    if (!cliente.senha || cliente.senha.length < 1) {
         issues.push({ message: 'A senha é obrigatória.', path: ['senha'] });
     }
     if (!cliente.rua) issues.push({ message: 'Rua é obrigatória', path: ['rua'] });

@@ -97,7 +97,7 @@ export function validar(administrador, isEditing = false) {
     if (!administrador.email) issues.push({ message: 'Email é obrigatório', path: ['email'] });
     if (!administrador.cpf) issues.push({ message: 'CPF é obrigatório', path: ['cpf'] });
     if (!administrador.telefone) issues.push({ message: 'Telefone é obrigatório', path: ['telefone'] });
-    if (!isEditing && (!administrador.senha || administrador.senha.length < 1)) {
+    if (!administrador.senha || administrador.senha.length < 1) {
         issues.push({ message: 'A senha é obrigatória.', path: ['senha'] });
     }
     return { issues };

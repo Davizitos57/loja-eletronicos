@@ -48,7 +48,9 @@ function AdminForm(props) {
             <TextField value={formValues.telefone ?? ''} onChange={handleTextFieldChange} name="telefone" label="Telefone" error={!!formErrors.telefone} helperText={formErrors.telefone ?? ' '} fullWidth />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField value={formValues.senha ?? ''} onChange={handleTextFieldChange} name="senha" label="Senha" type="password" error={!!formErrors.senha} helperText={formErrors.senha || (isEditing ? 'Deixe em branco para não alterar' : ' ')} fullWidth autoComplete="new-password"/>
+            <TextField 
+              value={formValues.senha ?? ''} onChange={handleTextFieldChange} name="senha" label="Senha" type="password" error={!!formErrors.senha} helperText={formErrors.senha ?? ' '} fullWidth autoComplete="new-password"
+            />
           </Grid>
         </Grid>
       </FormGroup>

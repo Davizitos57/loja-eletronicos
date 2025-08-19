@@ -127,7 +127,7 @@ function ClienteForm(props) {
               label="Senha"
               type="password"
               error={!!formErrors.senha}
-              helperText={formErrors.senha || (isEditing ? 'Deixe em branco para não alterar' : ' ')}
+              helperText={formErrors.senha ?? ' '}
               fullWidth
               autoComplete="new-password"
             />
