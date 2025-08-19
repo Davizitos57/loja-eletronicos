@@ -14,6 +14,7 @@ import com.trabalhobd.lojaeletronicos.repositories.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -141,11 +142,10 @@ public class PedidoService {
         return itemPedidoRepository.listarItensPorPedido(carrinho.getId());
     }
 
-    public void finalizarCarrinho(Long pedidoId) throws Exception{
+    public void finalizarCarrinho(Long pedidoId) throws Exception {
         veridicarDisponibilidade(pedidoId);
         pedidoRepository.atualizarPedido(pedidoId, PedidoEnum.AGUARDANDO_PAGAMENTO.getStatus());
     }
-
     private void veridicarDisponibilidade(Long pedidoId) throws Exception {
         var itens = itemPedidoRepository.listarItensPedido(pedidoId);
 
@@ -161,27 +161,34 @@ public class PedidoService {
     }
 
     public void concluirPagamento(Long pedidoId, String formaPagamento, Integer qtd_parcelas) {
+        // 1. Busca o pedido
         Pedido pedido = pedidoRepository.encontrarPedidoPorId(pedidoId);
-        float valorTotal = (float) (1.0F * pedido.getValorTotal());
+        if (pedido == null) {
+            throw new RuntimeException("Pedido não encontrado");
+        }
 
+        // 2. Cria o pagamento
         Pagamento pagamento = new Pagamento();
+        pagamento.setValor((float) (1.0F * pedido.getValorTotal()));
         pagamento.setMetodo_pagamento(formaPagamento);
         pagamento.setQuantidade_parcelas(qtd_parcelas);
-        pagamento.setValor(valorTotal);
+        pagamento.setData_pagamento(LocalDateTime.now());
         pagamento.setIdPedido(pedidoId);
 
         pagamentoRepository.create(pagamento);
 
+        // 3. Atualiza status do pedido para concluído
         pedidoRepository.atualizarPedido(pedidoId, PedidoEnum.CONCLUIDO.getStatus());
 
+        // 4. Atualiza estoque dos produtos
         var itens = itemPedidoRepository.listarItensPedido(pedidoId);
-
-        itens.forEach( item -> {
-            produtoRepository.updateProdutoQuantidade(item.getProdutoId(),  -item.getQuantidadeDesejada());
+        itens.forEach(item -> {
+            produtoRepository.updateProdutoQuantidade(
+                    item.getProdutoId(),
+                    -item.getQuantidadeDesejada()
+            );
         });
-
     }
-
     public List<Pedido> buscarPedidosPorUsuarioId(Long usuarioId) {
         return pedidoRepository.buscarPedidosPorCliente(usuarioId);
     }

@@ -53,13 +53,15 @@ export default function ResumoCompra() {
 
     const { enderecoSelecionado, loading: enderecoLoading, atualizarEndereco } = useEndereco();
     const { usuario } = useAuth();
-    
+
     const produtoCompra = location.state?.produto;
     const carrinhoCompra = location.state?.carrinho;
     const totalCompra = location.state?.total;
 
     const isCompraUnica = !!produtoCompra;
     const isCompraCarrinho = !!carrinhoCompra;
+
+    const [erro, setErro] = useState(null);
 
     let itensCompra = [];
     let total = 0;
@@ -76,7 +78,7 @@ export default function ResumoCompra() {
     const handleSalvarEndereco = async (dadosAtualizados) => {
         if (enderecoSelecionado) {
             await atualizarEndereco(enderecoSelecionado.id, dadosAtualizados);
-            setModalEnderecoAberto(false); 
+            setModalEnderecoAberto(false);
         }
     };
 
@@ -96,19 +98,6 @@ export default function ResumoCompra() {
         setDadosPagamento(dadosPagamento);
         setPagamentoAberto(false);
         processarPagamento(dadosPagamento);
-    };
-
-    const processarPagamento = async (dados) => {
-        setProcessandoPagamento(true);
-
-        setTimeout(() => {
-            setProcessandoPagamento(false);
-            setPagamentoSucesso(true);
-
-            if (isCompraCarrinho) {
-                limparCarrinho();
-            }
-        }, 2000);
     };
 
     const finalizarCompra = () => {
@@ -142,6 +131,46 @@ export default function ResumoCompra() {
         return 5;
     };
 
+    const processarPagamento = async (dados) => {
+        try {
+            setProcessandoPagamento(true);
+            setErro(null);
+
+            if (isCompraCarrinho) {
+                const pedidoId = location.state?.pedidoId;
+                await carrinhoService.finalizarCarrinho(pedidoId);
+                await carrinhoService.concluirPedido(
+                    pedidoId,
+                    dados.forma,
+                    dados.parcelas
+                );
+            } else if (isCompraUnica) {
+                const pedidoId = await carrinhoService.comprarDireto(
+                    usuario.id,
+                    produtoCompra.id,
+                    produtoCompra.quantidadeSelecionada || 1
+                );
+                await carrinhoService.concluirPedido(
+                    pedidoId,
+                    dados.forma,
+                    dados.parcelas
+                );
+            }
+
+            setProcessandoPagamento(false);
+            setPagamentoSucesso(true);
+
+            if (isCompraCarrinho) {
+                limparCarrinho();
+            }
+        } catch (error) {
+            console.error('Erro ao processar pagamento:', error);
+            setErro(error.response?.data || 'Erro ao processar pagamento');
+            setProcessandoPagamento(false);
+        }
+    };
+
+    // Loading check
     if (enderecoLoading) {
         return (
             <Container maxWidth="md" sx={{ py: 4, textAlign: 'center' }}>
@@ -151,6 +180,7 @@ export default function ResumoCompra() {
         );
     }
 
+    // Empty cart check
     if (itensCompra.length === 0) {
         return (
             <Container maxWidth="md" sx={{ py: 4 }}>
@@ -172,6 +202,17 @@ export default function ResumoCompra() {
 
     return (
         <Container maxWidth="md" sx={{ py: 4 }}>
+            {/* Resto do JSX permanece igual... */}
+            {erro && (
+                <Alert
+                    severity="error"
+                    onClose={() => setErro(null)}
+                    sx={{ mb: 2 }}
+                >
+                    {erro}
+                </Alert>
+            )}
+
             <Box sx={{ mb: 3 }}>
                 <Button
                     startIcon={<ArrowBackIcon />}
@@ -222,11 +263,11 @@ export default function ResumoCompra() {
                                             </Typography>
                                         }
                                         secondary={
-                                            <Box>
-                                                <Typography variant="body2" color="text.secondary">
+                                            <Box component="span">
+                                                <Typography component="span" variant="body2" color="text.secondary">
                                                     Quantidade: {quantidade} • {item.categoria}
                                                 </Typography>
-                                                <Typography variant="body2" color="text.secondary">
+                                                <Typography component="span" variant="body2" color="text.secondary" display="block">
                                                     Preço unitário: R$ {precoUnitario.toFixed(2)}
                                                 </Typography>
                                             </Box>
@@ -244,61 +285,61 @@ export default function ResumoCompra() {
 
             {/* Endereço de Entrega */}
             {enderecoSelecionado && (
-                 <Card sx={{ mb: 3 }}>
-                 <CardContent>
-                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                         <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center' }}>
-                             <LocalShippingIcon sx={{ mr: 1 }} />
-                             Endereço de Entrega
-                         </Typography>
-                         <IconButton
-                             size="small"
-                             sx={{ color: 'primary.main' }}
-                             onClick={() => setModalEnderecoAberto(true)}
-                         >
-                             <EditIcon />
-                         </IconButton>
-                     </Box>
- 
-                     <Box sx={{ bgcolor: 'grey.50', p: 2, borderRadius: 2, border: '1px solid', borderColor: 'grey.200' }}>
-                         <Typography variant="body2" color="text.primary" sx={{ mb: 1, fontWeight: 500 }}>
-                             {enderecoSelecionado.rua}, {enderecoSelecionado.numero}
-                             {enderecoSelecionado.complemento && `, ${enderecoSelecionado.complemento}`}
-                         </Typography>
-                         
-                         <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                             {enderecoSelecionado.bairro} - {enderecoSelecionado.cidade}, {enderecoSelecionado.estado}
-                         </Typography>
-                         
-                         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                             CEP: {formatarCEP(enderecoSelecionado.cep)}
-                         </Typography>
- 
-                         <Box sx={{
-                             p: 1.5,
-                             bgcolor: (theme) => alpha(theme.palette.success.main, 0.1),
-                             borderRadius: 1,
-                             border: '1px solid',
-                             borderColor: (theme) => alpha(theme.palette.success.main, 0.3)
-                         }}>
-                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                 <ScheduleIcon sx={{ fontSize: 20, color: 'success.main' }} />
-                                 <Typography variant="body2" fontWeight="bold" color="success.main">
-                                     Entrega prevista: {prazoEntrega} dia{prazoEntrega > 1 ? 's' : ''} út{prazoEntrega > 1 ? 'eis' : 'il'}
-                                 </Typography>
-                             </Box>
-                             <Typography variant="caption" color="success.dark">
-                                 {new Date(Date.now() + prazoEntrega * 24 * 60 * 60 * 1000).toLocaleDateString('pt-BR', {
-                                     weekday: 'long',
-                                     year: 'numeric',
-                                     month: 'long',
-                                     day: 'numeric'
-                                 })}
-                             </Typography>
-                         </Box>
-                     </Box>
-                 </CardContent>
-             </Card>
+                <Card sx={{ mb: 3 }}>
+                    <CardContent>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                            <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center' }}>
+                                <LocalShippingIcon sx={{ mr: 1 }} />
+                                Endereço de Entrega
+                            </Typography>
+                            <IconButton
+                                size="small"
+                                sx={{ color: 'primary.main' }}
+                                onClick={() => setModalEnderecoAberto(true)}
+                            >
+                                <EditIcon />
+                            </IconButton>
+                        </Box>
+
+                        <Box sx={{ bgcolor: 'grey.50', p: 2, borderRadius: 2, border: '1px solid', borderColor: 'grey.200' }}>
+                            <Typography variant="body2" color="text.primary" sx={{ mb: 1, fontWeight: 500 }}>
+                                {enderecoSelecionado.rua}, {enderecoSelecionado.numero}
+                                {enderecoSelecionado.complemento && `, ${enderecoSelecionado.complemento}`}
+                            </Typography>
+
+                            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                                {enderecoSelecionado.bairro} - {enderecoSelecionado.cidade}, {enderecoSelecionado.estado}
+                            </Typography>
+
+                            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                                CEP: {formatarCEP(enderecoSelecionado.cep)}
+                            </Typography>
+
+                            <Box sx={{
+                                p: 1.5,
+                                bgcolor: (theme) => alpha(theme.palette.success.main, 0.1),
+                                borderRadius: 1,
+                                border: '1px solid',
+                                borderColor: (theme) => alpha(theme.palette.success.main, 0.3)
+                            }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <ScheduleIcon sx={{ fontSize: 20, color: 'success.main' }} />
+                                    <Typography variant="body2" fontWeight="bold" color="success.main">
+                                        Entrega prevista: {prazoEntrega} dia{prazoEntrega > 1 ? 's' : ''} út{prazoEntrega > 1 ? 'eis' : 'il'}
+                                    </Typography>
+                                </Box>
+                                <Typography variant="caption" color="success.dark">
+                                    {new Date(Date.now() + prazoEntrega * 24 * 60 * 60 * 1000).toLocaleDateString('pt-BR', {
+                                        weekday: 'long',
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric'
+                                    })}
+                                </Typography>
+                            </Box>
+                        </Box>
+                    </CardContent>
+                </Card>
             )}
 
             <Card sx={{ mb: 3 }}>
