@@ -10,7 +10,7 @@ import {
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
 
-export default function BarraPesquisa({ onPesquisar, placeholder = "Busque por produtos ou categorias..." }) {
+export default function BarraPesquisa({ onPesquisar, placeholder }) {
     const [termoPesquisa, setTermoPesquisa] = useState('');
 
     const handlePesquisar = () => {

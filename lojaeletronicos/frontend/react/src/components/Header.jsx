@@ -8,11 +8,9 @@ import {
     IconButton,
     Paper
 } from '@mui/material';
-import { alpha } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useAuth } from '../context/AuthContext';
 
 export default function Header({ onPesquisar }) {
@@ -51,7 +49,7 @@ export default function Header({ onPesquisar }) {
             <Container sx={{ position: 'relative', zIndex: 2, textAlign: 'center' }}>
 
                 {/* Barra de pesquisa */}
-                <Box sx={{ mb: 11, mt: -5 }}>
+                <Box sx={{ mb: 12, mt: -5 }}>
                     <Paper
                         elevation={3}
                         sx={{
@@ -61,12 +59,13 @@ export default function Header({ onPesquisar }) {
                             overflow: 'hidden',
                             height: 47,
                             maxWidth: 800,
+                            width: '90%',
                             mx: 'auto',
                             backgroundColor: 'white',
                             border: '2px solid transparent',
                             transition: 'all 0.3s ease',
                             '&:hover': {
-                                 backgroundColor: '#f5f5f5',
+                                backgroundColor: '#f5f5f5',
                                 borderColor: 'rgba(255, 255, 255, 0.3)',
                                 transform: 'translateY(-2px)',
                                 boxShadow: 4,
@@ -81,7 +80,7 @@ export default function Header({ onPesquisar }) {
                         <TextField
                             fullWidth
                             variant="outlined"
-                            placeholder="Busque por produtos ou categorias..."
+                            placeholder="Busque por produtos..."
                             value={termoPesquisa}
                             onChange={(e) => setTermoPesquisa(e.target.value)}
                             onKeyPress={handleKeyPress}
@@ -110,8 +109,13 @@ export default function Header({ onPesquisar }) {
                                     '& .MuiOutlinedInput-notchedOutline': {
                                         border: 'none',
                                     },
+                                    '& .MuiInputBase-input': {
+                                        padding: '8px 4px', 
+                                        fontSize: '1rem', 
+                                        height: '1.4em', 
+                                    },
                                     '& .MuiInputBase-input::placeholder': {
-                                        color: 'grey.600',
+                                        color: 'grey.500',
                                         opacity: 1,
                                     },
                                 }
@@ -122,11 +126,14 @@ export default function Header({ onPesquisar }) {
                             sx={{
                                 bgcolor: 'primary.main',
                                 color: 'white',
+                                border: '10px solid transparent',
                                 px: 4,
                                 py: 5,
                                 minWidth: 70,
                                 '&:hover': {
                                     bgcolor: 'primary.dark',
+                                    border: '10px solid transparent',
+
                                 },
                                 '& .MuiSvgIcon-root': {
                                     fontSize: '1.5rem'
