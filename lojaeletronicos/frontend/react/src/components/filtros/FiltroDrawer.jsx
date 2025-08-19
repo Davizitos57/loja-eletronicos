@@ -141,7 +141,7 @@ export default function FiltroDrawer({
                         color="secondary"
                         onClick={handleAplicarFiltro}
                         disabled={categoriasSelecionadas.length === 0}
-                        sx={{ py: 1.5 }}
+                        sx={{ py: 1.5, color: 'black', fontWeight: 'bold' }}
                     >
                         Aplicar Filtro ({categoriasSelecionadas.length})
                     </Button>
@@ -151,7 +151,7 @@ export default function FiltroDrawer({
                         color="secondary"
                         onClick={handleLimparFiltros}
                         startIcon={<ClearIcon />}
-                        sx={{ py: 1.5 }}
+                        sx={{ py: 1.5, color: 'black', fontWeight: 'bold' }}
                     >
                         Limpar Filtros
                     </Button>
