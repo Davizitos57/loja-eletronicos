@@ -40,10 +40,12 @@ export default function Header({ onPesquisar }) {
     return (
         <Box
             sx={{
-                background: '#3392ffff',
                 py: 8,
                 position: 'relative',
                 overflow: 'hidden',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundImage: `linear-gradient(rgba(51, 146, 255, 0.64), rgba(51, 146, 255, 0.45)), url('/images/header2.jpg')`,
             }}
         >
             <Container sx={{ position: 'relative', zIndex: 2, textAlign: 'center' }}>
