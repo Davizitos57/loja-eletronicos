@@ -13,19 +13,20 @@ export default function AdminFab({ onClick }) {
         <Fab
         color='secondary'
             onClick={onClick}
-            sx={{
-                position: 'fixed',
-                top: 100,
-                left: 16,
-                zIndex: 1000,
-                boxShadow: 4,
-                bgcolor: '#f44336',
-                '&:hover': {
-                    transform: 'scale(1.1)',
-                    boxShadow: 6,
-                },
-                transition: 'all 0.3s ease',
-            }}
+        sx={{
+            position: 'fixed',
+            top: 100,
+            left: 16,
+            zIndex: 1000,
+            boxShadow: 4,
+            bgcolor: '#f44336',
+            '&:hover': {
+                transform: 'scale(1.1)',
+                boxShadow: 6,
+                bgcolor: '#d32f2f', 
+            },
+            transition: 'all 0.3s ease',
+        }}
         >
             <AdminPanelSettingsIcon />
         </Fab>
