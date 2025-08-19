@@ -39,7 +39,7 @@ import { useEndereco } from '../../hooks/useEndereco';
 import { carrinhoService } from '../../services/carrinho';
 import { useAuth } from '../../context/AuthContext';
 import EnderecoEditModal from '../../components/endereco/EnderecoEditModal.jsx';
-
+import api from '../../services/api.js';
 
 export default function ResumoCompra() {
     const navigate = useNavigate();
@@ -200,11 +200,16 @@ export default function ResumoCompra() {
                             const precoUnitario = item.preco || 0;
                             const precoTotal = precoUnitario * quantidade;
 
+                            const isUploadedImage = item.imagem && item.imagem.startsWith('/uploads/');
+                            const imageUrl = isUploadedImage
+                                ? `${api.defaults.baseURL}${item.imagem}`
+                                : item.imagem;
+
                             return (
                                 <ListItem key={item.id || index} divider={index < itensCompra.length - 1}>
                                     <ListItemAvatar>
                                         <Avatar
-                                            src={item.imagem}
+                                            src={imageUrl}
                                             alt={item.nome}
                                             sx={{ width: 80, height: 70, marginRight: 3 }}
                                             variant="rounded"
