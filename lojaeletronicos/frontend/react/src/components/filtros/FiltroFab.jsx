@@ -8,7 +8,7 @@ export default function FiltroFab({ onClick, categoriasAtivaCount = 0 }) {
             onClick={onClick}
             sx={{
                 position: 'fixed',
-                top: 100,
+                top: 20,
                 left: 16,
                 zIndex: 1000,
                 boxShadow: 3,
