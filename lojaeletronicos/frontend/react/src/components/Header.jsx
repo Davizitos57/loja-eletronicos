@@ -45,7 +45,7 @@ export default function Header({ onPesquisar }) {
                 overflow: 'hidden',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
-                backgroundImage: `linear-gradient(rgba(51, 146, 255, 0.64), rgba(51, 146, 255, 0.45)), url('/images/header2.jpg')`,
+                backgroundImage: `linear-gradient(rgba(51, 146, 255, 0.64), rgba(51, 146, 255, 0.45)), url('/images/header2.png')`,
             }}
         >
             <Container sx={{ position: 'relative', zIndex: 2, textAlign: 'center' }}>
