@@ -108,7 +108,7 @@ A aplicação estará disponível em: **http://localhost:5173**
 
 ## 📽️Explicação do projeto
 
-O vídeo da explicação do projeto está disponível em:
+O vídeo da explicação do projeto está disponível em: https://youtu.be/ylApQ5REf7I
 
 ---
 
