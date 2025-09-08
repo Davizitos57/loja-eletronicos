@@ -1,8 +1,7 @@
 # 🛒 Loja de Eletrônicos - TecnoFácil
 
 Este projeto foi desenvolvido como parte da disciplina **CSI602 - Banco de Dados I** da **Universidade Federal de Ouro Preto (UFOP)**.  
-A documentação completa referente a este projeto pode ser encontrada em:  
-`lojaeletronicos/docs`
+[Clique aqui](https://drive.google.com/file/d/1FDSI_R2BzjwLMes-KOKrjMKh2zu1a3TT/view?usp=drive_link) para acessar a documentação completa da aplicação
 
 ---
 
